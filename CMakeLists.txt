@@ -6,14 +6,11 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(EXECUTABLE_NAME "kabanero")
 set(IMGUI_ROOT "${CMAKE_SOURCE_DIR}/lib/imgui")
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+
 set(SOURCE_FILES
-    src/Main.cpp
-    src/logger/Logger.cpp
-    src/logger/Logger.h
-    src/ui/UIWindow.h
-    src/ui/UIGroup.h
-    src/ui/UIElement.h
-    src/ui/UIConsoleWindow.h)
+    src/Main.cpp)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
 
