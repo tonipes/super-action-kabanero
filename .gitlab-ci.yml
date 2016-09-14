@@ -1,0 +1,39 @@
+image: tonipes/sfml-docker
+
+before_script:
+  - git submodule update --init --recursive
+
+after_script:
+  - ./build.sh clean
+
+stages:
+  - build
+  - make
+  - test
+  - cleanup
+
+build:
+  stage: build
+  script:
+    - ./build.sh
+
+make:
+  stage: make
+  script:
+    - ./build.sh make
+
+unit_test:
+  # TODO: Run tests
+  stage: test
+  script:
+    - echo "Run unit tests here"
+
+run_test:
+  stage: test
+  script:
+    - ./build.sh run
+
+cleanup_build:
+  stage: cleanup
+  script:
+    - ./build.sh clean
