@@ -8,29 +8,29 @@ EXEC=build/bin/kabanero
 BUILD_DIR=build
 
 if [ ! -d "build" ]; then
+  echo "Creating build directory"
   mkdir "$BUILD_DIR"
 fi
 
 if [ "$1" = "clean" ]; then
+  echo "Removing build directory"
   rm -rf "$BUILD_DIR"
 else
   # Build
-  (cd "$BUILD_DIR" && cmake ..)
+  echo "Building project"
+  (cd "$BUILD_DIR" && cmake ..) || exit $?
+  echo "Build done"
 
-  # If succesful
-  if [ ! $? -eq 0 ]; then
+  if [ "$1" = "make" ] || [ "$1" = "run" ]; then
+    echo "Running make"
+    (cd "$BUILD_DIR" && make) || exit $?
+
     if [ "$1" = "run" ]; then
-      # Make
-      (cd "$BUILD_DIR" && make)
-      # If succesful
-      if [ ! $? -eq 0 ]; then
-        "$EXEC"
-      fi
-
+      echo "Running executable"
+      "$EXEC" || exit $?
     fi
 
   fi
-
   # Exit with status from last command
   exit $?
 
