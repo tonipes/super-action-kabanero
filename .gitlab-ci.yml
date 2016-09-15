@@ -3,14 +3,16 @@ image: tonipes/sfml-docker
 before_script:
   - git submodule update --init --recursive
 
-after_script:
-  - ./build.sh clean
-
 stages:
   - build
   - make
   - test
   - cleanup
+
+cache:
+  untracked: true
+  paths:
+    - build
 
 build:
   stage: build
