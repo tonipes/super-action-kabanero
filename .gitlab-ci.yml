@@ -1,4 +1,4 @@
-image: tonipes/sfml-docker
+image: tonipes/sfml-docker:latest
 
 before_script:
   - git submodule update --init --recursive
