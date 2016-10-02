@@ -1,3 +1,4 @@
 -Ilib/imgui
 -Ilib/imgui-sfml
+-Ilib/selene/include
 -Iinclude

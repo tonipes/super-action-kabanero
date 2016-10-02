@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.6)
 project(kabanero)
 
 set(IMGUI_SFML_BUILD_EXAMPLES 0)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -llua")
 set(EXECUTABLE_NAME "kabanero")
 set(IMGUI_ROOT "${CMAKE_SOURCE_DIR}/lib/imgui")
 
@@ -14,17 +14,28 @@ file(GLOB_RECURSE SOURCE_TEST_FILES test/*.cpp)
 file(GLOB_RECURSE RESOURCE_FILES resources/*)
 
 include_directories(/usr/bin/include)
+include_directories(lib/selene/include)
 include_directories(include)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
 
 add_subdirectory("${CMAKE_SOURCE_DIR}/lib/imgui-sfml")
+# add_subdirectory("${CMAKE_SOURCE_DIR}/lib/selene")
 
 add_subdirectory(test)
-
 # add_subdirectory(src) # not used
-
 add_executable(${EXECUTABLE_NAME} ${IMGUI_SOURCES} ${IMGUI_SFML_SOURCES} ${SOURCE_FILES})
+
+# Resources
+set(RES_SOURCE "${CMAKE_SOURCE_DIR}/resources")
+set(RES_DEST "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/resources")
+
+add_custom_command(
+ TARGET ${PROJECT_NAME} POST_BUILD
+ COMMAND ${CMAKE_COMMAND} -E create_symlink ${RES_SOURCE} ${RES_DEST}
+ DEPENDS ${RES_DEST}
+ COMMENT "symbolic link resources folder from ${RES_SOURCE} => ${RES_DEST}"
+)
 
 # SFML
 find_package(SFML REQUIRED system window graphics network audio)
