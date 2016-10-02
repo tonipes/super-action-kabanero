@@ -9,17 +9,22 @@ set(IMGUI_ROOT "${CMAKE_SOURCE_DIR}/lib/imgui")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
-set(SOURCE_FILES
-    src/Main.cpp)
+file(GLOB_RECURSE SOURCE_FILES      src/*.cpp include/*.hpp)
+file(GLOB_RECURSE SOURCE_TEST_FILES test/*.cpp)
+file(GLOB_RECURSE RESOURCE_FILES resources/*)
+
+include_directories(/usr/bin/include)
+include_directories(include)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
 
 add_subdirectory("${CMAKE_SOURCE_DIR}/lib/imgui-sfml")
 
-add_executable(${EXECUTABLE_NAME} ${IMGUI_SOURCES} ${IMGUI_SFML_SOURCES} ${SOURCE_FILES})
+add_subdirectory(test)
 
-# Needed for clion autocomplete on mac
-include_directories(/usr/bin/include)
+# add_subdirectory(src) # not used
+
+add_executable(${EXECUTABLE_NAME} ${IMGUI_SOURCES} ${IMGUI_SFML_SOURCES} ${SOURCE_FILES})
 
 # SFML
 find_package(SFML REQUIRED system window graphics network audio)
