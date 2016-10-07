@@ -4,14 +4,18 @@
 #include <vector>
 #include <list>
 #include <iostream>
+#include <algorithm>
+
+#include "kabanero/Option.hpp"
 
 template <template <class T, class Allocator = std::allocator<T>> class C, typename T>
 class Seq {
 public:
   Seq() {}
 
+  Seq(const Seq& copy) : memory(copy.memory) {}
+
   typedef C<T> Memory;
-  typedef std::function<void(T)> lambda;
   typedef typename Memory::iterator iterator;
   typedef typename Memory::const_iterator const_iterator;
 
@@ -19,8 +23,16 @@ public:
     return memory.size();
   }
 
-  auto foreach(const lambda& func) const -> void {
+  template <typename F>
+  auto foreach(const F& func) const -> void {
     for (auto const& i : memory) {
+      func(i);
+    }
+  }
+
+  template <typename F>
+  auto foreach(F func) -> void {
+    for (auto& i : memory) {
       func(i);
     }
   }
@@ -71,6 +83,48 @@ public:
     return s;
   }
 
+  template <typename F>
+  auto find(F func) const -> const Option<T> {
+    const auto it = std::find_if(begin(), end(), func);
+    if (it == end()) {
+      return Option<T>();
+    } else {
+      return Some(*it);
+    }
+  }
+
+  template <typename F>
+  auto exists(F func) const -> bool {
+    const auto it = std::find_if(begin(), end(), func);
+    return it != end();
+  }
+
+  template <typename F>
+  auto sortBy(F func) const -> Seq<C, T> {
+
+  }
+
+  template <typename F>
+  auto filter(F func) const -> Seq<C, T> {
+    auto a = Seq<C, T>();
+    for (auto const& i : memory) {
+      if (func(i)) {
+        a += i;
+      }
+    }
+    return a;
+  }
+
+  auto remove(const int i) -> const T {
+    const auto r = memory[i];
+    memory.erase(memory.begin() + i);
+    return r;
+  }
+
+  auto toVector() -> std::vector<T> {
+    return std::vector<T>(begin(), end());
+  }
+
 protected:
   Memory memory;
 };
@@ -89,7 +143,8 @@ auto operator<<(std::ostream& os, const Seq<C, T>& collection) -> std::ostream& 
 }
 
 template<typename T>
-class VectorSeq : public Seq<std::vector, T> {};
-
-template<typename T>
-class ListSeq : public Seq<std::list, T> {};
+class VectorSeq : public Seq<std::vector, T> {
+public:
+  VectorSeq() : Seq<std::vector, T>() {}
+  VectorSeq(const VectorSeq& copy) : Seq<std::vector, T>(copy) {}
+};
