@@ -1,4 +1,7 @@
+#pragma once
+
 #include <string>
+#include <iostream>
 
 namespace kabanero{
   class Dog {
@@ -9,4 +12,6 @@ namespace kabanero{
     void Woof();
 
   };
+
+  auto operator<<(std::ostream& os, const Dog& dog) -> std::ostream&;
 }
