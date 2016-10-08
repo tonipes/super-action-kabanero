@@ -10,6 +10,9 @@ public:
 
   Option() : valuePtr(nullptr) {}
 
+  // Now you can `if(opt)`. This equals to `if(opt.isDefined)`
+  operator bool() const { return isDefined(); }
+
   auto isDefined() const -> bool {
     return valuePtr != nullptr;
   }
@@ -22,7 +25,7 @@ public:
     return *valuePtr;
   }
 
-  auto getOrElse(T& v) -> T& {
+  auto getOrElse(const T& v) -> const T& {
     if (valuePtr != nullptr) {
       return *valuePtr;
     } else {
