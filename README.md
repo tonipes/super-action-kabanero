@@ -62,3 +62,4 @@ Tooling                 | 🔧  `:wrench:`
 Tests                   | 🚨  `:rotating_light:`
 Deprecation             | 💩  `:poop:`
 Work In Progress (WIP)  | 🚧  `:construction:`
+Library                 | 📓  `:notebook:`
