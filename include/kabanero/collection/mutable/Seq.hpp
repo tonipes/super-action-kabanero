@@ -13,6 +13,9 @@ class Seq {
 public:
   Seq() {}
 
+  // Allows Seq<T> = {t1, t2, t3, t4} like constructor
+  Seq(std::initializer_list<T> init) : memory(init) {}
+
   Seq(const Seq& copy) : memory(copy.memory) {}
 
   typedef C<T> Memory;
@@ -147,4 +150,5 @@ class VectorSeq : public Seq<std::vector, T> {
 public:
   VectorSeq() : Seq<std::vector, T>() {}
   VectorSeq(const VectorSeq& copy) : Seq<std::vector, T>(copy) {}
+  VectorSeq(std::initializer_list<T> init) : Seq<std::vector, T>(init) {}
 };
