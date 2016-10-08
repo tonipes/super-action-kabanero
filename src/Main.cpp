@@ -2,6 +2,7 @@
 #include <selene.h>
 #include "Dog.hpp"
 #include "kabanero/collection/mutable/Seq.hpp"
+#include "kabanero/collection/mutable/Map.hpp"
 #include "kabanero/Option.hpp"
 
 int main() {
@@ -105,6 +106,36 @@ int main() {
   std::cout << dogs << std::endl;
   std::cout << dogs.remove(2) << std::endl;
   std::cout << dogs << std::endl;
+
+  // Option as a boolean
+  auto found = dogs.find([](auto& d){ return d.name == "Teuvon veli";});
+  std::cout << "Found dog: " << found << std::endl;
+  if(found){
+    std::cout << "Unwrapped dog: " << found.get() << std::endl;
+  } else {
+    std::cout << "Did not find doge :(" << std::endl;
+  }
+
+  // Dictionary example
+  MapDict<std::string, std::string> stringmap;
+  stringmap["first"] = "teststring";
+  stringmap["second"] = "anotherstring";
+  stringmap["third"] = "randomstring";
+  std::cout << stringmap["second"] << std::endl;
+
+  std::cout << "Contains 'first' " << stringmap.contains("first") << std::endl;
+  std::cout << "Contains 'asd' " << stringmap.contains("asd") << std::endl;
+
+  std::cout << "Get first " << stringmap.get("first") << std::endl;
+  std::cout << "Get asd " << stringmap.get("asd") << std::endl;
+
+  std::cout << "GetOrElse " << stringmap.getOrElse("first", "notfound") << std::endl;
+  std::cout << "GetOrElse " << stringmap.getOrElse("asdasd", "notfound") << std::endl;
+
+  std::cout << "keys " << stringmap.keys() << std::endl;
+  std::cout << "values " << stringmap.values() << std::endl;
+
+  std::cout << stringmap << std::endl;
 
   return 0;
 }
