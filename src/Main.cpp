@@ -149,7 +149,7 @@ int main(int argc, char* argv[]) {
   sol::state config;
   config.script_file("resources/config.lua");
 
-  if(argc > 0 && std::string(argv[1]) == "testrun") {
+  if(argc > 1 && std::string(argv[1]) == "testrun") {
     std::cout << "Running windowless test run" << std::endl;
 
     auto test_string = config["test_string"].get_or<std::string>("notfound");
@@ -171,8 +171,9 @@ int main(int argc, char* argv[]) {
           window.close();
       }
     }
-    
+
   }
+
   std::cout << "Exiting" << std::endl;
   return 0;
 }
