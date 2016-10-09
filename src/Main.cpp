@@ -138,5 +138,12 @@ int main() {
 
   std::cout << stringmap << std::endl;
 
+  auto mappedDict = stringmap.map([](auto k){
+    return std::make_pair(k.first + "_newkey", VectorSeq<int>{1,2,3,4, int(k.second.length()) });
+  });
+
+  std::cout << mappedDict << std::endl;
+  std::cout << mappedDict["first_newkey"].find([](auto& a){ return a == 10;}) << std::endl;
+
   return 0;
 }

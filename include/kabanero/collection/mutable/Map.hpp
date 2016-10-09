@@ -56,6 +56,27 @@ public:
     return r;
   }
 
+  template <typename F>
+  auto foreach(F func) -> void {
+    for (auto& i : memory) {
+      func(i);
+    }
+  }
+
+  // Func is type f(std::pair<Key,Value>) -> std::pair(NewKey, NewValue)
+  template <typename F,
+    typename R = typename std::result_of<F&(std::pair<K, T>)>::type,
+    typename NK = typename R::first_type, typename NV = typename R::second_type
+  >
+  auto map(F func) const -> Dict<M, NK, NV> {
+    auto a = Dict<M, NK, NV>();
+    for (auto const& i : memory) {
+      auto got = func(i);
+      a[got.first] = got.second;
+    }
+    return a;
+  }
+
   auto get(const K& key) -> Option<T> {
     if(memory.find(key) != memory.end()) {
       return Some(memory[key]);
