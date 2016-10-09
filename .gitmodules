@@ -4,6 +4,3 @@
 [submodule "lib/imgui"]
 	path = lib/imgui
 	url = https://github.com/tonipes/imgui.git
-[submodule "lib/selene"]
-	path = lib/selene
-	url = https://github.com/tonipes/Selene.git
