@@ -33,7 +33,7 @@ unit_test:
 run_test:
   stage: test
   script:
-    - ./build.sh run
+    - ./build.sh testrun
 
 cleanup_build:
   stage: cleanup
