@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include <SFML/Window.hpp>
 #include <sol.hpp>
 
 #include "Dog.hpp"
@@ -8,7 +9,6 @@
 #include "kabanero/Option.hpp"
 
 int main() {
-
   // Lua
   sol::state lua;
   lua.script_file("resources/scripts/test.lua");
@@ -144,6 +144,25 @@ int main() {
 
   std::cout << mappedDict << std::endl;
   std::cout << mappedDict["first_newkey"].find([](auto& a){ return a == 10;}) << std::endl;
+
+  // Window
+  std::cout << "Starting window" << std::endl;
+  
+  sol::state config;
+  config.script_file("resources/config.lua");
+
+  auto window_w = config["window_width"].get_or(800);
+  auto window_h = config["window_height"].get_or(800);
+  auto window_name = config["window_name"].get_or<std::string>("window");
+  sf::Window window(sf::VideoMode(window_w, window_h), window_name);
+
+  while (window.isOpen()){
+    sf::Event event;
+    while (window.pollEvent(event)){
+      if (event.type == sf::Event::Closed)
+        window.close();
+    }
+  }
 
   return 0;
 }
