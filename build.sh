@@ -21,13 +21,18 @@ else
   (cd "$BUILD_DIR" && cmake ..) || exit $?
   echo "Build done"
 
-  if [ "$1" = "make" ] || [ "$1" = "run" ]; then
+  if [ "$1" = "make" ] || [ "$1" = "run" ] || [ "$1" = "testrun" ]; then
     echo "Running make"
     (cd "$BUILD_DIR" && make) || exit $?
 
     if [ "$1" = "run" ]; then
       echo "Running executable"
       "$EXEC" || exit $?
+    fi
+
+    if [ "$1" = "testrun" ]; then
+      echo "Running executable"
+      "$EXEC" testrun || exit $?
     fi
 
   fi

@@ -1,4 +1,4 @@
-image: tonipes/sfml-docker:0.1
+image: tonipes/sfml-docker:0.2
 
 before_script:
   - git submodule update --init --recursive
@@ -33,7 +33,7 @@ unit_test:
 run_test:
   stage: test
   script:
-    - ./build.sh run
+    - ./build.sh testrun
 
 cleanup_build:
   stage: cleanup
