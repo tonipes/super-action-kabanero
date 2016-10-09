@@ -1,10 +1,20 @@
 #include <iostream>
+
+#include <sol.hpp>
+
 #include "Dog.hpp"
 #include "kabanero/collection/mutable/Seq.hpp"
 #include "kabanero/collection/mutable/Map.hpp"
 #include "kabanero/Option.hpp"
 
 int main() {
+
+  // Lua
+  sol::state lua;
+  lua.script_file("resources/scripts/test.lua");
+  auto luatest = lua.get<std::string>("test");
+  std::cout << "Lua test: " << luatest << std::endl;
+
   auto dog = kabanero::Dog("Doge");
 
   std::cout << "Dog is " << dog.name << std::endl;

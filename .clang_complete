@@ -1,4 +1,4 @@
 -Ilib/imgui
 -Ilib/imgui-sfml
--Ilib/selene/include
+-Ilib/sol2/single/sol
 -Iinclude

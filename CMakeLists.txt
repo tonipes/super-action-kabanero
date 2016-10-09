@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.6)
 project(kabanero)
 
+
 set(IMGUI_SFML_BUILD_EXAMPLES 0)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 set(EXECUTABLE_NAME "kabanero")
@@ -15,13 +16,14 @@ file(GLOB_RECURSE RESOURCE_FILES resources/*)
 
 include_directories(/usr/bin/include)
 include_directories(include)
+include_directories(lib/sol2/single/sol)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
 
 add_subdirectory("${CMAKE_SOURCE_DIR}/lib/imgui-sfml")
 
 add_subdirectory(test)
-# add_subdirectory(src) # not used
+
 add_executable(${EXECUTABLE_NAME} ${IMGUI_SOURCES} ${IMGUI_SFML_SOURCES} ${SOURCE_FILES})
 
 # Resources
@@ -34,6 +36,13 @@ add_custom_command(
  DEPENDS ${RES_DEST}
  COMMENT "symbolic link resources folder from ${RES_SOURCE} => ${RES_DEST}"
 )
+
+# Lua
+find_package(Lua REQUIRED)
+if (LUA_FOUND)
+  include_directories(${LUA_INCLUDE_DIR})
+  target_link_libraries(${EXECUTABLE_NAME} ${LUA_LIBRARIES})
+endif()
 
 # SFML
 find_package(SFML REQUIRED system window graphics network audio)
