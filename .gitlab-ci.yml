@@ -25,10 +25,9 @@ make:
     - ./build.sh make
 
 unit_test:
-  # TODO: Run tests
   stage: test
   script:
-    - echo "Run unit tests here"
+    - ./build.sh test
 
 run_test:
   stage: test

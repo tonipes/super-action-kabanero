@@ -5,6 +5,7 @@
 # clean - removes build directory
 
 EXEC=build/bin/kabanero
+TESTEXEC=build/bin/kabanero-test
 BUILD_DIR=build
 
 if [ ! -d "build" ]; then
@@ -21,7 +22,7 @@ else
   (cd "$BUILD_DIR" && cmake ..) || exit $?
   echo "Build done"
 
-  if [ "$1" = "make" ] || [ "$1" = "run" ] || [ "$1" = "testrun" ]; then
+  if [ "$1" = "make" ] || [ "$1" = "run" ] || [ "$1" = "testrun" ]|| [ "$1" = "test" ]; then
     echo "Running make"
     (cd "$BUILD_DIR" && make) || exit $?
 
@@ -33,6 +34,10 @@ else
     if [ "$1" = "testrun" ]; then
       echo "Running executable"
       "$EXEC" testrun || exit $?
+    fi
+    if [ "$1" = "test" ]; then
+      echo "Running tests"
+      "$TESTEXEC" || exit $?
     fi
 
   fi
