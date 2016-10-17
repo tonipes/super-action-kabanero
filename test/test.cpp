@@ -1,16 +1,24 @@
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide a main()
 #include "catch.hpp"
+#include "util/PrintUtil.hpp"
 #include "kabanero/Option.hpp"
 #include "kabanero/collection/mutable/Seq.hpp"
 #include "kabanero/collection/mutable/Map.hpp"
+#include "scene/2D/Transform2D.hpp"
+#include "scene/3D/Transform3D.hpp"
+#include <glm/vec3.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/mat3x3.hpp>
+#include <glm/mat4x4.hpp>
+#include <glm/gtx/transform.hpp>
 
 TEST_CASE( "Option tests", "[option]" ) {
-    REQUIRE( Some(5).get() == 5 );
-    REQUIRE( Option<int>().getOrElse(12) == 12 );
-    REQUIRE( Option<int>().isDefined() == false );
-    REQUIRE( Option<int>().isEmpty() == true );
-    REQUIRE( Option<int>(5) );
-    REQUIRE( !Option<int>() );
+  REQUIRE( Some(5).get() == 5 );
+  REQUIRE( Option<int>().getOrElse(12) == 12 );
+  REQUIRE( Option<int>().isDefined() == false );
+  REQUIRE( Option<int>().isEmpty() == true );
+  REQUIRE( Option<int>(5) );
+  REQUIRE( !Option<int>() );
 }
 
 TEST_CASE( "Seq tests", "[seq]" ) {
@@ -39,4 +47,39 @@ TEST_CASE( "Map tests", "[map]" ) {
   REQUIRE( !s.get("someting") );
   REQUIRE( s.getOrElse("eka", 0) == 1 );
   REQUIRE( s_mapped.get("eka_newkey").get() == 101 );
+}
+
+TEST_CASE( "Transform tests", "[transform]" ) {
+  auto t3d = Transform3D();
+  auto t3d2 = Transform3D();
+
+  REQUIRE(t3d.matrix() == t3d2.matrix());
+
+  t3d.setPosition(glm::vec3(2, 0, 1));
+  auto m = glm::mat4x4(
+    1, 0, 0, 0,
+    0, 1, 0, 0,
+    0, 0, 1, 0,
+    2, 0, 1, 1);
+
+  REQUIRE(t3d.matrix() == m);
+
+  t3d.setRotation(glm::quat(0, 1, 0, 0.2));
+  m = m * glm::toMat4(glm::quat(0, 1, 0, 0.2));
+
+  REQUIRE(t3d.matrix() == m);
+
+  auto t2d = Transform2D();
+  auto m33 = glm::mat3x3();
+
+  REQUIRE(t2d.matrix() == m33);
+
+  t2d.setScale(glm::vec2(2, 1));
+  m33 = glm::mat3x3(
+    2, 0, 0,
+    0, 1, 0,
+    0, 0, 1
+  );
+  REQUIRE(t2d.matrix() == m33);
+
 }
