@@ -112,8 +112,3 @@ auto operator<<(std::ostream& os, const Dict<M, K, T>& collection) -> std::ostre
   os << " }";
   return os;
 }
-
-template<typename K, typename T>
-class KBMap: public Dict<std::map, K, T> {
-
-};

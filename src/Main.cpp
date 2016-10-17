@@ -5,8 +5,8 @@
 #include <glm/vec3.hpp>
 
 #include "Dog.hpp"
-#include "kabanero/collection/mutable/Seq.hpp"
-#include "kabanero/collection/mutable/Map.hpp"
+#include "kabanero/collection/mutable/KBVector.hpp"
+#include "kabanero/collection/mutable/KBMap.hpp"
 #include "kabanero/Option.hpp"
 #include "util/PrintUtil.hpp"
 

@@ -2,8 +2,8 @@
 #include "catch.hpp"
 #include "util/PrintUtil.hpp"
 #include "kabanero/Option.hpp"
-#include "kabanero/collection/mutable/Seq.hpp"
-#include "kabanero/collection/mutable/Map.hpp"
+#include "kabanero/collection/mutable/KBVector.hpp"
+#include "kabanero/collection/mutable/KBMap.hpp"
 #include "scene/2D/Transform2D.hpp"
 #include "scene/3D/Transform3D.hpp"
 #include <glm/vec3.hpp>
