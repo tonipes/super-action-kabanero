@@ -33,6 +33,15 @@ public:
     }
   }
 
+  template <typename F, typename R = typename std::result_of<F&(T)>::type>
+  auto map(F func) -> const Option<R> {
+    if (isDefined()) {
+      return Option<R>(func(*valuePtr));
+    } else {
+      return Option<R>();
+    }
+  }
+
 private:
   const T* valuePtr;
 };
