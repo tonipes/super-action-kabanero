@@ -23,7 +23,7 @@ int main(int argc, char* argv[]) {
   std::cout << "Dog is " << dog.name << std::endl;
   dog.Woof();
 
-  VectorSeq<int> testSeq;
+  KBVector<int> testSeq;
   testSeq += 3;
   testSeq += 10;
   testSeq += 18;
@@ -80,7 +80,7 @@ int main(int argc, char* argv[]) {
     return v % 2 == 0;
   }) << std::endl;
 
-  auto testSeqCopy = VectorSeq<int>(testSeq);
+  auto testSeqCopy = KBVector<int>(testSeq);
   testSeq += 100;
 
   std::cout << testSeq << std::endl;
@@ -94,14 +94,14 @@ int main(int argc, char* argv[]) {
   // auto someOption2 = Some(3);
 
   using namespace kabanero;
-  VectorSeq<Dog> dogs;
+  KBVector<Dog> dogs;
   dogs += Dog("Teuvo");
   dogs += Dog("Henri");
   dogs += Dog("Emma");
   dogs += Dog("Döge");
   dogs += Dog("Musti");
 
-  VectorSeq<Dog> initdogs = { Dog("Taneli"), Dog("Liisa"), Dog("Eino") };
+  KBVector<Dog> initdogs = { Dog("Taneli"), Dog("Liisa"), Dog("Eino") };
   std::cout << "Initialize dogs: " << initdogs << std::endl;
 
   std::cout << dogs << std::endl;
@@ -142,7 +142,7 @@ int main(int argc, char* argv[]) {
   std::cout << stringmap << std::endl;
 
   auto mappedDict = stringmap.map([](auto k){
-    return std::make_pair(k.first + "_newkey", VectorSeq<int>{1,2,3,4, int(k.second.length()) });
+    return std::make_pair(k.first + "_newkey", KBVector<int>{1,2,3,4, int(k.second.length()) });
   });
 
   std::cout << mappedDict << std::endl;

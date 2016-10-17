@@ -42,15 +42,15 @@ public:
     return memory.find(key) != memory.end();
   }
 
-  auto keys() -> VectorSeq<K> {
-    VectorSeq<K> r;
+  auto keys() -> KBVector<K> {
+    KBVector<K> r;
     for(auto i : memory)
       r += i.first;
     return r;
   }
 
-  auto values() -> VectorSeq<T> {
-    VectorSeq<T> r;
+  auto values() -> KBVector<T> {
+    KBVector<T> r;
     for(auto i : memory)
       r += i.second;
     return r;

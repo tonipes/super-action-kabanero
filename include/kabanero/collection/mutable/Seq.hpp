@@ -146,9 +146,9 @@ auto operator<<(std::ostream& os, const Seq<C, T>& collection) -> std::ostream& 
 }
 
 template<typename T>
-class VectorSeq : public Seq<std::vector, T> {
+class KBVector : public Seq<std::vector, T> {
 public:
-  VectorSeq() : Seq<std::vector, T>() {}
-  VectorSeq(const VectorSeq& copy) : Seq<std::vector, T>(copy) {}
-  VectorSeq(std::initializer_list<T> init) : Seq<std::vector, T>(init) {}
+  KBVector() : Seq<std::vector, T>() {}
+  KBVector(const KBVector& copy) : Seq<std::vector, T>(copy) {}
+  KBVector(std::initializer_list<T> init) : Seq<std::vector, T>(init) {}
 };

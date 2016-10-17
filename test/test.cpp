@@ -22,9 +22,9 @@ TEST_CASE( "Option tests", "[option]" ) {
 }
 
 TEST_CASE( "Seq tests", "[seq]" ) {
-  auto s = VectorSeq<int> {1,2,3,4,5};
-  auto s2 = VectorSeq<std::string> {"eka", "toka", "kolmas"};
-  auto s_copy = VectorSeq<int>(s);
+  auto s = KBVector<int> {1,2,3,4,5};
+  auto s2 = KBVector<std::string> {"eka", "toka", "kolmas"};
+  auto s_copy = KBVector<int>(s);
   auto s_mapped = s2.map([](auto a){ return a + "_mapped";});
   s_copy.remove(3);
 
