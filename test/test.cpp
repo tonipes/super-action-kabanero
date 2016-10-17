@@ -34,7 +34,7 @@ TEST_CASE( "Seq tests", "[seq]" ) {
 }
 
 TEST_CASE( "Map tests", "[map]" ) {
-  auto s = MapDict<std::string, int>();
+  auto s = KBMap<std::string, int>();
   s["eka"] = 1;
   s["toka"] = 2;
   s["kolmas"] = 3;

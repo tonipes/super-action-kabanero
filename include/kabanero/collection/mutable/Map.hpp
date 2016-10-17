@@ -114,6 +114,6 @@ auto operator<<(std::ostream& os, const Dict<M, K, T>& collection) -> std::ostre
 }
 
 template<typename K, typename T>
-class MapDict: public Dict<std::map, K, T> {
+class KBMap: public Dict<std::map, K, T> {
 
 };

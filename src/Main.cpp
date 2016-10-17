@@ -121,7 +121,7 @@ int main(int argc, char* argv[]) {
   }
 
   // Dictionary example
-  MapDict<std::string, std::string> stringmap;
+  KBMap<std::string, std::string> stringmap;
   stringmap["first"] = "teststring";
   stringmap["second"] = "anotherstring";
   stringmap["third"] = "randomstring";
