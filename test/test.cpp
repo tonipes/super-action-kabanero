@@ -19,6 +19,14 @@ TEST_CASE( "Option tests", "[option]" ) {
   REQUIRE( Option<int>().isEmpty() == true );
   REQUIRE( Option<int>(5) );
   REQUIRE( !Option<int>() );
+  auto mappedValue = Option<int>(3).map([](int i) {
+    return i * 10;
+  }).get();
+  auto mappedValue2 = Option<int>(3).map([](auto i) {
+    return std::to_string(i * 10);
+  }).get();
+  REQUIRE( mappedValue == 30 );
+  REQUIRE( mappedValue2 == "30" );
 }
 
 TEST_CASE( "Seq tests", "[seq]" ) {
