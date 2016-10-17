@@ -63,3 +63,5 @@ Tests                   | 🚨  `:rotating_light:`
 Deprecation             | 💩  `:poop:`
 Work In Progress (WIP)  | 🚧  `:construction:`
 Library                 | 📓  `:notebook:`
+Remove linter warnings  | 👕  `:shirt:`
+Remove code/files       | 🔥  `:fire:`
