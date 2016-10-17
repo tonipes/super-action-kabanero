@@ -2,4 +2,5 @@
 -Ilib/imgui-sfml
 -Ilib/sol2/single/sol
 -Ilib/glm
+-Ilib/catch/include
 -Iinclude
