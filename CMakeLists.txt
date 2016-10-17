@@ -17,6 +17,7 @@ file(GLOB_RECURSE RESOURCE_FILES resources/*)
 include_directories(/usr/bin/include)
 include_directories(include)
 include_directories(lib/sol2/single/sol)
+include_directories(lib/glm)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
 

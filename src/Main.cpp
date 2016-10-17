@@ -2,11 +2,13 @@
 
 #include <SFML/Window.hpp>
 #include <sol.hpp>
+#include <glm/vec3.hpp>
 
 #include "Dog.hpp"
 #include "kabanero/collection/mutable/Seq.hpp"
 #include "kabanero/collection/mutable/Map.hpp"
 #include "kabanero/Option.hpp"
+#include "util/PrintUtil.hpp"
 
 int main(int argc, char* argv[]) {
 
@@ -145,6 +147,10 @@ int main(int argc, char* argv[]) {
 
   std::cout << mappedDict << std::endl;
   std::cout << mappedDict["first_newkey"].find([](auto& a){ return a == 10;}) << std::endl;
+
+  auto v = glm::vec3(3, 2, 1);
+
+  std::cout << v << std::endl;
 
   sol::state config;
   config.script_file("resources/config.lua");
