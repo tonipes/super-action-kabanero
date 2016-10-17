@@ -3,7 +3,7 @@
 #include <map>
 
 #include "kabanero/Option.hpp"
-#include "kabanero/collection/mutable/Seq.hpp"
+#include "kabanero/collection/mutable/KBVector.hpp"
 
 template <template<
     class K,

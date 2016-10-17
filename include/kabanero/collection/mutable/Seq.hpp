@@ -144,11 +144,3 @@ auto operator<<(std::ostream& os, const Seq<C, T>& collection) -> std::ostream& 
   os << " ]";
   return os;
 }
-
-template<typename T>
-class KBVector : public Seq<std::vector, T> {
-public:
-  KBVector() : Seq<std::vector, T>() {}
-  KBVector(const KBVector& copy) : Seq<std::vector, T>(copy) {}
-  KBVector(std::initializer_list<T> init) : Seq<std::vector, T>(init) {}
-};
