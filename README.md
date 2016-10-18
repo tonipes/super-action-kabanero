@@ -13,7 +13,7 @@ Install [SFML](http://www.sfml-dev.org/) with
 brew install sfml
 ```
 
-or your environment's equivalent.
+or your environment's equivalent. Version >=2.2.0 is required.
 
 ## Tools
 
@@ -21,7 +21,10 @@ To build the project, you can use `build.sh` script.
 
 *   To make use argument: `./build.sh make`
 *   To run after building: `./build.sh run`
+*   To run tests: `./build.sh test`
 *   To clean up: `./build.sh clean`
+
+This project is developed and tested with clang compiler and c++14 features. There are some known issues with GNU compiler and it is not supported.
 
 ## Development environment
 
@@ -41,9 +44,9 @@ Some useful packages for making development more enjoyable:
 
 Activate git hooks by running command `activate_hooks.sh` before committing.
 
-### Commit message
+### Message icons
 
-Always start commit messages with one of these emojis:
+Always start **commit messages** and **issue titles** with one of these emojis:
 
 **Note** that you don't put the actual emoji in the message.
 Please use the markdown emoji format eg. `:tada:` instead of 🎉
