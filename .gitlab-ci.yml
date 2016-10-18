@@ -9,6 +9,10 @@ stages:
   - test
   - cleanup
 
+variables:
+  CC: /usr/bin/clang
+  CXX: /usr/bin/clang++
+
 # cache:
 #   untracked: true
 #   paths:
