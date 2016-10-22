@@ -1,6 +1,7 @@
 -Ilib/imgui
 -Ilib/imgui-sfml
 -Ilib/sol2/single/sol
+-DGLM_FORCE_SWIZZLE=ON
 -Ilib/glm
 -Ilib/catch/include
 -Iinclude
