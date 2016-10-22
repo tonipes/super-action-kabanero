@@ -25,7 +25,7 @@ public:
     return *valuePtr;
   }
 
-  auto getOrElse(const T& v) -> const T& {
+  auto getOrElse(const T& v) const -> const T& {
     if (valuePtr != nullptr) {
       return *valuePtr;
     } else {
@@ -34,7 +34,7 @@ public:
   }
 
   template <typename F, typename R = typename std::result_of<F&(T)>::type>
-  auto map(F func) -> const Option<R> {
+  auto map(F func) const -> const Option<R> {
     if (isDefined()) {
       return Option<R>(func(*valuePtr));
     } else {
