@@ -1,5 +1,9 @@
 #include <iostream>
 
+// NOTE: Enables swizzleing of vectors, but may cause name conflicts
+#define GLM_FORCE_SWIZZLE
+#include <glm/glm.hpp>
+
 #include <SFML/Window.hpp>
 #include <sol.hpp>
 #include <glm/vec3.hpp>
