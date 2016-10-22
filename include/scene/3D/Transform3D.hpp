@@ -11,6 +11,7 @@
 
 class Transform3D : public Transform<glm::vec3, glm::quat, glm::mat4x4> {
 public:
+
   Transform3D() : Transform(glm::vec3(0, 0, 0), glm::quat(), glm::vec3(1, 1, 1)) {}
   Transform3D(
       glm::vec3 pos,
@@ -19,20 +20,10 @@ public:
   ) : Transform(pos, rot, scale) {}
 
 protected:
-  void recomputeTransform() {
+  auto recomputeTransform() const -> void {
     _transform =
       glm::translate(_position) *
       glm::toMat4(_rotation) *
       glm::scale(_scale);
   }
 };
-
-
-std::ostream& operator<<(std::ostream& os, Transform3D t) {
-  os << "Transform3D" << std::endl <<
-    "  position: " << t.position() << std::endl <<
-    "  rotation: " << t.rotation() << std::endl <<
-    "  scale:  " << t.scale();
-
-  return os;
-}

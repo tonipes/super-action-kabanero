@@ -1,12 +1,14 @@
 #pragma once
 
+#include <iostream>
+
 template <typename V, typename R, typename M>
 class Transform {
 public:
 
   Transform(V pos, R rot, V scale) : _position(pos), _rotation(rot), _scale(scale) {}
 
-  auto matrix() -> M {
+  auto matrix() const -> M {
     if (_recomputeTransform) {
       recomputeTransform();
       _recomputeTransform = false;
@@ -40,12 +42,27 @@ public:
     _scale = scale;
     _recomputeTransform = true;
   }
-protected:
-  virtual void recomputeTransform() = 0;
 
-  V _position;
-  R _rotation;
-  V _scale;
-  M _transform;
-  bool _recomputeTransform = true;
+  typedef V vectorType;
+  typedef R rotationType;
+  typedef M matrixType;
+
+protected:
+  virtual auto recomputeTransform() const -> void = 0;
+
+  mutable V _position;
+  mutable R _rotation;
+  mutable V _scale;
+  mutable M _transform;
+  mutable bool _recomputeTransform = true;
 };
+
+template <typename V, typename R, typename M>
+std::ostream& operator<<(std::ostream& os, Transform<V, R, M> t) {
+  os << "Transform" << std::endl <<
+    "  position: " << t.position() << std::endl <<
+    "  rotation: " << t.rotation() << std::endl <<
+    "  scale:  " << t.scale();
+
+  return os;
+}

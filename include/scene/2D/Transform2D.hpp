@@ -15,7 +15,7 @@ public:
   ) : Transform(pos, rot, scale) {}
 
 protected:
-  void recomputeTransform() {
+  auto recomputeTransform() const -> void {
     _transform = glm::mat3x3();
     _transform = glm::scale(_transform, _scale);
     _transform = glm::rotate(_transform, _rotation);
