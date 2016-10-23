@@ -1,4 +1,7 @@
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide a main()
+
+#define GLM_FORCE_SWIZZLE
+
 #include "catch.hpp"
 #include "util/PrintUtil.hpp"
 #include "kabanero/Option.hpp"
@@ -6,11 +9,16 @@
 #include "kabanero/collection/mutable/KBMap.hpp"
 #include "scene/2D/Transform2D.hpp"
 #include "scene/3D/Transform3D.hpp"
+#include "scene/3D/Node3D.hpp"
 #include <glm/vec3.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
 #include <glm/mat3x3.hpp>
 #include <glm/mat4x4.hpp>
+#include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
 #include <glm/gtx/transform.hpp>
+#include <glm/gtc/constants.hpp>
 
 TEST_CASE( "Option tests", "[option]" ) {
   REQUIRE( Some(5).get() == 5 );
@@ -19,6 +27,7 @@ TEST_CASE( "Option tests", "[option]" ) {
   REQUIRE( Option<int>().isEmpty() == true );
   REQUIRE( Option<int>(5) );
   REQUIRE( !Option<int>() );
+  REQUIRE( Some("ABCD").get() == "ABCD" );
   auto mappedValue = Option<int>(3).map([](int i) {
     return i * 10;
   }).get();
@@ -90,4 +99,38 @@ TEST_CASE( "Transform tests", "[transform]" ) {
   );
   REQUIRE(t2d.matrix() == m33);
 
+}
+
+TEST_CASE( "Node tests", "[node]" ) {
+  auto node = std::make_shared<Node3D>("node");
+
+  REQUIRE(node->position() == glm::vec3(0, 0, 0));
+  REQUIRE(node->rotation() == glm::quat());
+  REQUIRE(node->scale() == glm::vec3(1, 1, 1));
+  REQUIRE(node->name() == "node");
+
+  auto parent = std::make_shared<Node3D>("parent_node");
+
+  parent->addChild(node);
+  REQUIRE(*parent == (node->parent().get()));
+
+  parent->setLocalPosition(glm::vec3(0, 10, 0));
+
+  REQUIRE(node->position() == glm::vec3(0, 10, 0));
+
+  auto child = std::make_shared<Node3D>("child");
+
+  node->addChild(child);
+
+  child->setLocalPosition(glm::vec3(0, 0, 10));
+
+  REQUIRE(child->position() == glm::vec3(0, 10, 10));
+
+  node->setLocalRotation(glm::angleAxis(glm::half_pi<float>(), glm::vec3(0, 1, 0)));
+
+  REQUIRE(glm::round(child->position()) == glm::vec3(10, 10, 0));
+
+  parent->setLocalPosition(glm::vec3(0, 0, 0));
+
+  REQUIRE(node->parent().get().position() == glm::vec3(0, 0, 0));
 }
