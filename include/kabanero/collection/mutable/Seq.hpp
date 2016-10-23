@@ -5,8 +5,10 @@
 #include <list>
 #include <iostream>
 #include <algorithm>
+#include <tuple>
 
 #include "kabanero/Option.hpp"
+#include "util/PrintUtil.hpp"
 
 template <template <class T, class Allocator = std::allocator<T>> class C, typename T>
 class Seq {
@@ -22,7 +24,7 @@ public:
   typedef typename Memory::iterator iterator;
   typedef typename Memory::const_iterator const_iterator;
 
-  auto length() -> size_t {
+  auto length() const -> size_t {
     return memory.size();
   }
 
@@ -64,9 +66,24 @@ public:
     return memory[index];
   }
 
-  auto operator+=(T elem) -> void {
+  auto operator+=(const T& elem) -> void {
     memory.push_back(elem);
   };
+
+  auto operator+=(T&& elem) -> void {
+    memory.push_back(elem);
+  };
+
+  auto operator==(const Seq& other) {
+    return length() == other.length() && ([&](){
+      for (auto i = 0; i < length(); i++) {
+        if ((*this)[i] != other[i]) {
+          return false;
+        }
+      }
+      return true;
+    })();
+  }
 
   template <typename F, typename R = typename std::result_of<F&(T)>::type>
   auto map(F func) const -> Seq<C, R> {
@@ -121,6 +138,16 @@ public:
   auto remove(const int i) -> const T {
     const auto r = memory[i];
     memory.erase(memory.begin() + i);
+    return r;
+  }
+
+  template <typename R>
+  auto zip(const Seq<C, R>& other) const -> Seq<C, std::tuple<T, R>> {
+    auto r = Seq<C, std::tuple<T, R>>();
+    auto minLength = std::min(this->length(), other.length());
+    for (auto i = 0; i < minLength; ++i) {
+      r += std::make_tuple((*this)[i], other[i]);
+    }
     return r;
   }
 

@@ -19,6 +19,7 @@
 #include <glm/vec4.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/constants.hpp>
+#include <tuple>
 
 TEST_CASE( "Option tests", "[option]" ) {
   REQUIRE( Some(5).get() == 5 );
@@ -44,6 +45,18 @@ TEST_CASE( "Seq tests", "[seq]" ) {
   auto s_copy = KBVector<int>(s);
   auto s_mapped = s2.map([](auto a){ return a + "_mapped";});
   s_copy.remove(3);
+
+  auto a = KBVector<int> {1, 2, 3, 4, 5};
+  auto b = KBVector<std::string> {"one", "two", "three", "four", "five"};
+  auto r = Seq<std::vector, std::tuple<int, std::string>> {
+    std::make_tuple<int, std::string>(1, "one"),
+    std::make_tuple<int, std::string>(2, "two"),
+    std::make_tuple<int, std::string>(3, "three"),
+    std::make_tuple<int, std::string>(4, "four"),
+    std::make_tuple<int, std::string>(5, "five")
+  };
+
+  REQUIRE( a.zip(b) == r );
 
   REQUIRE( s[3] == 4 );
   REQUIRE( s_copy[3] == 5);
