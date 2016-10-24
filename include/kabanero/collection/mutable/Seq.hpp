@@ -141,8 +141,8 @@ public:
     return r;
   }
 
-  template <typename R>
-  auto zip(const Seq<C, R>& other) const -> Seq<C, std::tuple<T, R>> {
+  template <template <class R, class Allocator = std::allocator<T>> class C2, typename R>
+  auto zip(const Seq<C2, R>& other) const -> Seq<C, std::tuple<T, R>> {
     auto r = Seq<C, std::tuple<T, R>>();
     auto minLength = std::min(this->length(), other.length());
     for (auto i = 0; i < minLength; ++i) {
