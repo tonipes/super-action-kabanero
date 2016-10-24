@@ -15,7 +15,7 @@ class Seq {
 public:
   Seq() {}
 
-  // Allows Seq<T> = {t1, t2, t3, t4} like constructor
+  // Allows Seq<T> = {t1, t2, t3, t4} -like constructor
   Seq(std::initializer_list<T> init) : memory(init) {}
 
   Seq(const Seq& copy) : memory(copy.memory) {}

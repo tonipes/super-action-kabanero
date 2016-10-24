@@ -98,11 +98,6 @@ protected:
     _worldTransform = _parent.map([&](const auto& parentNode) {
       return parentNode.worldTransform() * _transform.matrix();
     }).getOrElse(_transform.matrix());
-    // if (_parent) {
-    //   _worldTransform = _parent->worldTransform() * _transform.matrix();
-    // } else {
-    //   _worldTransform = _transform.matrix();
-    // }
     _setUpdateFlag();
   }
 

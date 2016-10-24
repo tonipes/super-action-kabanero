@@ -1,8 +1,6 @@
 #pragma once
 
 #include "scene/Transform.hpp"
-#include "util/PrintUtil.hpp"
-#include <iostream>
 #include <glm/vec3.hpp>
 #include <glm/mat4x4.hpp>
 #include <glm/gtx/transform.hpp>

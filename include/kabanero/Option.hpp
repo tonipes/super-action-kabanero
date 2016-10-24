@@ -46,12 +46,11 @@ public:
     }
   }
 
-
-
 private:
   std::shared_ptr<T> _valueStore;
   bool _isDefined = false;
 };
+
 
 template <typename T>
 auto Some(std::shared_ptr<T>& value) -> Option<T> {
