@@ -12,7 +12,7 @@ template <template<
     class KeyEqual,
     class Allocator = std::allocator< std::pair<const K, T> >
   > class M, typename K, typename T, typename Hash, typename KeyEqual>
-class Dict {
+class Dictionary {
 public:
   typedef M<K, T, Hash, KeyEqual> Memory;
   typedef typename Memory::iterator iterator;
@@ -69,8 +69,8 @@ public:
     typename R = typename std::result_of<F&(std::pair<K, T>)>::type,
     typename NK = typename R::first_type, typename NV = typename R::second_type
   >
-  auto map(F func) const -> Dict<M, NK, NV, Hash, KeyEqual> {
-    auto a = Dict<M, NK, NV, Hash, KeyEqual>();
+  auto map(F func) const -> Dictionary<M, NK, NV, Hash, KeyEqual> {
+    auto a = Dictionary<M, NK, NV, Hash, KeyEqual>();
     for (auto const& i : memory) {
       auto got = func(i);
       a[got.first] = got.second;
@@ -103,7 +103,7 @@ template <template<
     class Allocator = std::allocator< std::pair<const K, T> >
   > class M, typename K, typename T, typename Hash, typename KeyEqual>
 
-auto operator<<(std::ostream& os, const Dict<M, K, T, Hash, KeyEqual>& collection) -> std::ostream& {
+auto operator<<(std::ostream& os, const Dictionary<M, K, T, Hash, KeyEqual>& collection) -> std::ostream& {
   os << "{ ";
   for (auto it = collection.begin(); it != collection.end(); it++) {
     os << "("<< it->first << " => " << it->second << ")";
