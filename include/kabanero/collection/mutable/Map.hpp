@@ -8,12 +8,13 @@
 template <template<
     class K,
     class T,
-    class Compare = std::less<K>,
+    class Hash,
+    class KeyEqual,
     class Allocator = std::allocator< std::pair<const K, T> >
-  > class M, typename K, typename T>
+  > class M, typename K, typename T, typename Hash, typename KeyEqual>
 class Dict {
 public:
-  typedef M<K, T> Memory;
+  typedef M<K, T, Hash, KeyEqual> Memory;
   typedef typename Memory::iterator iterator;
   typedef typename Memory::const_iterator const_iterator;
 
@@ -68,8 +69,8 @@ public:
     typename R = typename std::result_of<F&(std::pair<K, T>)>::type,
     typename NK = typename R::first_type, typename NV = typename R::second_type
   >
-  auto map(F func) const -> Dict<M, NK, NV> {
-    auto a = Dict<M, NK, NV>();
+  auto map(F func) const -> Dict<M, NK, NV, Hash, KeyEqual> {
+    auto a = Dict<M, NK, NV, Hash, KeyEqual>();
     for (auto const& i : memory) {
       auto got = func(i);
       a[got.first] = got.second;
@@ -97,11 +98,12 @@ protected:
 template <template<
     class K,
     class T,
-    class Compare = std::less<K>,
+    class Hash,
+    class KeyEqual,
     class Allocator = std::allocator< std::pair<const K, T> >
-  > class M, typename K, typename T>
+  > class M, typename K, typename T, typename Hash, typename KeyEqual>
 
-auto operator<<(std::ostream& os, const Dict<M, K, T>& collection) -> std::ostream& {
+auto operator<<(std::ostream& os, const Dict<M, K, T, Hash, KeyEqual>& collection) -> std::ostream& {
   os << "{ ";
   for (auto it = collection.begin(); it != collection.end(); it++) {
     os << "("<< it->first << " => " << it->second << ")";
