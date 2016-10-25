@@ -43,14 +43,14 @@ public:
     return memory.find(key) != memory.end();
   }
 
-  auto keys() -> KBVector<K> {
+  auto keys() const -> KBVector<K> {
     KBVector<K> r;
     for(auto i : memory)
       r += i.first;
     return r;
   }
 
-  auto values() -> KBVector<T> {
+  auto values() const -> KBVector<T> {
     KBVector<T> r;
     for(auto i : memory)
       r += i.second;
@@ -79,7 +79,7 @@ public:
   }
 
   auto get(const K& key) -> Option<T> {
-    if(memory.find(key) != memory.end()) {
+    if (memory.find(key) != memory.end()) {
       return Some(memory[key]);
     } else {
       return Option<T>();
