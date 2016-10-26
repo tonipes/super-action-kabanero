@@ -7,6 +7,8 @@
 
 ## Dependencies
 
+### SFML
+
 Install [SFML](http://www.sfml-dev.org/) with
 
 ```
@@ -14,6 +16,30 @@ brew install sfml
 ```
 
 or your environment's equivalent. Version >=2.2.0 is required.
+
+### CMake
+
+Install [CMake](https://cmake.org/)
+
+## Installing
+
+Clone the project:
+
+```
+git clone https://gitlab.com/mureke/kabanero.git
+```
+
+Pull and update all submodules:
+
+```
+git pull && git submodule update --init --recursive
+```
+
+Build and run:
+
+```
+./build.sh run
+```
 
 ## Tools
 
