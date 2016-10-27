@@ -7,6 +7,17 @@
 
 ## Dependencies
 
+### Lua
+
+Install Lua with
+
+```
+brew install lua
+```
+
+or your environment's equivalent.
+Version >=5.2.4 is required.
+
 ### SFML
 
 Install [SFML](http://www.sfml-dev.org/) with
@@ -15,7 +26,8 @@ Install [SFML](http://www.sfml-dev.org/) with
 brew install sfml
 ```
 
-or your environment's equivalent. Version >=2.2.0 is required.
+or your environment's equivalent.
+Version >=2.2.0 is required.
 
 ### CMake
 
