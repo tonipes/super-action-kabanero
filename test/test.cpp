@@ -7,6 +7,7 @@
 #include "kabanero/Option.hpp"
 #include "kabanero/collection/mutable/KBVector.hpp"
 #include "kabanero/collection/mutable/KBMap.hpp"
+#include "kabanero/collection/mutable/KBTypeMap.hpp"
 #include "scene/2D/Transform2D.hpp"
 #include "scene/3D/Transform3D.hpp"
 #include "scene/3D/Node3D.hpp"
@@ -77,6 +78,37 @@ TEST_CASE( "Map tests", "[map]" ) {
   REQUIRE( !s.get("someting") );
   REQUIRE( s.getOrElse("eka", 0) == 1 );
   REQUIRE( s_mapped.get("eka_newkey").get() == 101 );
+}
+
+TEST_CASE( "Type Map tests", "[type map]") {
+  auto m = KBTypeMap<std::string>();
+  m[typeid(int)] = "Int";
+  m[typeid(double)] = "Double";
+  m[typeid(float)] = "Float";
+
+  int a = 0;
+  double d = 0.0;
+  float f = 0.0f;
+
+  REQUIRE(m[typeid(a)] == "Int");
+  REQUIRE(m[typeid(d)] == "Double");
+  REQUIRE(m[typeid(f)] == "Float");
+
+  struct A {};
+
+  struct B : public A {};
+  struct C : public A {};
+
+  auto m2 = KBTypeMap<std::shared_ptr<A>>();
+
+  auto b = std::make_shared<B>();
+  auto c = std::make_shared<C>();
+
+  m2[typeid(B)] = b;
+  m2[typeid(C)] = c;
+
+  REQUIRE(m2[typeid(B)] == b);
+  REQUIRE(m2[typeid(C)] == c);
 }
 
 TEST_CASE( "Transform tests", "[transform]" ) {
