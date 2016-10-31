@@ -25,12 +25,12 @@ class KBTypeMap: public Dictionary<std::unordered_map, TypeInfoRef, T, Hasher, E
 public:
 
   template <typename A>
-  auto get() -> Option<A> {
+  auto get() const -> Option<T> {
     auto it = this->memory.find(typeid(A));
     if (it != this->memory.end()) {
       return Some((*it).second);
     } else {
-      return Option<A>();
+      return Option<T>();
     }
   }
 private:
