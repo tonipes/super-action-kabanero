@@ -1,8 +1,9 @@
 #pragma once
 
-#include "kabanero/collection/mutable/KBVector.hpp"
-#include "kabanero/collection/mutable/KBMap.hpp"
-#include "kabanero/Option.hpp"
+#include "collection/mutable/KBVector.hpp"
+#include "collection/mutable/KBMap.hpp"
+#include "collection/mutable/KBTypeMap.hpp"
+#include "collection/Option.hpp"
 #include "scene/Transform.hpp"
 #include "scene/NodeAttachment.hpp"
 #include <typeinfo>
@@ -31,6 +32,15 @@ public:
     _children += child;
     child->_setParent(this->shared_from_this());
     child->_setUpdateFlag();
+  }
+
+  auto addAttachment(std::shared_ptr<NodeAttachment> attachment) -> void {
+    _attachments[typeid(*attachment)] = attachment;
+  }
+
+  template <typename AttachmentType>
+  auto get() -> Option<AttachmentType> {
+    _attachments.get<AttachmentType>();
   }
 
   auto transform() const -> typename T::matrixType {
@@ -121,6 +131,7 @@ private:
   std::string _name;
   KBVector<std::weak_ptr<Node>> _children;
   Option<Node> _parent;
+  KBTypeMap<std::shared_ptr<NodeAttachment>> _attachments;
   T _transform;
   mutable typename T::matrixType _worldTransform;
 };
