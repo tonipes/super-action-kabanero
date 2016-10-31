@@ -81,7 +81,7 @@ public:
   auto get(const K& key) -> Option<T> {
     auto it = memory.find(key);
     if (it != memory.end()) {
-      return Some((*it).second);
+      return Option<T>((*it).second);
     } else {
       return Option<T>();
     }
