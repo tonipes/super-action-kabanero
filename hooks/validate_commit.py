@@ -5,7 +5,7 @@ import re, sys
 
 # check that there is :xxx: (emoji) and space in the begining of the line
 # xxx is between 3 and 20 letters
-FIRST_LINE_REGEX = r"^:[a-z]{3,20}: .*$"
+FIRST_LINE_REGEX = r"^:[a-z_]{3,20}: .*$"
 
 message_file = sys.argv[1]
 
