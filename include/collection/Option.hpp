@@ -37,6 +37,13 @@ public:
     }
   }
 
+  template <typename F>
+  auto foreach(F func) const -> void {
+    if (isDefined()) {
+      func(*_valueStore);
+    }
+  }
+
   template <typename F, typename R = typename std::result_of<F&(T)>::type>
   auto map(F func) const -> const Option<R> {
     if (isDefined()) {
