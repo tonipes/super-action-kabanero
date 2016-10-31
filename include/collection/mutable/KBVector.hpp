@@ -1,6 +1,6 @@
 #pragma once
 
-#include "kabanero/collection/mutable/Seq.hpp"
+#include "collection/mutable/Seq.hpp"
 
 template<typename T>
 class KBVector : public Seq<std::vector, T> {

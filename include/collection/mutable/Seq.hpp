@@ -7,7 +7,7 @@
 #include <algorithm>
 #include <tuple>
 
-#include "kabanero/Option.hpp"
+#include "collection/Option.hpp"
 #include "util/PrintUtil.hpp"
 
 template <template <class T, class Allocator = std::allocator<T>> class C, typename T>

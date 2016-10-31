@@ -1,6 +1,6 @@
 #pragma once
 
-#include "kabanero/collection/mutable/Dictionary.hpp"
+#include "collection/mutable/Dictionary.hpp"
 
 #include <unordered_map>
 

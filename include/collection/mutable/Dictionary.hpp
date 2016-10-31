@@ -2,8 +2,8 @@
 
 #include <map>
 
-#include "kabanero/Option.hpp"
-#include "kabanero/collection/mutable/KBVector.hpp"
+#include "collection/Option.hpp"
+#include "collection/mutable/KBVector.hpp"
 
 template <template<
     class K,

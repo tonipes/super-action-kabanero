@@ -8,9 +8,9 @@
 #include <sol.hpp>
 #include <glm/vec3.hpp>
 
-#include "kabanero/collection/mutable/KBVector.hpp"
-#include "kabanero/collection/mutable/KBMap.hpp"
-#include "kabanero/Option.hpp"
+#include "collection/mutable/KBVector.hpp"
+#include "collection/mutable/KBMap.hpp"
+#include "collection/Option.hpp"
 #include "util/PrintUtil.hpp"
 
 int main(int argc, char* argv[]) {
