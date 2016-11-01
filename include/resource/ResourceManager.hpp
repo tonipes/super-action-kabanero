@@ -35,7 +35,7 @@ public:
     }
     auto loader = loaderOption.get();
 
-    _futureResources += { filePath, loader->loadAsync(filePath) };
+    _futureResources.insert(filePath, loader->loadAsync(filePath));
     _numToLoad += 1;
   }
 
@@ -50,17 +50,20 @@ public:
   }
 
   auto update() -> void {
-    _futureResources.remove([&](auto& futurePair) {
-      auto filePath = std::get<0>(futurePair);
-      auto& future = std::get<1>(futurePair);
+    auto toRemove = KBVector<std::string>();
+    _futureResources.keys().foreach([&](const auto& filePath) {
+      auto future = _futureResources.get(filePath).get();
       if (future.isReady()) {
         auto value = future.get();
         _resources[typeid(*value)][filePath] = value;
         _numLoaded += 1;
-        return true;
+        toRemove += filePath;
       }
-      return false;
     });
+    toRemove.foreach([&](const auto& filePath) {
+      _futureResources.remove(filePath);
+    });
+
     // Once ready, reset values
     if (isReady()) {
       _numLoaded = 0;
@@ -87,7 +90,7 @@ private:
 
   KBTypeMap<KBMap<std::string, std::shared_ptr<Resource>>> _resources;
 
-  KBVector<std::tuple<std::string, FutureResource>> _futureResources;
+  KBMap<std::string, FutureResource> _futureResources;
 
   int _numToLoad = 0;
   int _numLoaded = 0;
