@@ -18,14 +18,16 @@ public:
   // Allows Seq<T> = {t1, t2, t3, t4} -like constructor
   Seq(std::initializer_list<T> init) : memory(init) {}
 
-  Seq(const Seq& copy) : memory(copy.memory) {}
-
   typedef C<T> Memory;
   typedef typename Memory::iterator iterator;
   typedef typename Memory::const_iterator const_iterator;
 
   auto length() const -> size_t {
     return memory.size();
+  }
+
+  auto isEmpty() const -> bool {
+    return length() == 0;
   }
 
   template <typename F>
@@ -71,7 +73,7 @@ public:
   };
 
   auto operator+=(T&& elem) -> void {
-    memory.push_back(elem);
+    memory.push_back(std::move(elem));
   };
 
   auto operator==(const Seq& other) {
@@ -139,6 +141,11 @@ public:
     const auto r = memory[i];
     memory.erase(memory.begin() + i);
     return r;
+  }
+
+  template <typename F>
+  auto remove(F func) -> void {
+    memory.erase(std::remove_if(memory.begin(), memory.end(), func));
   }
 
   template <template <class R, class Allocator = std::allocator<T>> class C2, typename R>
