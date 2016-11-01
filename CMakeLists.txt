@@ -1,9 +1,8 @@
 cmake_minimum_required(VERSION 3.6)
-project(kabanero)
-
+project(kabanero C CXX)
 
 set(IMGUI_SFML_BUILD_EXAMPLES 0)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -std=c++14")
 set(EXECUTABLE_NAME "kabanero")
 set(IMGUI_ROOT "${CMAKE_SOURCE_DIR}/lib/imgui")
 
