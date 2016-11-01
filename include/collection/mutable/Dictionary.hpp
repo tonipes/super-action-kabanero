@@ -38,6 +38,18 @@ public:
     return memory[key];
   }
 
+  auto operator[](K&& key) -> T& {
+    return memory[key];
+  }
+
+  auto insert(const K& key, T value) -> void {
+    memory.emplace(key, value);
+  }
+
+  auto remove(const K& key) -> void {
+    memory.erase(key);
+  }
+
   // You get a const! And You get const! Everybody gets a const!
   auto contains(const K& key) const -> const bool {
     return memory.find(key) != memory.end();
@@ -55,6 +67,14 @@ public:
     for(auto i : memory)
       r += i.second;
     return r;
+  }
+
+  auto length() const -> size_t {
+    return keys().length();
+  }
+
+  auto isEmpty() const -> bool {
+    return length() == 0;
   }
 
   template <typename F>
