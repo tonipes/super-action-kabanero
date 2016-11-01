@@ -3,23 +3,23 @@
 #include <string>
 #include <regex>
 #include <tuple>
-#include <collection/mutable/KBMap.hpp>
-#include <collection/mutable/KBVector.hpp>
-#include <collection/mutable/KBTypeMap.hpp>
-#include <collection/Option.hpp>
+#include "collection/mutable/KBMap.hpp"
+#include "collection/mutable/KBVector.hpp"
+#include "collection/mutable/KBTypeMap.hpp"
+#include "collection/Option.hpp"
 
 #include "resource/Loader.hpp"
 
 class ResourceManager {
 public:
-  // typedef std::future<std::shared_ptr<Resource>> FutureResource;
+  typedef Future<std::shared_ptr<Resource>> FutureResource;
 
   auto addLoader(std::regex regex, std::shared_ptr<Loader> loader) -> void {
     _loaders += { regex, loader };
   }
 
   auto load(std::string filePath) -> void {
-    auto loader = _loaders.find([&](const auto& pair) {
+    auto loaderOption = _loaders.find([&](const auto& pair) {
       std::regex r;
       std::shared_ptr<Loader> l;
       std::tie(r, l) = pair;
@@ -30,15 +30,13 @@ public:
       std::tie(r, l) = pair;
       return l;
     });
-    if (loader.isEmpty()) {
+    if (loaderOption.isEmpty()) {
       // throw error
     }
-    // auto f = std::move(loader.get()->loadAsync(filePath));
-    // auto f = p.get_future();
-    // _futureResources += std::make_tuple(filePath, std::move(f));
+    auto loader = loaderOption.get();
 
-    auto resource = loader.get()->loadAsync(filePath);
-    _resources[typeid(*resource)][filePath] = resource;
+    _futureResources += { filePath, loader->loadAsync(filePath) };
+    _numToLoad += 1;
   }
 
   template <typename T>
@@ -51,10 +49,37 @@ public:
     });
   }
 
-  // Return value between 0.0 and 1.0
-  auto getProgress() -> float;
+  auto update() -> void {
+    _futureResources.remove([&](auto& futurePair) {
+      auto filePath = std::get<0>(futurePair);
+      auto& future = std::get<1>(futurePair);
+      if (future.isReady()) {
+        auto value = future.get();
+        _resources[typeid(*value)][filePath] = value;
+        _numLoaded += 1;
+        return true;
+      }
+      return false;
+    });
+    // Once ready, reset values
+    if (isReady()) {
+      _numLoaded = 0;
+      _numToLoad = 0;
+    }
+  }
 
-  auto isReady() -> bool;
+  // Return value between 0.0 and 1.0
+  auto getProgress() -> float {
+    if (isReady()) {
+      return 1.0;
+    } else {
+      return float(_numToLoad) / _numLoaded;
+    }
+  }
+
+  auto isReady() -> bool {
+    return _futureResources.isEmpty();
+  }
 
 
 private:
@@ -62,6 +87,8 @@ private:
 
   KBTypeMap<KBMap<std::string, std::shared_ptr<Resource>>> _resources;
 
-  // KBVector<std::tuple<std::string, FutureResource>> _futureResources;
+  KBVector<std::tuple<std::string, FutureResource>> _futureResources;
 
+  int _numToLoad = 0;
+  int _numLoaded = 0;
 };

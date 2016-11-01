@@ -192,14 +192,18 @@ TEST_CASE( "Node tests", "[node]" ) {
 TEST_CASE( "Resource loading", "[resource]") {
   auto loader = std::make_shared<TextLoader>();
   auto text = loader->loadAsync("resources/test.txt");
-  // text.wait();
-  REQUIRE(*(std::dynamic_pointer_cast<Text>(text)) == Text("Test string\n"));
+  text.wait();
+  REQUIRE(*(std::dynamic_pointer_cast<Text>(text.get())) == Text("Test string\n"));
 
   auto resourceManager = ResourceManager();
   std::regex text_regex("^.+\\.txt$");
   resourceManager.addLoader(text_regex, loader);
 
   resourceManager.load("resources/test.txt");
+  while (!resourceManager.isReady()) {
+    resourceManager.update();
+  }
+
   auto text2 = resourceManager.get<Text>("resources/test.txt");
 
   REQUIRE(text2.isDefined());
