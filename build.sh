@@ -22,7 +22,12 @@ else
   (cd "$BUILD_DIR" && cmake ..) || exit $?
   echo "Build done"
 
-  if [ "$1" = "make" ] || [ "$1" = "run" ] || [ "$1" = "testrun" ]|| [ "$1" = "test" ]; then
+  if [ "$1" = "docs" ]; then
+    echo "Building docs"
+    (cd "$BUILD_DIR" && make docs) || exit $?
+  fi
+
+  if [ "$1" = "make" ] || [ "$1" = "run" ] || [ "$1" = "testrun" ] || [ "$1" = "test" ]; then
     echo "Running make"
     (cd "$BUILD_DIR" && make) || exit $?
 
