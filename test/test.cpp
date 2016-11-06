@@ -209,3 +209,23 @@ TEST_CASE( "Resource loading", "[resource]") {
   REQUIRE(text2.isDefined());
   REQUIRE(text2.get().str() == "Test string\n");
 }
+
+TEST_CASE( "Resource loading exception", "[resource]") {
+  auto loader = std::make_shared<TextLoader>();
+
+  auto resourceManager = ResourceManager();
+  std::regex text_regex("^.+\\.txt$");
+  resourceManager.addLoader(text_regex, loader);
+
+  REQUIRE_THROWS(resourceManager.load("resources/nonexistent.null"));
+
+  resourceManager.load("resources/nonexistent.txt");
+  auto f = [&](){
+    while (!resourceManager.isReady()) {
+      resourceManager.update();
+    }
+  };
+
+  REQUIRE_THROWS(f());
+
+}

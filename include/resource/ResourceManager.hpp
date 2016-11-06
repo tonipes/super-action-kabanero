@@ -7,6 +7,7 @@
 #include "collection/mutable/KBVector.hpp"
 #include "collection/mutable/KBTypeMap.hpp"
 #include "collection/Option.hpp"
+#include "exception/ResourceException.hpp"
 
 #include "resource/Loader.hpp"
 
@@ -31,7 +32,7 @@ public:
       return l;
     });
     if (loaderOption.isEmpty()) {
-      // throw error
+      throw ResourceException("No matching loader found for file: " + filePath);
     }
     auto loader = loaderOption.get();
 
