@@ -61,6 +61,7 @@ To build the project, you can use `build.sh` script.
 *   To run after building: `./build.sh run`
 *   To run tests: `./build.sh test`
 *   To clean up: `./build.sh clean`
+*   To create documentation: `./build.sh docs`
 
 This project is developed and tested with clang compiler and c++14 features. There are some known issues with GNU compiler and it is not supported.
 
@@ -75,6 +76,16 @@ Some useful packages for making development more enjoyable:
 *   [build](https://atom.io/packages/build)
 *   [linter-clang](https://atom.io/packages/linter-clang)
 
+## Documentation
+
+You can build the documentation with command:
+
+```
+./build.sh docs
+```
+Documentation will be created to path `build/html`. Access them by opening `index.html` in your [favorite html rendering program](https://www.google.com/chrome/browser/desktop/index.html).
+
+Note that building documentation requires [Doxygen](http://www.stack.nl/~dimitri/doxygen/).
 
 ## Contributing
 
