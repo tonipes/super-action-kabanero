@@ -1,4 +1,4 @@
-image: tonipes/sfml-docker:0.3
+image: tonipes/sfml-docker:latest
 
 before_script:
   - git submodule update --init --recursive
@@ -7,6 +7,7 @@ stages:
   - build
   - make
   - test
+  - deploy
   - cleanup
 
 variables:
@@ -42,3 +43,14 @@ cleanup_build:
   stage: cleanup
   script:
     - ./build.sh clean
+
+pages:
+  stage: deploy
+  script:
+  - ./build.sh docs
+  - mv build/html/ public/
+  artifacts:
+    paths:
+    - public
+  only:
+  - develop
