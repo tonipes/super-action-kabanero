@@ -7,7 +7,10 @@ public:
   Scene() {}
   ~Scene() {}
 
-  auto init() -> void {}
+  auto init(
+    MessagePublisher& messagePublisher,
+    ResourceManager& resourceManager
+  ) -> void {}
 
   auto update(
     double delta,

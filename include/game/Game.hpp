@@ -13,7 +13,10 @@ public:
   Game(Renderer& renderer): Updateable(), MessageSubscriber(), _renderer(renderer) {}
   ~Game() {}
 
-  auto init() -> void {}
+  auto init(
+    MessagePublisher& messagePublisher,
+    ResourceManager& resourceManager
+  ) -> void {}
 
   // TODO: Could also do resizing with message.
   auto resize(int x, int y) -> void {}
