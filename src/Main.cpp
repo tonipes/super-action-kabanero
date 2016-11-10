@@ -31,25 +31,7 @@ int main(int argc, char* argv[]) {
   sol::state config;
   config.script_file("resources/config.lua");
 
-  auto resources = config.get<sol::table>("resources");
-
-  // Resource loading
   auto resourceManager = ResourceManager();
-
-  auto text_loader = std::make_shared<TextLoader>();
-  std::regex text_regex("^.+\\.txt$");
-  resourceManager.addLoader(text_regex, text_loader);
-
-  auto texture_loader = std::make_shared<TextureLoader>();
-  std::regex texture_regex("^.+\\.png$");
-  resourceManager.addLoader(texture_regex, texture_loader);
-
-  for(auto i = 1; i <= resources.size(); i++){
-    std::cout << resources.get<std::string>(i) << std::endl;
-    resourceManager.load(resources.get<std::string>(i));
-  }
-
-  std::cout << resourceManager << std::endl;
 
   if(argc > 1 && std::string(argv[1]) == "testrun") {
     // Program is run with 'testrun' parameter.
@@ -60,7 +42,26 @@ int main(int argc, char* argv[]) {
     logger.info( "test_string: " + test_string );
 
   } else {
-    logger.info("Starting window");
+    logger.info("Loading resources");
+
+    auto resources = config.get<sol::table>("resources");
+
+    auto text_loader = std::make_shared<TextLoader>();
+    std::regex text_regex("^.+\\.txt$");
+    resourceManager.addLoader(text_regex, text_loader);
+
+    auto texture_loader = std::make_shared<TextureLoader>();
+    std::regex texture_regex("^.+\\.png$");
+    resourceManager.addLoader(texture_regex, texture_loader);
+
+    for(auto i = 1; i <= resources.size(); i++){
+      std::cout << resources.get<std::string>(i) << std::endl;
+      resourceManager.load(resources.get<std::string>(i));
+    }
+
+    std::cout << resourceManager << std::endl;
+
+    std::cout << "Starting window" << std::endl;
 
     // Get window parameters from config file and create window
     auto window_w = config["window_width"].get_or(800);
