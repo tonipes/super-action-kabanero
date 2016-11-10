@@ -13,8 +13,6 @@
 
 class ResourceManager {
 public:
-  // typedef Future<std::shared_ptr<Resource>> FutureResource;
-
   auto addLoader(std::regex regex, std::shared_ptr<Loader> loader) -> void {
     _loaders += { regex, loader };
   }
@@ -35,9 +33,13 @@ public:
       throw ResourceException("No matching loader found for file: " + filePath);
     }
     auto loader = loaderOption.get();
-    _resources.insert(loader->load(filePath));
+    auto res = loader->load(filePath);
+    _resources[typeid(*res)][filePath] = res;
   }
 
+  friend std::ostream& operator<<(std::ostream& os, ResourceManager resman);
+
+  // BUG: Crashes if call with non existent filePath and type combination
   template <typename T>
   auto get(const std::string& filePath) const -> Option<T> {
     Option<KBMap<std::string, std::shared_ptr<Resource>>> m = _resources.get<T>();
@@ -54,3 +56,8 @@ private:
   KBTypeMap<KBMap<std::string, std::shared_ptr<Resource>>> _resources;
 
 };
+
+std::ostream& operator<<(std::ostream& os, ResourceManager resman) {
+  os << "ResourceManager( " << resman._resources.length() << " )";
+  return os;
+}

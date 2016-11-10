@@ -8,6 +8,10 @@
 #include <sol.hpp>
 #include <glm/vec3.hpp>
 
+#include "resource/ResourceManager.hpp"
+#include "resource/loader/TextLoader.hpp"
+#include "resource/resource/Text.hpp"
+#include "resource/loader/TextureLoader.hpp"
 #include "collection/mutable/KBVector.hpp"
 #include "collection/mutable/KBMap.hpp"
 #include "collection/Option.hpp"
@@ -27,12 +31,32 @@ int main(int argc, char* argv[]) {
   sol::state config;
   config.script_file("resources/config.lua");
 
+  auto resources = config.get<sol::table>("resources");
+
+  // Resource loading
+  auto resourceManager = ResourceManager();
+
+  auto text_loader = std::make_shared<TextLoader>();
+  std::regex text_regex("^.+\\.txt$");
+  resourceManager.addLoader(text_regex, text_loader);
+
+  auto texture_loader = std::make_shared<TextureLoader>();
+  std::regex texture_regex("^.+\\.png$");
+  resourceManager.addLoader(texture_regex, texture_loader);
+
+  for(auto i = 1; i <= resources.size(); i++){
+    std::cout << resources.get<std::string>(i) << std::endl;
+    resourceManager.load(resources.get<std::string>(i));
+  }
+
+  std::cout << resourceManager << std::endl;
+
   if(argc > 1 && std::string(argv[1]) == "testrun") {
     // Program is run with 'testrun' parameter.
     // This is used in automated testing to make sure that the program actually runs.
     logger.info("Running windowless test run" );
 
-    auto test_string = config["test_string"].get_or<std::string>("notfound");
+    auto test_string = resourceManager.get<Text>("resources/test.txt");
     logger.info( "test_string: " + test_string );
 
   } else {

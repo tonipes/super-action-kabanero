@@ -17,6 +17,7 @@ public:
       std::istreambuf_iterator<char>(in),
       std::istreambuf_iterator<char>()
     };
+    resource.pop_back(); // Last line end
     return std::make_shared<Text>(resource);
   }
 };
