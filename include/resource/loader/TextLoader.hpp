@@ -6,6 +6,9 @@
 #include <fstream>
 #include <iterator>
 
+/**
+ * Text resource loader class.
+ */
 class TextLoader : public Loader {
 public:
   auto load(const std::string& filePath) -> const std::shared_ptr<Resource> {

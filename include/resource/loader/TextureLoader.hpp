@@ -6,6 +6,9 @@
 #include "resource/resource/Texture.hpp"
 #include "exception/ResourceException.hpp"
 
+/**
+ * Texture resource loader class.
+ */
 class TextureLoader : public Loader {
   auto load(const std::string& filePath) -> const std::shared_ptr<Resource> {
     sf::Texture texture;

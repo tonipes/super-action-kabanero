@@ -2,6 +2,9 @@
 
 #include <string>
 
+/**
+ * Resource class.
+ */
 class Resource {
 public:
   Resource() {}
