@@ -7,7 +7,7 @@
 #include <iterator>
 
 class TextLoader : public Loader {
-protected:
+public:
   auto load(const std::string& filePath) -> const std::shared_ptr<Resource> {
     std::ifstream in { filePath };
     if(!in.is_open()) {
