@@ -4,9 +4,14 @@
 #include <SFML/Graphics.hpp>
 #include "resource/Resource.hpp"
 
+/**
+ * Texture Resource.
+ */
 class Texture : public Resource {
 public:
   Texture(sf::Texture texture) : _texture(texture) {}
+
+  auto getTexture() -> sf::Texture {return _texture;}
 
   friend std::ostream& operator<<(std::ostream& os, Texture rexture);
 
