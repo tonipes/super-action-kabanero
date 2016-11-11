@@ -9,12 +9,14 @@
 #include <sol.hpp>
 #include <glm/vec3.hpp>
 
+#include "audio/AudioPlayer.hpp"
 #include "resource/ResourceManager.hpp"
 #include "message/MessagePublisher.hpp"
 #include "resource/loader/TextLoader.hpp"
 #include "resource/resource/Text.hpp"
 #include "game/Game.hpp"
 #include "resource/loader/TextureLoader.hpp"
+#include "resource/loader/AudioLoader.hpp"
 #include "collection/mutable/KBVector.hpp"
 #include "collection/mutable/KBMap.hpp"
 #include "collection/Option.hpp"
@@ -54,6 +56,10 @@ int main(int argc, char* argv[]) {
     std::regex text_regex("^.+\\.txt$");
     resourceManager.addLoader(text_regex, text_loader);
 
+    auto audio_loader = std::make_shared<AudioLoader>();
+    std::regex audio_regex("^.+\\.ogg$");
+    resourceManager.addLoader(audio_regex, audio_loader);
+
     auto texture_loader = std::make_shared<TextureLoader>();
     std::regex texture_regex("^.+\\.png$");
     resourceManager.addLoader(texture_regex, texture_loader);
@@ -78,9 +84,10 @@ int main(int argc, char* argv[]) {
 
     sf::RenderWindow window(sf::VideoMode(window_w, window_h), window_name);
 
-    auto renderer = Renderer(window);
     std::cout << "Creating game" << std::endl;
-
+    
+    auto renderer = Renderer(window);
+    auto audioPlayer = AudioPlayer();
     auto game = Game(renderer);
 
     typedef std::chrono::high_resolution_clock Clock;

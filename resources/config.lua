@@ -14,5 +14,6 @@ tilesize = 16
 -- resources
 resources = {
   "resources/textures/test_tileset.png",
+  "resources/audio/local_forecast.ogg",
   "resources/test.txt",
 }
