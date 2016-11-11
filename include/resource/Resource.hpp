@@ -3,7 +3,7 @@
 #include <string>
 
 /**
- * Resource class.
+ * Resource interface.
  */
 class Resource {
 public:

@@ -1,23 +1,19 @@
 #pragma once
 
 #include "game/Updateable.hpp"
+#include "scene/SceneGraph.hpp"
+#include "message/MessageSubscriber.hpp"
 
-class Scene : public Updateable {
+/**
+ * Scene interface.
+ */
+template <typename T>
+class Scene : public Updateable, public MessageSubscriber {
 public:
   Scene() {}
-  ~Scene() {}
+  virtual ~Scene() {}
 
-  auto init(
-    MessagePublisher& messagePublisher,
-    ResourceManager& resourceManager
-  ) -> void {}
-
-  auto update(
-    double delta,
-    MessagePublisher& messagePublisher,
-    ResourceManager& resourceManager
-  ) -> void {
-    std::cout << "Scene update with delta of " << delta << std::endl;
-  }
+protected:
+  SceneGraph<T> _graph;
 
 };

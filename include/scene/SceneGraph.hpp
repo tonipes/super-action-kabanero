@@ -1,22 +1,28 @@
 #pragma once
 
 #include "game/Updateable.hpp"
+#include "scene/Node.hpp"
 
+/**
+ * SceneGraph class.
+ */
+template <typename T>
 class SceneGraph : public Updateable {
 public:
-  SceneGraph() {}
+  SceneGraph(): _root("root") {}
   ~SceneGraph() {}
 
-  auto init() -> void {}
+  auto init(
+    MessagePublisher& messagePublisher,
+    ResourceManager& resourceManager
+  ) -> void override {}
 
   auto update(
     double delta,
     MessagePublisher& messagePublisher,
     ResourceManager& resourceManager
-  ) -> void {
-
-  }
+  ) -> void override {}
 
 private:
-  Node root;
+  Node<T> _root;
 };

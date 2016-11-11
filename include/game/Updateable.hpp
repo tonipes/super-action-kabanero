@@ -4,12 +4,12 @@
 #include "resource/ResourceManager.hpp"
 
 /**
- * Updateable class.
+ * Updateable interface.
  */
 class Updateable {
 public:
   Updateable() {}
-  ~Updateable() {}
+  virtual ~Updateable() {}
 
   /**
    * Render game with resources.

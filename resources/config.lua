@@ -4,9 +4,9 @@ window_height = 800
 window_name = "HelloWindow"
 test_string = "This is only a test"
 
--- Timing
-update_interval = 64;
-draw_interval = 64;
+-- Timing [ms]
+update_interval = 16;
+draw_interval = 32;
 
 -- Graphics
 tilesize = 16

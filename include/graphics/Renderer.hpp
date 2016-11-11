@@ -7,6 +7,8 @@
 /**
  * Renderer class.
  * Used to render scenes.
+ * @todo Should we have seperate 2d and 3d renderers?
+ * @todo Make actually render a scene
  */
 class Renderer {
 public:
@@ -18,12 +20,12 @@ public:
    * @param scene to draw.
    * @param resourceManager to get resources from.
    */
-  auto render(Scene& scene, ResourceManager& resourceManager) -> void {
-    // std::cout << "Rendering! " << std::endl;
+  template <typename T>
+  auto render(Scene<T>& scene, ResourceManager& resourceManager) -> void {
+    std::cout << "Rendering! " << std::endl;
 
     _window.clear(sf::Color::Black);
 
-    // TODO: This is just for testing
     auto textureResource = resourceManager.get<Texture>("resources/textures/test_tileset.png");
     if(textureResource.isDefined()){
       auto got = textureResource.get();

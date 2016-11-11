@@ -1,10 +1,10 @@
 #pragma once
 
 /**
- * Event class.
+ * Event interface.
  */
 class Event {
 public:
   Event() {}
-  ~Event() {}
+  virtual ~Event() {}
 };
