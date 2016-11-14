@@ -12,22 +12,31 @@
 #include "collection/mutable/KBMap.hpp"
 #include "collection/Option.hpp"
 #include "util/PrintUtil.hpp"
+#include "logger/Logger.hpp"
 
 int main(int argc, char* argv[]) {
   // Load configuration from config.lua file
+  Logger logger;
+
+  logger.debug("Debug test");
+  logger.info("Info test");
+  logger.warn("Warn test");
+  logger.error("Error test");
+  logger.fatal("Fatal test");
+
   sol::state config;
   config.script_file("resources/config.lua");
 
   if(argc > 1 && std::string(argv[1]) == "testrun") {
     // Program is run with 'testrun' parameter.
     // This is used in automated testing to make sure that the program actually runs.
-    std::cout << "Running windowless test run" << std::endl;
+    logger.info("Running windowless test run" );
 
     auto test_string = config["test_string"].get_or<std::string>("notfound");
-    std::cout << "test_string: " << test_string << std::endl;
+    logger.info( "test_string: " + test_string );
 
   } else {
-    std::cout << "Starting window" << std::endl;
+    logger.info("Starting window");
 
     // Get window parameters from config file and create window
     auto window_w = config["window_width"].get_or(800);
@@ -45,6 +54,8 @@ int main(int argc, char* argv[]) {
       }
     }
   }
-  std::cout << "Exiting" << std::endl;
+
+  logger.info("Exiting");
+
   return 0;
 }
