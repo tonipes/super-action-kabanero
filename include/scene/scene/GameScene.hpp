@@ -15,7 +15,7 @@ public:
     MessagePublisher& messagePublisher,
     ResourceManager& resourceManager
   ) -> void override {
-    std::cout << "GameScene init" << std::endl;
+    // std::cout << "GameScene init" << std::endl;
   }
 
   auto update(
@@ -23,10 +23,10 @@ public:
     MessagePublisher& messagePublisher,
     ResourceManager& resourceManager
   ) -> void override {
-    std::cout << "GameScene update with delta of " << delta << std::endl;
+    // std::cout << "GameScene update with delta of " << delta << std::endl;
   }
 
   auto receiveMessage(Message& message) -> void override {
-   std::cout << "GameScene received a message " << std::endl;
+  //  std::cout << "GameScene received a message " << std::endl;
   }
 };

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "collection/mutable/Dictionary.hpp"
+#include "exception/EngineException.hpp"
 
 #include <unordered_map>
 #include <type_traits>
@@ -25,12 +26,12 @@ class KBTypeMap: public Dictionary<std::unordered_map, TypeInfoRef, T, Hasher, E
 public:
 
   template <typename A>
-  auto get() const -> Option<T> {
+  auto get() const -> const T& {
     auto it = this->memory.find(typeid(A));
     if (it != this->memory.end()) {
-      return Some((*it).second);
+      return (*it).second;
     } else {
-      return Option<T>();
+      throw EngineException("Value not found");
     }
   }
 private:

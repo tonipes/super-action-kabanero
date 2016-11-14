@@ -13,5 +13,10 @@
  */
 class Loader {
 public:
+  Loader() {}
+  virtual ~Loader() { }
   virtual auto load(const std::string& filePath) -> const std::shared_ptr<Resource> = 0;
+
+private:
+  Loader(const Loader& loader) {}
 };

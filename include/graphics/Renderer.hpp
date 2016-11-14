@@ -22,17 +22,12 @@ public:
    */
   template <typename T>
   auto render(Scene<T>& scene, ResourceManager& resourceManager) -> void {
-    std::cout << "Rendering! " << std::endl;
 
     _window.clear(sf::Color::Black);
 
-    auto textureResource = resourceManager.get<Texture>("resources/textures/test_tileset.png");
-    if(textureResource.isDefined()){
-      auto got = textureResource.get();
-      auto texture = got.getTexture();
-      sf::Sprite sprite(texture);
-      _window.draw(sprite);
-    }
+    auto texture = resourceManager.get<Texture>("resources/textures/test_tileset.png").getTexture();
+    sf::Sprite sprite(texture);
+    _window.draw(sprite);
 
     _window.display();
   };

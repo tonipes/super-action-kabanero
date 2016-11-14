@@ -12,6 +12,7 @@
 #include "audio/AudioPlayer.hpp"
 #include "resource/ResourceManager.hpp"
 #include "message/MessagePublisher.hpp"
+#include "message/Event/AudioEvent.hpp"
 #include "resource/loader/TextLoader.hpp"
 #include "resource/resource/Text.hpp"
 #include "game/Game.hpp"
@@ -24,8 +25,10 @@
 #include "logger/Logger.hpp"
 
 int main(int argc, char* argv[]) {
-  // Load configuration from config.lua file
+
   Logger logger;
+  ResourceManager resourceManager;
+  MessagePublisher messagePublisher;
 
   logger.debug("Debug test");
   logger.info("Info test");
@@ -33,19 +36,14 @@ int main(int argc, char* argv[]) {
   logger.error("Error test");
   logger.fatal("Fatal test");
 
+  // Load configuration from config.lua file
   sol::state config;
   config.script_file("resources/config.lua");
-
-  auto resourceManager = ResourceManager();
-  auto messagePublisher = MessagePublisher();
 
   if(argc > 1 && std::string(argv[1]) == "testrun") {
     // Program is run with 'testrun' parameter.
     // This is used in automated testing to make sure that the program actually runs.
     logger.info("Running windowless test run" );
-
-    auto test_string = resourceManager.get<Text>("resources/test.txt");
-    logger.info( "test_string: " + test_string );
 
   } else {
     logger.info("Loading resources");
@@ -65,15 +63,11 @@ int main(int argc, char* argv[]) {
     resourceManager.addLoader(texture_regex, texture_loader);
 
     for(auto i = 1; i <= resources.size(); i++){
-      std::cout << resources.get<std::string>(i) << std::endl;
+      logger.debug(resources.get<std::string>(i));
       resourceManager.load(resources.get<std::string>(i));
     }
 
-    std::cout << resourceManager << std::endl;
-
-    std::cout << "Starting window" << std::endl;
     // Intervals
-
     auto update_interval = config["update_interval"].get_or(32);
     auto draw_interval = config["draw_interval"].get_or(32);
 
@@ -84,11 +78,23 @@ int main(int argc, char* argv[]) {
 
     sf::RenderWindow window(sf::VideoMode(window_w, window_h), window_name);
 
-    std::cout << "Creating game" << std::endl;
-    
-    auto renderer = Renderer(window);
-    auto audioPlayer = AudioPlayer();
-    auto game = Game(renderer);
+    logger.info("Creating game");
+
+    Renderer renderer(window);
+    AudioPlayer audioPlayer;
+    Game game(renderer);
+
+    messagePublisher.addSubscriber(audioPlayer);
+
+    audioPlayer.init(messagePublisher, resourceManager);
+    game.init(messagePublisher, resourceManager);
+
+    messagePublisher.sendMessage(
+      Message(
+        AudioEvent(CHANGE_MUSIC, "resources/audio/local_forecast.ogg"),
+        "address"
+      )
+    );
 
     typedef std::chrono::high_resolution_clock Clock;
     typedef std::chrono::milliseconds ms;
@@ -107,6 +113,7 @@ int main(int argc, char* argv[]) {
 
       if(update_delta_ms.count() > update_interval) {
         game.update(update_delta, messagePublisher, resourceManager);
+        audioPlayer.update(update_delta, messagePublisher, resourceManager);
         last_update_time = current_time;
       }
       if(draw_delta_ms.count() > draw_interval) {
@@ -119,7 +126,10 @@ int main(int argc, char* argv[]) {
         if (event.type == sf::Event::Closed)
           window.close();
         else if (event.type == sf::Event::Resized)
-          std::cout << "Resize event" << std::endl;
+        messagePublisher.sendMessage(Message(
+          AudioEvent(PLAY_MUSIC, ""),"address"
+        ));
+
       }
     }
 
