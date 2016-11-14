@@ -3,6 +3,7 @@
 #include <SFML/Audio.hpp>
 
 #include "game/Updateable.hpp"
+#include "resource/resource/Audio.hpp"
 #include "message/Message.hpp"
 #include "message/MessageSubscriber.hpp"
 
@@ -12,13 +13,17 @@
 class AudioPlayer: public Updateable, public MessageSubscriber {
 public:
   AudioPlayer() {}
-  ~AudioPlayer() {}
+  ~AudioPlayer() {std::cout << "~AudioPlayer" << std::endl;}
 
   auto init(
     MessagePublisher& messagePublisher,
     ResourceManager& resourceManager
   ) -> void override {
     std::cout << "AudioPlayer init" << std::endl;
+
+    auto &a = resourceManager.get<Audio>("resources/audio/local_forecast.ogg").getBuffer();
+    _music.setBuffer(a);
+
   }
 
   auto update(
@@ -26,13 +31,21 @@ public:
     MessagePublisher& messagePublisher,
     ResourceManager& resourceManager
   ) -> void override {
-    std::cout << "AudioPlayer update with delta of " << delta << std::endl;
+    // std::cout << "AudioPlayer update with delta of " << delta << std::endl;
   }
 
   auto receiveMessage(Message& message) -> void override {
-   std::cout << "AudioPlayer received a message " << std::endl;
+    if(isPlaying)
+      _music.pause();
+    else
+      _music.play();
+    isPlaying = !isPlaying;
+    
+    std::cout << "AudioPlayer received a message " << std::endl;
   }
 
 private:
-  sf::SoundBuffer buffer;
+  AudioPlayer(AudioPlayer& audioPlayer) {}
+  bool isPlaying = false;
+  sf::Sound _music;
 };

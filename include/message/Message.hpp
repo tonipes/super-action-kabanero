@@ -8,12 +8,12 @@
  */
 class Message {
 public:
-  Message(Event& event) : _event(event) {}
+  Message(Event event, std::string address) : _event(event), _address(address) {}
   ~Message() {}
 
   auto getEvent() -> Event& { return _event; }
 
 private:
-  Event& _event;
+  Event _event;
   std::string _address;
 };

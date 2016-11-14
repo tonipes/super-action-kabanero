@@ -10,9 +10,14 @@
 class Audio : public Resource {
 public:
   Audio(sf::SoundBuffer buffer) : _buffer(buffer) {
-    // Just for testing. Actually should use AudioPlayer
     _sound.setBuffer(_buffer);
-    _sound.play();
+  }
+
+  auto getBuffer() -> sf::SoundBuffer& {
+    return _buffer;
+  }
+  auto getSound() -> sf::Sound& {
+    return _sound;
   }
 
   friend std::ostream& operator<<(std::ostream& os, Audio audio);
