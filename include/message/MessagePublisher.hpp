@@ -23,4 +23,13 @@ public:
    * @param message to send
    */
   virtual auto addSubscriber(MessageSubscriber& sub) -> void = 0;
+
+  /**
+   * Publishes messages.
+   */
+  virtual auto publishMessages() -> void = 0;
+
+private:
+  MessagePublisher(const MessagePublisher& messagePublisher) {}
+
 };

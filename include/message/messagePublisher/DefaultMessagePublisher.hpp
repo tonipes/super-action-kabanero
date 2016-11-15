@@ -13,24 +13,24 @@ public:
   DefaultMessagePublisher() {}
   ~DefaultMessagePublisher() {}
 
-  /**
-   * Send message to subscribers.
-   * @param message to send
-   */
   auto sendMessage(Message message) -> void override {
-    for(auto sub : _subscribers) {
-      sub.get().receiveMessage(message);
-    }
-  };
+    _messages += message;
+  }
 
-  /**
-   * Add subscriber.
-   * @param message to send
-   */
   auto addSubscriber(MessageSubscriber& sub) -> void override {
     _subscribers += sub;
-  };
+  }
+
+  auto publishMessages() -> void override {
+    for(auto& msg : _messages) {
+      for(auto sub : _subscribers) {
+        sub.get().receiveMessage(msg);
+      }
+    }
+    _messages = KBVector<Message>();
+  }
 
 private:
   KBVector<std::reference_wrapper<MessageSubscriber>> _subscribers;
+  KBVector<Message> _messages;
 };

@@ -112,6 +112,7 @@ int main(int argc, char* argv[]) {
       double draw_delta = draw_delta_ms.count() / 1000.0;
 
       if(update_delta_ms.count() > update_interval) {
+        messagePublisher.publishMessages();
         game.update(update_delta, messagePublisher, resourceManager);
         audioPlayer.update(update_delta, messagePublisher, resourceManager);
         last_update_time = current_time;
