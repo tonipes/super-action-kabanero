@@ -11,31 +11,18 @@
 
 #include "resource/Loader.hpp"
 
+/**
+* ResourceManager interface.
+* @todo use Option class.
+*/
 class ResourceManager {
 public:
   ResourceManager() {}
-  ~ResourceManager() {}
+  virtual ~ResourceManager() {}
 
-  auto addLoader(std::regex regex, std::shared_ptr<Loader> loader) -> void {
-    _loaders += { regex, loader };
-  }
+  virtual auto addLoader(std::regex regex, std::shared_ptr<Loader> loader) -> void = 0;
 
-  auto load(std::string filePath) -> void {
-    for(auto pair : _loaders) {
-      std::regex regex;
-      std::shared_ptr<Loader> loader;
-      std::tie(regex, loader) = pair;
-      bool match = std::regex_match(filePath, regex);
-      if (match){
-        auto res = loader->load(filePath);
-        _resources[typeid(*res)][filePath] = res;
-        return;
-      }
-    }
-    throw ResourceException("No matching loader found for file: " + filePath);
-  }
-
-  friend std::ostream& operator<<(std::ostream& os, ResourceManager resman);
+  virtual auto load(std::string filePath) -> void = 0;
 
   template <typename T>
   auto get(const std::string& filePath) const -> T& {
@@ -45,16 +32,9 @@ public:
     return *std::dynamic_pointer_cast<T>(resource);
   }
 
-private:
-  ResourceManager(const ResourceManager& resourceManager) {}
-
-  KBVector<std::tuple<std::regex, std::shared_ptr<Loader>>> _loaders;
-
+protected:
   KBTypeMap<KBMap<std::string, std::shared_ptr<Resource>>> _resources;
 
+private:
+  ResourceManager(const ResourceManager& resourceManager) {}
 };
-
-std::ostream& operator<<(std::ostream& os, ResourceManager resman) {
-  os << "ResourceManager( " << resman._resources.length() << " )";
-  return os;
-}

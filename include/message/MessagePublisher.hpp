@@ -5,33 +5,22 @@
 #include "collection/mutable/KBVector.hpp"
 
 /**
- * MessagePublisher class.
- * @todo Messages are now recieved immediately
- * @todo Use addesses. Now everybody gets every message.
+ * MessagePublisher interface.
  */
 class MessagePublisher {
 public:
   MessagePublisher() {}
-  ~MessagePublisher() {}
+  virtual ~MessagePublisher() {}
 
   /**
    * Send message to subscribers.
    * @param message to send
    */
-  auto sendMessage(Message message) -> void {
-    for(auto sub : _subscribers) {
-      sub.get().receiveMessage(message);
-    }
-  };
+  virtual auto sendMessage(Message message) -> void = 0;
 
   /**
    * Add subscriber.
    * @param message to send
    */
-  auto addSubscriber(MessageSubscriber& sub) -> void {
-    _subscribers += sub;
-  };
-
-private:
-  KBVector<std::reference_wrapper<MessageSubscriber>> _subscribers;
+  virtual auto addSubscriber(MessageSubscriber& sub) -> void = 0;
 };

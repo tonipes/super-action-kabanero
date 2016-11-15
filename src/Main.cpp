@@ -10,9 +10,9 @@
 #include <glm/vec3.hpp>
 
 #include "audio/AudioPlayer.hpp"
-#include "resource/ResourceManager.hpp"
-#include "message/MessagePublisher.hpp"
-#include "message/Event/AudioEvent.hpp"
+#include "resource/resourceManager/SyncResourceManager.hpp"
+#include "message/messagePublisher/DefaultMessagePublisher.hpp"
+#include "message/event/AudioEvent.hpp"
 #include "resource/loader/TextLoader.hpp"
 #include "resource/resource/Text.hpp"
 #include "game/Game.hpp"
@@ -22,13 +22,13 @@
 #include "collection/mutable/KBMap.hpp"
 #include "collection/Option.hpp"
 #include "util/PrintUtil.hpp"
-#include "logger/Logger.hpp"
+#include "logger/logger/DefaultLogger.hpp"
 
 int main(int argc, char* argv[]) {
 
-  Logger logger;
-  ResourceManager resourceManager;
-  MessagePublisher messagePublisher;
+  DefaultLogger logger;
+  SyncResourceManager resourceManager;
+  DefaultMessagePublisher messagePublisher;
 
   logger.debug("Debug test");
   logger.info("Info test");
