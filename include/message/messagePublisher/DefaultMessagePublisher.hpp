@@ -1,12 +1,10 @@
 #pragma once
 
-#include "message/Message.hpp"
-#include "message/MessageSubscriber.hpp"
-#include "message/MessagePublisher.hpp"
+#include "service/MessagePublisher.hpp"
 #include "collection/mutable/KBVector.hpp"
 
 /**
- * DefaultMessagePublisher class.
+ * Default implementation of message publisher
  */
 class DefaultMessagePublisher: public MessagePublisher {
 public:
