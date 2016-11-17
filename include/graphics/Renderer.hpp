@@ -1,6 +1,6 @@
 #pragma once
 
-#include "resource/ResourceManager.hpp"
+#include "service/ResourceManager.hpp"
 #include "resource/resource/Texture.hpp"
 #include "scene/Scene.hpp"
 
@@ -25,7 +25,7 @@ public:
 
     _window.clear(sf::Color::Black);
 
-    auto texture = resourceManager.get<Texture>("resources/textures/test_tileset.png").getTexture();
+    const auto texture = resourceManager.get<Texture>("resources/textures/test_tileset.png").get().getTexture();
     sf::Sprite sprite(texture);
     _window.draw(sprite);
 

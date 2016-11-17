@@ -12,7 +12,7 @@
 #include "scene/3D/Transform3D.hpp"
 #include "scene/3D/Node3D.hpp"
 #include "resource/loader/TextLoader.hpp"
-#include "resource/ResourceManager.hpp"
+#include "service/ResourceManager.hpp"
 #include <glm/vec3.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
