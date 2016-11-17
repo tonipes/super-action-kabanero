@@ -10,6 +10,6 @@ struct Message {
 public:
   Message(std::string address, Event event) : event(event), address(address) {}
 
-  std::string address;
-  Event event;
+  const std::string address;
+  const Event event;
 };
