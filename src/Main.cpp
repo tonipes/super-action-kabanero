@@ -97,7 +97,7 @@ int main(int argc, char* argv[]) {
     messagePublisher->sendMessage(
       Message(
         "address",
-        AudioEvent(CHANGE_MUSIC, "resources/audio/local_forecast.ogg")
+        std::make_shared<AudioEvent>(CHANGE_MUSIC, "resources/audio/local_forecast.ogg")
       )
     );
 
@@ -134,7 +134,7 @@ int main(int argc, char* argv[]) {
         else if (event.type == sf::Event::Resized)
         messagePublisher->sendMessage(Message(
           "address",
-          AudioEvent(PLAY_MUSIC, "")
+          std::make_shared<AudioEvent>(PLAY_MUSIC, "")
         ));
 
       }

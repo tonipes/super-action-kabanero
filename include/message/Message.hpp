@@ -8,10 +8,17 @@
  */
 class Message {
 public:
-  Message(std::string address, Event event) : event(event), address(address) {}
-  auto operator=(Message& msg) -> Message& {
-    Message(msg.address, msg.event);
+  Message(std::string address, std::shared_ptr<Event> event) : _event(event), _address(address) {}
+
+  auto address() -> std::string {
+    return _address;
   }
-  const std::string address;
-  const Event event;
+
+  auto event() -> std::shared_ptr<Event> {
+    return _event;
+  }
+
+private:
+  std::string _address;
+  std::shared_ptr<Event> _event;
 };
