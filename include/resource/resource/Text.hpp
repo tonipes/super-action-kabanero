@@ -3,6 +3,9 @@
 #include <iostream>
 #include "resource/Resource.hpp"
 
+/**
+ * Text Resource.
+ */
 class Text : public Resource {
 public:
   Text(std::string text) : _text(text) {}

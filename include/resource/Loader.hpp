@@ -8,18 +8,15 @@
 #include "resource/Resource.hpp"
 #include "collection/Future.hpp"
 
+/**
+ * Resource loader interface.
+ */
 class Loader {
 public:
-  typedef std::future<std::tuple<
-      std::string,
-      std::shared_ptr<Resource>
-    >> FutureResource;
-  auto loadAsync(const std::string& filePath) -> Future<std::shared_ptr<Resource>> {
-    auto f = Future<std::shared_ptr<Resource>>([=]() {
-      return load(filePath);
-    });
-    return f;
-  }
-protected:
+  Loader() {}
+  virtual ~Loader() { }
   virtual auto load(const std::string& filePath) -> const std::shared_ptr<Resource> = 0;
+
+private:
+  Loader(const Loader& loader) {}
 };

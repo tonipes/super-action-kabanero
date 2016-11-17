@@ -6,8 +6,11 @@
 #include <fstream>
 #include <iterator>
 
+/**
+ * Text resource loader class.
+ */
 class TextLoader : public Loader {
-protected:
+public:
   auto load(const std::string& filePath) -> const std::shared_ptr<Resource> {
     std::ifstream in { filePath };
     if(!in.is_open()) {
@@ -17,6 +20,7 @@ protected:
       std::istreambuf_iterator<char>(in),
       std::istreambuf_iterator<char>()
     };
+    resource.pop_back(); // Last line end
     return std::make_shared<Text>(resource);
   }
 };
