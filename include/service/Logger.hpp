@@ -34,7 +34,8 @@ private:
 
 };
 
-class NullLogger {
+class NullLogger: public Logger {
+public:
   NullLogger() {}
   auto setLevel(const LogLevel l) -> void { }
 

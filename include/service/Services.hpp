@@ -2,6 +2,7 @@
 
 #include "service/MessagePublisher.hpp"
 #include "service/ResourceManager.hpp"
+#include "service/Logger.hpp"
 
 #include <memory>
 
@@ -24,6 +25,14 @@ public:
   }
 
   /**
+   * Get logger
+   * @return supplied logger
+   */
+  static auto logger() -> std::shared_ptr<Logger> {
+    return _logger;
+  }
+
+  /**
    * Replace current message publisher
    * @param messagePublisher new message publisher
    */
@@ -41,9 +50,21 @@ public:
     _resourceManager = resourceManager;
   }
 
+  /**
+   *  Replace current logger
+   *  @param logger new logger
+   */
+  static auto provideLogger(
+      std::shared_ptr<Logger> logger) -> void {
+
+    _logger = logger;
+  }
+
+
 private:
   static std::shared_ptr<MessagePublisher> _messagePublisher;
   static std::shared_ptr<ResourceManager> _resourceManager;
+  static std::shared_ptr<Logger> _logger;
 };
 
 // Set messagePublisher default to NullMessagePublisher
@@ -52,3 +73,6 @@ std::shared_ptr<MessagePublisher> Services::_messagePublisher
 // Set resourceManager default to NullResourceManager
 std::shared_ptr<ResourceManager> Services::_resourceManager
   = std::make_shared<NullResourceManager>();
+// Set logger default to NullLogger
+std::shared_ptr<Logger> Services::_logger
+  = std::make_shared<NullLogger>();

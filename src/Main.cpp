@@ -33,6 +33,7 @@ int main(int argc, char* argv[]) {
 
   Services::provideMessagePublisher(messagePublisher);
   Services::provideResourceManager(resourceManager);
+  Services::provideLogger(logger);
 
 
   logger->debug("Debug test");
