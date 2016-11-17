@@ -1,6 +1,7 @@
 #pragma once
 
 #include "scene/Scene.hpp"
+#include "message/EventHandler.hpp"
 
 /**
  * Scene interface.
@@ -19,7 +20,8 @@ public:
     // std::cout << "GameScene update with delta of " << delta << std::endl;
   }
 
-  auto receiveMessage(Message& message) -> void override {
-  //  std::cout << "GameScene received a message " << std::endl;
+  auto getEventHandler(const std::string& address) const -> EventHandler& override {
+    auto eh = EventHandler();
+    return eh;
   }
 };

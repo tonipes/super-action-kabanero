@@ -43,7 +43,10 @@ public:
     _scene.update(delta);
   }
 
-  auto receiveMessage(Message& message) -> void override {}
+  auto getEventHandler(const std::string& address) const -> EventHandler& override {
+    auto eh = EventHandler();
+    return eh;
+  }
 
 private:
   Renderer _renderer;

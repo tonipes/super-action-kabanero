@@ -3,26 +3,19 @@
 #include "message/Event.hpp"
 
 enum AudioAction {
-  PLAY_MUSIC,
-  STOP_MUSIC,
-  CHANGE_MUSIC,
-  PLAY_SOUND
+  PLAY,
+  PAUSE,
+  STOP
 };
 
 class AudioEvent: public Event {
 public:
-  AudioEvent(AudioAction action, std::string name): _name(name), _action(action) {}
+  AudioEvent(AudioAction action): _action(action) {}
 
-  auto getName() -> std::string& {
-    return _name;
-  }
-
-  auto getAction() -> AudioAction {
+  auto action() const -> AudioAction {
     return _action;
   }
 
 private:
   AudioAction _action;
-  std::string _name;
-
 };

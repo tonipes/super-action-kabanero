@@ -21,7 +21,7 @@ public:
    * Add subscriber.
    * @param message to send
    */
-  virtual auto addSubscriber(MessageSubscriber& subscriber) -> void = 0;
+  virtual auto addSubscriber(const std::shared_ptr<MessageSubscriber>& subscriber) -> void = 0;
 
   /**
    * Publishes messages.
@@ -40,7 +40,7 @@ public:
 
   auto sendMessage(Message message) -> void { }
 
-  auto addSubscriber(MessageSubscriber& subscriber) -> void { }
+  auto addSubscriber(const std::shared_ptr<MessageSubscriber>& subscriber) -> void { }
 
   auto publishMessages() -> void { }
 private:

@@ -86,18 +86,20 @@ int main(int argc, char* argv[]) {
     logger.info("Creating game");
 
     Renderer renderer(window);
-    AudioPlayer audioPlayer;
+
+    auto audioFolderPath = config["audio_folder"].get_or<std::string>("resources/audio/");
+
+    auto audioPlayer = std::make_shared<AudioPlayer>(audioFolderPath);
     Game game(renderer);
 
     messagePublisher->addSubscriber(audioPlayer);
 
-    audioPlayer.init();
     game.init();
 
     messagePublisher->sendMessage(
       Message(
-        "address",
-        std::make_shared<AudioEvent>(CHANGE_MUSIC, "resources/audio/local_forecast.ogg")
+        "audioPlayer:local_forecast.ogg",
+        std::make_shared<AudioEvent>(PLAY)
       )
     );
 
@@ -119,7 +121,6 @@ int main(int argc, char* argv[]) {
       if(update_delta_ms.count() > update_interval) {
         messagePublisher->publishMessages();
         game.update(update_delta);
-        audioPlayer.update(update_delta);
         last_update_time = current_time;
       }
       if(draw_delta_ms.count() > draw_interval) {
@@ -129,14 +130,11 @@ int main(int argc, char* argv[]) {
 
       sf::Event event;
       while (window.pollEvent(event)){
-        if (event.type == sf::Event::Closed)
+        if (event.type == sf::Event::Closed) {
           window.close();
-        else if (event.type == sf::Event::Resized)
-        messagePublisher->sendMessage(Message(
-          "address",
-          std::make_shared<AudioEvent>(PLAY_MUSIC, "")
-        ));
+        } else if (event.type == sf::Event::Resized) {
 
+        }
       }
     }
 

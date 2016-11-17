@@ -1,6 +1,7 @@
 #pragma once
 
 #include "message/Message.hpp"
+#include "message/EventHandler.hpp"
 #include <string>
 
 /**
@@ -12,10 +13,11 @@ public:
   virtual ~MessageSubscriber() {}
 
   /**
-   * Receive a Message.
-   * @param message to receive.
+   * Gets the event handler corresponding to the supplied path.
+   * @param  path The path to the event handler, formatted "foo/bar/baz/..."
+   * @return      Event handler
    */
-  virtual auto receiveMessage(Message& message) -> void = 0;
+  virtual auto getEventHandler(const std::string& path) const -> EventHandler& = 0;
 
   auto socket() const -> std::string {
     return _socket;

@@ -17,3 +17,4 @@ resources = {
   "resources/audio/local_forecast.ogg",
   "resources/test.txt",
 }
+audio_folder = "resources/audio/"
