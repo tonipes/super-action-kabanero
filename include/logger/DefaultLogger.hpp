@@ -4,7 +4,7 @@
 #include <iostream>
 
 #include "collection/mutable/KBMap.hpp"
-#include "logger/Logger.hpp"
+#include "service/Logger.hpp"
 
 /**
  * DefaultLogger class.

@@ -22,7 +22,7 @@
 #include "collection/mutable/KBMap.hpp"
 #include "collection/Option.hpp"
 #include "util/PrintUtil.hpp"
-#include "logger/logger/DefaultLogger.hpp"
+#include "logger/DefaultLogger.hpp"
 #include "service/Services.hpp"
 
 int main(int argc, char* argv[]) {
