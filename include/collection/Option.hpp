@@ -40,7 +40,7 @@ public:
    * Returns pointer to contained value.
    * @return pointer to contained value. Returns nullptr if no value is contained.
    */
-  auto get() const -> const T {
+  auto get() const -> const T& {
     return *_valueStore;
   }
 
