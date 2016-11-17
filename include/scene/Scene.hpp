@@ -10,7 +10,7 @@
 template <typename T>
 class Scene : public Updateable, public MessageSubscriber {
 public:
-  Scene() {}
+  Scene(std::string name) : MessageSubscriber(name) {}
   virtual ~Scene() {}
 
 protected:

@@ -1,21 +1,25 @@
 #pragma once
 
 #include "message/Message.hpp"
+#include <string>
 
 /**
  * MessageSubscriber class.
- * @todo Should socket be rather something else than a string?
  */
 class MessageSubscriber {
 public:
-  MessageSubscriber() {}
+  MessageSubscriber(std::string socket) : _socket(socket) {}
   virtual ~MessageSubscriber() {}
 
   /**
    * Receive a Message.
    * @param message to receive.
    */
-  virtual auto receiveMessage(Message& message) -> void {}
+  virtual auto receiveMessage(Message& message) -> void = 0;
+
+  auto socket() const -> std::string {
+    return _socket;
+  }
 
 private:
   std::string _socket;

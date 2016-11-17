@@ -8,7 +8,7 @@
 template <typename T>
 class GameScene : public Scene<T> {
 public:
-  GameScene() {}
+  GameScene(std::string name) : Scene<T>(name) {}
   virtual ~GameScene() {}
 
   auto init() -> void override {

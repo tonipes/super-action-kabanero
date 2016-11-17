@@ -6,6 +6,7 @@
 #include "graphics/Renderer.hpp"
 #include "message/MessageSubscriber.hpp"
 #include "scene/2D/Transform2D.hpp"
+#include "scene/3D/Transform3D.hpp"
 
 /**
  * Game class.
@@ -16,7 +17,13 @@ class Game: public Updateable, public MessageSubscriber  {
 public:
   typedef Transform2D Transform;
 
-  Game(Renderer& renderer): Updateable(), MessageSubscriber(), _renderer(renderer) {}
+  Game(Renderer& renderer):
+      Updateable(),
+      MessageSubscriber("game"),
+      _renderer(renderer),
+      _scene(GameScene<Transform3D>("testScene")) {
+
+  }
   ~Game() {}
 
   auto init() -> void override {}
@@ -29,7 +36,7 @@ public:
    * @param resourceManager to get resources from.
    */
   auto render(double delta, ResourceManager& resourceManager) -> void {
-    _renderer.render<Transform>(_scene, resourceManager);
+    _renderer.render<Transform3D>(_scene, resourceManager);
   }
 
   auto update(double delta) -> void override {
@@ -40,5 +47,5 @@ public:
 
 private:
   Renderer _renderer;
-  GameScene<Transform> _scene; // Placeholder. There will be multiple scenes in a game
+  GameScene<Transform3D> _scene; // Placeholder. There will be multiple scenes in a game
 };

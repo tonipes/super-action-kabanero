@@ -8,6 +8,7 @@
 #include "collection/mutable/KBTypeMap.hpp"
 #include "collection/Option.hpp"
 #include "exception/ResourceException.hpp"
+#include "resource/ResourceManager.hpp"
 
 #include "resource/Loader.hpp"
 

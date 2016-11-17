@@ -12,7 +12,7 @@
  */
 class AudioPlayer: public Updateable, public MessageSubscriber {
 public:
-  AudioPlayer() {}
+  AudioPlayer() : MessageSubscriber("audioPlayer") {}
   ~AudioPlayer() {std::cout << "~AudioPlayer" << std::endl;}
 
   auto init() -> void override {
@@ -38,7 +38,7 @@ public:
   }
 
 private:
-  AudioPlayer(AudioPlayer& audioPlayer) {}
+  AudioPlayer(AudioPlayer& audioPlayer) : MessageSubscriber(audioPlayer.socket()){}
   bool isPlaying = false;
   sf::Sound _music;
 };
