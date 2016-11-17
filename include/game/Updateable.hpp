@@ -1,10 +1,7 @@
 #pragma once
 
-#include "message/MessagePublisher.hpp"
-#include "resource/ResourceManager.hpp"
-
 /**
- * Updateable interface.
+ * Updateable interface
  */
 class Updateable {
 public:
@@ -12,24 +9,13 @@ public:
   virtual ~Updateable() {}
 
   /**
-   * Render game with resources.
-   * @param messagePublisher MessagePublisher.
-   * @param resourceManager ResourceManager.
+   * Initializes object
    */
-  virtual auto init(
-    MessagePublisher& messagePublisher,
-    ResourceManager& resourceManager
-  ) -> void = 0;
+  virtual auto init() -> void = 0;
 
   /**
-   * Update function.
+   * Updates object
    * @param delta time since last update.
-   * @param messagePublisher MessagePublisher.
-   * @param resourceManager ResourceManager.
    */
-  virtual auto update(
-    double delta,
-    MessagePublisher& messagePublisher,
-    ResourceManager& resourceManager
-  ) -> void = 0;
+  virtual auto update(double delta) -> void = 0;
 };

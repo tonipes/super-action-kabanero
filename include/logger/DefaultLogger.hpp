@@ -4,22 +4,15 @@
 #include <iostream>
 
 #include "collection/mutable/KBMap.hpp"
-
-enum LogLevel {
-  DEBUG = 0,
-  INFO = 1,
-  WARN = 2,
-  ERROR = 3,
-  FATAL = 4
-};
+#include "service/Logger.hpp"
 
 /**
- * Logger interface.
+ * DefaultLogger class.
  * @todo Figure out a better way to define colors and headers
  */
-class Logger {
+class DefaultLogger: public Logger {
 public:
-  Logger(): level(DEBUG) {
+  DefaultLogger(): level(DEBUG) {
     colors[DEBUG] = "\u001B[32m";
     colors[INFO] = "\u001B[34m";
     colors[WARN] = "\u001B[33m";
@@ -32,7 +25,7 @@ public:
     headers[ERROR] = " ERROR ";
     headers[FATAL] = " FATAL ";
   }
-  virtual ~Logger() {}
+  ~DefaultLogger() {}
 
   auto setLevel(const LogLevel l) -> void { level = l; }
 
@@ -43,17 +36,26 @@ public:
   auto fatal(const std::string& message) -> void { msg(message, FATAL); }
 
 protected:
-    virtual auto msg(const std::string& message, LogLevel l) -> void = 0;
+  LogLevel level;
 
-    LogLevel level;
+  bool enableColor = true;
+  std::string colorReset = "\u001B[0m";
 
-    bool enableColor = true;
-    std::string colorReset = "\u001B[0m";
-
-    KBMap<LogLevel, std::string> colors;
-    KBMap<LogLevel, std::string> headers;
+  KBMap<LogLevel, std::string> colors;
+  KBMap<LogLevel, std::string> headers;
 
 private:
-  Logger(Logger& logger) {}
+  auto msg(const std::string& message, LogLevel l) -> void {
+    if(l >= level){
+      if(enableColor){
+        printConsole(colors[l] + "[" + headers[l] + "] " + message + "\u001B[0m");
+      } else {
+        printConsole("[" + headers[l] + "] " + message + "\u001B[0m");
+      }
+    }
+  }
 
+  auto printConsole(const std::string& line) -> void {
+    std::cout << line << std::endl;
+  }
 };

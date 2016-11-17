@@ -6,6 +6,7 @@
 #include "graphics/Renderer.hpp"
 #include "message/MessageSubscriber.hpp"
 #include "scene/2D/Transform2D.hpp"
+#include "scene/3D/Transform3D.hpp"
 
 /**
  * Game class.
@@ -16,13 +17,16 @@ class Game: public Updateable, public MessageSubscriber  {
 public:
   typedef Transform2D Transform;
 
-  Game(Renderer& renderer): Updateable(), MessageSubscriber(), _renderer(renderer) {}
+  Game(Renderer& renderer):
+      Updateable(),
+      MessageSubscriber("game"),
+      _renderer(renderer),
+      _scene(GameScene<Transform3D>("testScene")) {
+
+  }
   ~Game() {}
 
-  auto init(
-    MessagePublisher& messagePublisher,
-    ResourceManager& resourceManager
-  ) -> void override {}
+  auto init() -> void override {}
 
   auto resize(int x, int y) -> void {}
 
@@ -31,21 +35,20 @@ public:
    * @param delta time since last render.
    * @param resourceManager to get resources from.
    */
-  auto render(double delta, ResourceManager& resourceManager) -> void {
-    _renderer.render<Transform>(_scene, resourceManager);
+  auto render() -> void {
+    _renderer.render<Transform3D>(_scene);
   }
 
-  auto update(
-    double delta,
-    MessagePublisher& messagePublisher,
-    ResourceManager& resourceManager
-  ) -> void override {
-    _scene.update(delta, messagePublisher, resourceManager);
+  auto update(double delta) -> void override {
+    _scene.update(delta);
   }
 
-  auto receiveMessage(Message& message) -> void override {}
+  auto getEventHandler(const std::string& address) const -> EventHandler& override {
+    auto eh = EventHandler();
+    return eh;
+  }
 
 private:
   Renderer _renderer;
-  GameScene<Transform> _scene; // Placeholder. There will be multiple scenes in a game
+  GameScene<Transform3D> _scene; // Placeholder. There will be multiple scenes in a game
 };

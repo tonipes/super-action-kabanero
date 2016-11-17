@@ -22,19 +22,25 @@
 #include "collection/mutable/KBMap.hpp"
 #include "collection/Option.hpp"
 #include "util/PrintUtil.hpp"
-#include "logger/logger/DefaultLogger.hpp"
+#include "logger/DefaultLogger.hpp"
+#include "service/Services.hpp"
 
 int main(int argc, char* argv[]) {
 
-  DefaultLogger logger;
-  SyncResourceManager resourceManager;
-  DefaultMessagePublisher messagePublisher;
+  auto logger = std::make_shared<DefaultLogger>();
+  auto resourceManager = std::make_shared<SyncResourceManager>();
+  auto messagePublisher = std::make_shared<DefaultMessagePublisher>();
 
-  logger.debug("Debug test");
-  logger.info("Info test");
-  logger.warn("Warn test");
-  logger.error("Error test");
-  logger.fatal("Fatal test");
+  Services::provideMessagePublisher(messagePublisher);
+  Services::provideResourceManager(resourceManager);
+  Services::provideLogger(logger);
+
+
+  logger->debug("Debug test");
+  logger->info("Info test");
+  logger->warn("Warn test");
+  logger->error("Error test");
+  logger->fatal("Fatal test");
 
   // Load configuration from config.lua file
   sol::state config;
@@ -43,28 +49,28 @@ int main(int argc, char* argv[]) {
   if(argc > 1 && std::string(argv[1]) == "testrun") {
     // Program is run with 'testrun' parameter.
     // This is used in automated testing to make sure that the program actually runs.
-    logger.info("Running windowless test run" );
+    logger->info("Running windowless test run" );
 
   } else {
-    logger.info("Loading resources");
+    logger->info("Loading resources");
 
     auto resources = config.get<sol::table>("resources");
 
     auto text_loader = std::make_shared<TextLoader>();
     std::regex text_regex("^.+\\.txt$");
-    resourceManager.addLoader(text_regex, text_loader);
+    resourceManager->addLoader(text_regex, text_loader);
 
     auto audio_loader = std::make_shared<AudioLoader>();
     std::regex audio_regex("^.+\\.ogg$");
-    resourceManager.addLoader(audio_regex, audio_loader);
+    resourceManager->addLoader(audio_regex, audio_loader);
 
     auto texture_loader = std::make_shared<TextureLoader>();
     std::regex texture_regex("^.+\\.png$");
-    resourceManager.addLoader(texture_regex, texture_loader);
+    resourceManager->addLoader(texture_regex, texture_loader);
 
     for(auto i = 1; i <= resources.size(); i++){
-      logger.debug(resources.get<std::string>(i));
-      resourceManager.load(resources.get<std::string>(i));
+      logger->debug(resources.get<std::string>(i));
+      resourceManager->load(resources.get<std::string>(i));
     }
 
     // Intervals
@@ -78,21 +84,23 @@ int main(int argc, char* argv[]) {
 
     sf::RenderWindow window(sf::VideoMode(window_w, window_h), window_name);
 
-    logger.info("Creating game");
+    logger->info("Creating game");
 
     Renderer renderer(window);
-    AudioPlayer audioPlayer;
+
+    auto audioFolderPath = config["audio_folder"].get_or<std::string>("resources/audio/");
+
+    auto audioPlayer = std::make_shared<AudioPlayer>(audioFolderPath);
     Game game(renderer);
 
-    messagePublisher.addSubscriber(audioPlayer);
+    messagePublisher->addSubscriber(audioPlayer);
 
-    audioPlayer.init(messagePublisher, resourceManager);
-    game.init(messagePublisher, resourceManager);
+    game.init();
 
-    messagePublisher.sendMessage(
+    messagePublisher->sendMessage(
       Message(
-        AudioEvent(CHANGE_MUSIC, "resources/audio/local_forecast.ogg"),
-        "address"
+        "audioPlayer:local_forecast.ogg",
+        std::make_shared<AudioEvent>(PLAY)
       )
     );
 
@@ -112,31 +120,28 @@ int main(int argc, char* argv[]) {
       double draw_delta = draw_delta_ms.count() / 1000.0;
 
       if(update_delta_ms.count() > update_interval) {
-        messagePublisher.publishMessages();
-        game.update(update_delta, messagePublisher, resourceManager);
-        audioPlayer.update(update_delta, messagePublisher, resourceManager);
+        messagePublisher->publishMessages();
+        game.update(update_delta);
         last_update_time = current_time;
       }
       if(draw_delta_ms.count() > draw_interval) {
-        game.render(draw_delta, resourceManager);
+        game.render();
         last_draw_time = current_time;
       }
 
       sf::Event event;
       while (window.pollEvent(event)){
-        if (event.type == sf::Event::Closed)
+        if (event.type == sf::Event::Closed) {
           window.close();
-        else if (event.type == sf::Event::Resized)
-        messagePublisher.sendMessage(Message(
-          AudioEvent(PLAY_MUSIC, ""),"address"
-        ));
+        } else if (event.type == sf::Event::Resized) {
 
+        }
       }
     }
 
   }
 
-  logger.info("Exiting");
+  logger->info("Exiting");
 
   return 0;
 }

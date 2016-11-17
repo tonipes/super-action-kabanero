@@ -1,6 +1,7 @@
 #pragma once
 
 #include "scene/Scene.hpp"
+#include "message/EventHandler.hpp"
 
 /**
  * Scene interface.
@@ -8,25 +9,19 @@
 template <typename T>
 class GameScene : public Scene<T> {
 public:
-  GameScene() {}
+  GameScene(std::string name) : Scene<T>(name) {}
   virtual ~GameScene() {}
 
-  auto init(
-    MessagePublisher& messagePublisher,
-    ResourceManager& resourceManager
-  ) -> void override {
+  auto init() -> void override {
     // std::cout << "GameScene init" << std::endl;
   }
 
-  auto update(
-    double delta,
-    MessagePublisher& messagePublisher,
-    ResourceManager& resourceManager
-  ) -> void override {
+  auto update(double delta) -> void override {
     // std::cout << "GameScene update with delta of " << delta << std::endl;
   }
 
-  auto receiveMessage(Message& message) -> void override {
-  //  std::cout << "GameScene received a message " << std::endl;
+  auto getEventHandler(const std::string& address) const -> EventHandler& override {
+    auto eh = EventHandler();
+    return eh;
   }
 };

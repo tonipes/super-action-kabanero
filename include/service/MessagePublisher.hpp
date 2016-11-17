@@ -2,7 +2,6 @@
 
 #include "message/Message.hpp"
 #include "message/MessageSubscriber.hpp"
-#include "collection/mutable/KBVector.hpp"
 
 /**
  * MessagePublisher interface.
@@ -22,7 +21,7 @@ public:
    * Add subscriber.
    * @param message to send
    */
-  virtual auto addSubscriber(MessageSubscriber& sub) -> void = 0;
+  virtual auto addSubscriber(const std::shared_ptr<MessageSubscriber>& subscriber) -> void = 0;
 
   /**
    * Publishes messages.
@@ -32,4 +31,17 @@ public:
 private:
   MessagePublisher(const MessagePublisher& messagePublisher) {}
 
+};
+
+class NullMessagePublisher : public MessagePublisher {
+public:
+  NullMessagePublisher() {}
+  ~NullMessagePublisher() {}
+
+  auto sendMessage(Message message) -> void { }
+
+  auto addSubscriber(const std::shared_ptr<MessageSubscriber>& subscriber) -> void { }
+
+  auto publishMessages() -> void { }
+private:
 };

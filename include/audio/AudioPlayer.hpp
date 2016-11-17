@@ -1,51 +1,40 @@
 #pragma once
 
 #include <SFML/Audio.hpp>
+#include <regex>
 
-#include "game/Updateable.hpp"
 #include "resource/resource/Audio.hpp"
 #include "message/Message.hpp"
 #include "message/MessageSubscriber.hpp"
+#include "service/Services.hpp"
+#include "audio/AudioClip.hpp"
+#include "collection/mutable/KBMap.hpp"
+#include "util/StringUtil.hpp"
 
 /**
  * AudioPlayer class.
  */
-class AudioPlayer: public Updateable, public MessageSubscriber {
+class AudioPlayer: public MessageSubscriber {
 public:
-  AudioPlayer() {}
+  AudioPlayer(std::string audioFolderPath) :
+      MessageSubscriber("audioPlayer"),
+      _audioFolderPath(audioFolderPath) {}
+
   ~AudioPlayer() {std::cout << "~AudioPlayer" << std::endl;}
 
-  auto init(
-    MessagePublisher& messagePublisher,
-    ResourceManager& resourceManager
-  ) -> void override {
-    std::cout << "AudioPlayer init" << std::endl;
-
-    auto &a = resourceManager.get<Audio>("resources/audio/local_forecast.ogg").getBuffer();
-    _music.setBuffer(a);
-
-  }
-
-  auto update(
-    double delta,
-    MessagePublisher& messagePublisher,
-    ResourceManager& resourceManager
-  ) -> void override {
-    // std::cout << "AudioPlayer update with delta of " << delta << std::endl;
-  }
-
-  auto receiveMessage(Message& message) -> void override {
-    if(isPlaying)
-      _music.pause();
-    else
-      _music.play();
-    isPlaying = !isPlaying;
-    
-    std::cout << "AudioPlayer received a message " << std::endl;
+  auto getEventHandler(const std::string& path) const -> EventHandler& override {
+    if (!clips.contains(path)) {
+      std::string fullPath = _audioFolderPath + path;
+      clips[path] = std::make_shared<AudioClip>(fullPath);
+    }
+    return *clips[path];
   }
 
 private:
-  AudioPlayer(AudioPlayer& audioPlayer) {}
+  AudioPlayer(AudioPlayer& audioPlayer) : MessageSubscriber(audioPlayer.socket()){}
   bool isPlaying = false;
   sf::Sound _music;
+  mutable KBMap<std::string, std::shared_ptr<AudioClip>> clips;
+  // AudioClip testClip = AudioClip(_audioFolderPath + "local_forecast.ogg");
+  std::string _audioFolderPath;
 };
