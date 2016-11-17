@@ -19,10 +19,7 @@ public:
   Game(Renderer& renderer): Updateable(), MessageSubscriber(), _renderer(renderer) {}
   ~Game() {}
 
-  auto init(
-    MessagePublisher& messagePublisher,
-    ResourceManager& resourceManager
-  ) -> void override {}
+  auto init() -> void override {}
 
   auto resize(int x, int y) -> void {}
 
@@ -35,12 +32,8 @@ public:
     _renderer.render<Transform>(_scene, resourceManager);
   }
 
-  auto update(
-    double delta,
-    MessagePublisher& messagePublisher,
-    ResourceManager& resourceManager
-  ) -> void override {
-    _scene.update(delta, messagePublisher, resourceManager);
+  auto update(double delta) -> void override {
+    _scene.update(delta);
   }
 
   auto receiveMessage(Message& message) -> void override {}

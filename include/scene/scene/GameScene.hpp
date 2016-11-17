@@ -11,18 +11,11 @@ public:
   GameScene() {}
   virtual ~GameScene() {}
 
-  auto init(
-    MessagePublisher& messagePublisher,
-    ResourceManager& resourceManager
-  ) -> void override {
+  auto init() -> void override {
     // std::cout << "GameScene init" << std::endl;
   }
 
-  auto update(
-    double delta,
-    MessagePublisher& messagePublisher,
-    ResourceManager& resourceManager
-  ) -> void override {
+  auto update(double delta) -> void override {
     // std::cout << "GameScene update with delta of " << delta << std::endl;
   }
 

@@ -86,8 +86,8 @@ int main(int argc, char* argv[]) {
 
     messagePublisher.addSubscriber(audioPlayer);
 
-    audioPlayer.init(messagePublisher, resourceManager);
-    game.init(messagePublisher, resourceManager);
+    audioPlayer.init();
+    game.init();
 
     messagePublisher.sendMessage(
       Message(
@@ -113,8 +113,8 @@ int main(int argc, char* argv[]) {
 
       if(update_delta_ms.count() > update_interval) {
         messagePublisher.publishMessages();
-        game.update(update_delta, messagePublisher, resourceManager);
-        audioPlayer.update(update_delta, messagePublisher, resourceManager);
+        game.update(update_delta);
+        audioPlayer.update(update_delta);
         last_update_time = current_time;
       }
       if(draw_delta_ms.count() > draw_interval) {

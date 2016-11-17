@@ -12,16 +12,9 @@ public:
   SceneGraph(): _root("root") {}
   ~SceneGraph() {}
 
-  auto init(
-    MessagePublisher& messagePublisher,
-    ResourceManager& resourceManager
-  ) -> void override {}
+  auto init() -> void override {}
 
-  auto update(
-    double delta,
-    MessagePublisher& messagePublisher,
-    ResourceManager& resourceManager
-  ) -> void override {}
+  auto update(double delta) -> void override {}
 
 private:
   Node<T> _root;

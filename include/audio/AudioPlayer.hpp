@@ -15,22 +15,15 @@ public:
   AudioPlayer() {}
   ~AudioPlayer() {std::cout << "~AudioPlayer" << std::endl;}
 
-  auto init(
-    MessagePublisher& messagePublisher,
-    ResourceManager& resourceManager
-  ) -> void override {
+  auto init() -> void override {
     std::cout << "AudioPlayer init" << std::endl;
 
-    auto &a = resourceManager.get<Audio>("resources/audio/local_forecast.ogg").getBuffer();
-    _music.setBuffer(a);
+    // auto &a = resourceManager.get<Audio>("resources/audio/local_forecast.ogg").getBuffer();
+    // _music.setBuffer(a);
 
   }
 
-  auto update(
-    double delta,
-    MessagePublisher& messagePublisher,
-    ResourceManager& resourceManager
-  ) -> void override {
+  auto update(double delta) -> void override {
     // std::cout << "AudioPlayer update with delta of " << delta << std::endl;
   }
 
@@ -40,7 +33,7 @@ public:
     else
       _music.play();
     isPlaying = !isPlaying;
-    
+
     std::cout << "AudioPlayer received a message " << std::endl;
   }
 
