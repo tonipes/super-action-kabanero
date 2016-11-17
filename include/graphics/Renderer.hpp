@@ -3,6 +3,7 @@
 #include "service/ResourceManager.hpp"
 #include "resource/resource/Texture.hpp"
 #include "scene/Scene.hpp"
+#include "service/Services.hpp"
 
 /**
  * Renderer class.
@@ -21,11 +22,12 @@ public:
    * @param resourceManager to get resources from.
    */
   template <typename T>
-  auto render(Scene<T>& scene, ResourceManager& resourceManager) -> void {
+  auto render(Scene<T>& scene) -> void {
+    auto resourceManager = Services::resourceManager();
 
     _window.clear(sf::Color::Black);
 
-    const auto texture = resourceManager.get<Texture>("resources/textures/test_tileset.png").get().getTexture();
+    const auto texture = resourceManager->get<Texture>("resources/textures/test_tileset.png").get().getTexture();
     sf::Sprite sprite(texture);
     _window.draw(sprite);
 

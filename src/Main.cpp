@@ -23,12 +23,17 @@
 #include "collection/Option.hpp"
 #include "util/PrintUtil.hpp"
 #include "logger/logger/DefaultLogger.hpp"
+#include "service/Services.hpp"
 
 int main(int argc, char* argv[]) {
 
   DefaultLogger logger;
-  SyncResourceManager resourceManager;
-  DefaultMessagePublisher messagePublisher;
+  auto resourceManager = std::make_shared<SyncResourceManager>();
+  auto messagePublisher = std::make_shared<DefaultMessagePublisher>();
+
+  Services::provideMessagePublisher(messagePublisher);
+  Services::provideResourceManager(resourceManager);
+
 
   logger.debug("Debug test");
   logger.info("Info test");
@@ -52,19 +57,19 @@ int main(int argc, char* argv[]) {
 
     auto text_loader = std::make_shared<TextLoader>();
     std::regex text_regex("^.+\\.txt$");
-    resourceManager.addLoader(text_regex, text_loader);
+    resourceManager->addLoader(text_regex, text_loader);
 
     auto audio_loader = std::make_shared<AudioLoader>();
     std::regex audio_regex("^.+\\.ogg$");
-    resourceManager.addLoader(audio_regex, audio_loader);
+    resourceManager->addLoader(audio_regex, audio_loader);
 
     auto texture_loader = std::make_shared<TextureLoader>();
     std::regex texture_regex("^.+\\.png$");
-    resourceManager.addLoader(texture_regex, texture_loader);
+    resourceManager->addLoader(texture_regex, texture_loader);
 
     for(auto i = 1; i <= resources.size(); i++){
       logger.debug(resources.get<std::string>(i));
-      resourceManager.load(resources.get<std::string>(i));
+      resourceManager->load(resources.get<std::string>(i));
     }
 
     // Intervals
@@ -84,12 +89,12 @@ int main(int argc, char* argv[]) {
     AudioPlayer audioPlayer;
     Game game(renderer);
 
-    messagePublisher.addSubscriber(audioPlayer);
+    messagePublisher->addSubscriber(audioPlayer);
 
     audioPlayer.init();
     game.init();
 
-    messagePublisher.sendMessage(
+    messagePublisher->sendMessage(
       Message(
         "address",
         AudioEvent(CHANGE_MUSIC, "resources/audio/local_forecast.ogg")
@@ -112,13 +117,13 @@ int main(int argc, char* argv[]) {
       double draw_delta = draw_delta_ms.count() / 1000.0;
 
       if(update_delta_ms.count() > update_interval) {
-        messagePublisher.publishMessages();
+        messagePublisher->publishMessages();
         game.update(update_delta);
         audioPlayer.update(update_delta);
         last_update_time = current_time;
       }
       if(draw_delta_ms.count() > draw_interval) {
-        game.render(draw_delta, resourceManager);
+        game.render();
         last_draw_time = current_time;
       }
 
@@ -127,7 +132,7 @@ int main(int argc, char* argv[]) {
         if (event.type == sf::Event::Closed)
           window.close();
         else if (event.type == sf::Event::Resized)
-        messagePublisher.sendMessage(Message(
+        messagePublisher->sendMessage(Message(
           "address",
           AudioEvent(PLAY_MUSIC, "")
         ));

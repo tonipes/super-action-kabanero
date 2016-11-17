@@ -13,17 +13,17 @@ public:
     _sound.setBuffer(_buffer);
   }
 
-  auto getBuffer() -> sf::SoundBuffer& {
+  auto getBuffer() const -> const sf::SoundBuffer& {
     return _buffer;
   }
-  auto getSound() -> sf::Sound& {
+  auto getSound() const -> const sf::Sound& {
     return _sound;
   }
 
   friend std::ostream& operator<<(std::ostream& os, Audio audio);
 
 private:
-  sf::SoundBuffer _buffer;
+  const sf::SoundBuffer _buffer;
   sf::Sound _sound;
 };
 

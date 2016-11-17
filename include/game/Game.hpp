@@ -35,8 +35,8 @@ public:
    * @param delta time since last render.
    * @param resourceManager to get resources from.
    */
-  auto render(double delta, ResourceManager& resourceManager) -> void {
-    _renderer.render<Transform3D>(_scene, resourceManager);
+  auto render() -> void {
+    _renderer.render<Transform3D>(_scene);
   }
 
   auto update(double delta) -> void override {

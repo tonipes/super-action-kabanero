@@ -6,6 +6,7 @@
 #include "resource/resource/Audio.hpp"
 #include "message/Message.hpp"
 #include "message/MessageSubscriber.hpp"
+#include "service/Services.hpp"
 
 /**
  * AudioPlayer class.
@@ -18,8 +19,9 @@ public:
   auto init() -> void override {
     std::cout << "AudioPlayer init" << std::endl;
 
-    // auto &a = resourceManager.get<Audio>("resources/audio/local_forecast.ogg").getBuffer();
-    // _music.setBuffer(a);
+    auto resourceManager = Services::resourceManager();
+    auto &a = resourceManager->get<Audio>("resources/audio/local_forecast.ogg").get().getBuffer();
+    _music.setBuffer(a);
 
   }
 
