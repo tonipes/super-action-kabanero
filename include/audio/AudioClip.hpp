@@ -24,7 +24,7 @@ public:
       throw EngineException("Audio: " + audioPath + " not found");
     }
 
-    this->addEventResponse([&](AudioEvent audioEvent) {
+    this->addEventReactor([&](AudioEvent audioEvent) {
       auto action = audioEvent.action();
       if (action == PLAY) {
         _sound.play();
