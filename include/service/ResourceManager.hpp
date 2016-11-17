@@ -28,16 +28,20 @@ public:
     } else {
       return Option<T>();
     }
-
-    // return m;
-    //
-    // // return m.get(filePath).map([](const auto& resource) -> T& {
-    // //   return *(std::dynamic_pointer_cast<T>(resource));
-    // // });
   }
 
 protected:
   KBTypeMap<KBMap<std::string, std::shared_ptr<Resource>>> _resources;
 private:
   ResourceManager(const ResourceManager& resourceManager) {}
+};
+
+
+class NullResourceManager : public ResourceManager {
+public:
+  NullResourceManager() {}
+
+  auto addLoader(std::regex regex, std::shared_ptr<Loader> loader) -> void override { }
+
+  auto load(std::string filePath) -> void override { }
 };
