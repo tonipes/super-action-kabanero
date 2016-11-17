@@ -27,7 +27,7 @@
 
 int main(int argc, char* argv[]) {
 
-  DefaultLogger logger;
+  auto logger = std::make_shared<DefaultLogger>();
   auto resourceManager = std::make_shared<SyncResourceManager>();
   auto messagePublisher = std::make_shared<DefaultMessagePublisher>();
 
@@ -35,11 +35,11 @@ int main(int argc, char* argv[]) {
   Services::provideResourceManager(resourceManager);
 
 
-  logger.debug("Debug test");
-  logger.info("Info test");
-  logger.warn("Warn test");
-  logger.error("Error test");
-  logger.fatal("Fatal test");
+  logger->debug("Debug test");
+  logger->info("Info test");
+  logger->warn("Warn test");
+  logger->error("Error test");
+  logger->fatal("Fatal test");
 
   // Load configuration from config.lua file
   sol::state config;
@@ -48,10 +48,10 @@ int main(int argc, char* argv[]) {
   if(argc > 1 && std::string(argv[1]) == "testrun") {
     // Program is run with 'testrun' parameter.
     // This is used in automated testing to make sure that the program actually runs.
-    logger.info("Running windowless test run" );
+    logger->info("Running windowless test run" );
 
   } else {
-    logger.info("Loading resources");
+    logger->info("Loading resources");
 
     auto resources = config.get<sol::table>("resources");
 
@@ -68,7 +68,7 @@ int main(int argc, char* argv[]) {
     resourceManager->addLoader(texture_regex, texture_loader);
 
     for(auto i = 1; i <= resources.size(); i++){
-      logger.debug(resources.get<std::string>(i));
+      logger->debug(resources.get<std::string>(i));
       resourceManager->load(resources.get<std::string>(i));
     }
 
@@ -83,7 +83,7 @@ int main(int argc, char* argv[]) {
 
     sf::RenderWindow window(sf::VideoMode(window_w, window_h), window_name);
 
-    logger.info("Creating game");
+    logger->info("Creating game");
 
     Renderer renderer(window);
 
@@ -140,7 +140,7 @@ int main(int argc, char* argv[]) {
 
   }
 
-  logger.info("Exiting");
+  logger->info("Exiting");
 
   return 0;
 }
