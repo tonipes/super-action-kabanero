@@ -33,3 +33,15 @@ private:
   Logger(Logger& logger) {}
 
 };
+
+class NullLogger {
+  NullLogger() {}
+  auto setLevel(const LogLevel l) -> void { }
+
+  auto debug(const std::string& message) -> void { }
+  auto info(const std::string& message) -> void { }
+  auto warn(const std::string& message) -> void { }
+  auto error(const std::string& message) -> void { }
+  auto fatal(const std::string& message) -> void { }
+
+};
