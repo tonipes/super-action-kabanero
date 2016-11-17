@@ -91,8 +91,8 @@ int main(int argc, char* argv[]) {
 
     messagePublisher.sendMessage(
       Message(
-        AudioEvent(CHANGE_MUSIC, "resources/audio/local_forecast.ogg"),
-        "address"
+        "address",
+        AudioEvent(CHANGE_MUSIC, "resources/audio/local_forecast.ogg")
       )
     );
 
@@ -128,7 +128,8 @@ int main(int argc, char* argv[]) {
           window.close();
         else if (event.type == sf::Event::Resized)
         messagePublisher.sendMessage(Message(
-          AudioEvent(PLAY_MUSIC, ""),"address"
+          "address",
+          AudioEvent(PLAY_MUSIC, "")
         ));
 
       }

@@ -1,19 +1,15 @@
 #pragma once
 
 #include "message/Event.hpp"
+#include <string>
 
 /**
  * Message class.
- * @todo Should address be rather something else than a string?
  */
-class Message {
+struct Message {
 public:
-  Message(Event event, std::string address) : _event(event), _address(address) {}
-  ~Message() {}
+  Message(std::string address, Event event) : event(event), address(address) {}
 
-  auto getEvent() -> Event& { return _event; }
-
-private:
-  Event _event;
-  std::string _address;
+  std::string address;
+  Event event;
 };
