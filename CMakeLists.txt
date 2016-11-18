@@ -35,7 +35,7 @@ option(BUILD_DOCUMENTATION "Create and install the HTML based API
 documentation (requires Doxygen)" ${DOXYGEN_FOUND})
 
 if(BUILD_DOCUMENTATION)
-  message("Doxygen found. Building documentation woth doxygen.")
+  message("Doxygen found.")
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/docs/Doxyfile ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
     add_custom_target(docs
         ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
