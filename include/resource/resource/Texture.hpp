@@ -18,8 +18,3 @@ public:
 private:
   const sf::Texture _texture;
 };
-
-std::ostream& operator<<(std::ostream& os, Texture rexture) {
-  os << "Texture( " << " )";
-  return os;
-}
