@@ -10,6 +10,7 @@
 #include <iostream>
 #include <memory>
 #include "util/MatrixUtil.hpp"
+#include "glm/gtx/string_cast.hpp"
 
 /**
  * Node interface.
@@ -143,9 +144,9 @@ template <typename T>
 auto operator<<(std::ostream& os, const Node<T>& node) -> std::ostream& {
   os << "Node: " <<
     "  name: " << node.name() << std::endl <<
-    "  position: " << node.position() << std::endl <<
-    "  rotation: " << node.rotation() << std::endl <<
-    "  scale: " << node.scale();
+    "  position: " << glm::to_string(node.position()) << std::endl <<
+    "  rotation: " << glm::to_string(node.rotation()) << std::endl <<
+    "  scale: " << glm::to_string(node.scale());
 
   return os;
 
