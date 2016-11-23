@@ -16,5 +16,6 @@ resources = {
   "resources/textures/test_tileset.png",
   "resources/audio/local_forecast.ogg",
   "resources/test.txt",
+  "resources/atlases/pack.atlas"
 }
 audio_folder = "resources/audio/"
