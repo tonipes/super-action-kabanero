@@ -10,6 +10,8 @@
 #include <glm/vec3.hpp>
 
 #include "audio/AudioPlayer.hpp"
+#include "input/InputTranslator.hpp"
+#include "message/event/GameInputEvent.hpp"
 #include "resource/resourceManager/SyncResourceManager.hpp"
 #include "message/messagePublisher/DefaultMessagePublisher.hpp"
 #include "message/event/AudioEvent.hpp"
@@ -34,6 +36,7 @@ int main(int argc, char* argv[]) {
   Services::provideMessagePublisher(messagePublisher);
   Services::provideResourceManager(resourceManager);
   Services::provideLogger(logger);
+  // auto InputTranslator = std::make_shared<InputTranslator(messagePublisher)>();
 
 
   logger->debug("Debug test");
@@ -130,15 +133,16 @@ int main(int argc, char* argv[]) {
       }
 
       sf::Event event;
-      while (window.pollEvent(event)){
+      while (window.pollEvent(event)) {
+        std::shared_ptr<InputTranslator> translator = std::make_shared<InputTranslator>();
+        translator->processMessage(event);
+
         if (event.type == sf::Event::Closed) {
           window.close();
         } else if (event.type == sf::Event::Resized) {
-
         }
       }
     }
-
   }
 
   logger->info("Exiting");
