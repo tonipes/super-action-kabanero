@@ -25,6 +25,9 @@
 #include "logger/DefaultLogger.hpp"
 #include "service/Services.hpp"
 
+#include "minebombers/level/CellularAutomata.hpp"
+#include "random/StdLibRandom.hpp"
+
 int main(int argc, char* argv[]) {
 
   auto logger = std::make_shared<DefaultLogger>();
@@ -109,6 +112,28 @@ int main(int argc, char* argv[]) {
 
     auto last_update_time = Clock::now();
     auto last_draw_time = Clock::now();
+
+    auto random = StdLibRandom();
+
+    auto phases = KBVector<std::shared_ptr<CellularAutomataPhase>>();
+    phases += std::make_shared<RandomCellularAutomataPhase>(0.4f, random);
+    phases += std::make_shared<ThresholdCellularAutomataPhase>(4, 2, 5);
+    phases += std::make_shared<ThresholdCellularAutomataPhase>(3, -1, 5);
+
+    auto w = 64u, h = 64u;
+
+    auto mata = CellularAutomata(w, h, 2, phases);
+    auto map = mata.generate();
+
+    for (auto x = 0u; x < w; x++) {
+      for (auto b : map[x]) {
+        
+      }
+      for (auto y = 0u; y < h; y++) {
+        //auto s = map[x][y] ? "#" : " ";
+        //std::cout << s << '\n';
+      }
+    }
 
     while (window.isOpen()){
       auto current_time = Clock::now();
