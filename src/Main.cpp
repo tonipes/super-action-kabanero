@@ -12,7 +12,8 @@
 #include "audio/AudioPlayer.hpp"
 #include "resource/resourceManager/SyncResourceManager.hpp"
 #include "message/messagePublisher/DefaultMessagePublisher.hpp"
-#include "message/event/AudioEvent.hpp"
+#include "message/event/AudioClipEvent.hpp"
+#include "message/event/AudioTrackEvent.hpp"
 #include "resource/loader/TextLoader.hpp"
 #include "resource/resource/Text.hpp"
 #include "game/Game.hpp"
@@ -104,8 +105,15 @@ int main(int argc, char* argv[]) {
 
     messagePublisher->sendMessage(
       Message(
-        "audioPlayer:local_forecast.ogg",
-        std::make_shared<AudioEvent>(PLAY)
+        "audioPlayer:track/jazz",
+        std::make_shared<AudioTrackEvent>(TRACK_CHANGE, "resources/audio/spinning_monkeys.ogg")
+      )
+    );
+
+    messagePublisher->sendMessage(
+      Message(
+        "audioPlayer:track/jazz",
+        std::make_shared<AudioTrackEvent>(TRACK_PLAY)
       )
     );
 
@@ -139,11 +147,27 @@ int main(int argc, char* argv[]) {
         if (event.type == sf::Event::Closed) {
           window.close();
         } else if (event.type == sf::Event::Resized) {
-
+          messagePublisher->sendMessage(
+            Message(
+              "audioPlayer:clip/test_clip.ogg",
+              std::make_shared<AudioClipEvent>(CLIP_PLAY)
+            )
+          );
+          messagePublisher->sendMessage(
+            Message(
+              "audioPlayer:track/jazz",
+              std::make_shared<AudioTrackEvent>(TRACK_CHANGE, "resources/audio/local_forecast.ogg")
+            )
+          );
+          messagePublisher->sendMessage(
+            Message(
+              "audioPlayer:track/jazz",
+              std::make_shared<AudioTrackEvent>(TRACK_PLAY)
+            )
+          );
         }
       }
     }
-
   }
 
   logger->info("Exiting");

@@ -15,6 +15,10 @@ tilesize = 16
 resources = {
   "resources/textures/test_tileset.png",
   "resources/audio/local_forecast.ogg",
+  "resources/audio/granade.ogg",
+  "resources/audio/test_clip.ogg",
+  "resources/audio/spinning_monkeys.ogg",
+  "resources/audio/gunshot.ogg",
   "resources/test.txt",
   "resources/atlases/pack.atlas"
 }
