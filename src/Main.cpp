@@ -117,8 +117,8 @@ int main(int argc, char* argv[]) {
 
     auto phases = KBVector<std::shared_ptr<CellularAutomataPhase>>();
     phases += std::make_shared<RandomCellularAutomataPhase>(0.4f, random);
-    phases += std::make_shared<ThresholdCellularAutomataPhase>(4, 2, 5);
-    phases += std::make_shared<ThresholdCellularAutomataPhase>(3, -1, 5);
+    phases += std::make_shared<ThresholdCellularAutomataPhase>(4, 3, 4);
+    phases += std::make_shared<ThresholdCellularAutomataPhase>(3, 0, 4);
 
     auto w = 64u, h = 64u;
 
@@ -126,13 +126,11 @@ int main(int argc, char* argv[]) {
     auto map = mata.generate();
 
     for (auto x = 0u; x < w; x++) {
-      for (auto b : map[x]) {
-        
-      }
       for (auto y = 0u; y < h; y++) {
-        //auto s = map[x][y] ? "#" : " ";
-        //std::cout << s << '\n';
+        auto s = map[x][y].isAlive() ? "#" : " ";
+        std::cout << s << " ";
       }
+      std::cout << std::endl;
     }
 
     while (window.isOpen()){

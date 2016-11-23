@@ -4,13 +4,21 @@
 #include "collection/mutable/KBMap.hpp"
 #include "service/Random.hpp"
 
+class Cell {
+public:
+  Cell(bool alive): _alive(alive) {}
+  auto isAlive() -> bool { return _alive; }
+private:
+  bool _alive;
+};
+
 class CellularAutomataPhase {
 public:
   CellularAutomataPhase() {}
   virtual ~CellularAutomataPhase() {}
 
-  virtual auto nextState(bool currentState, uint nearbyLiving) -> bool const = 0;
-  virtual auto getIterations() -> uint const = 0;
+  virtual auto nextState(Cell& currentState, uint nearbyLiving) -> Cell = 0;
+  virtual auto getIterations() -> uint = 0;
 };
 
 class RandomCellularAutomataPhase : public CellularAutomataPhase {
@@ -21,10 +29,11 @@ public:
   {}
   ~RandomCellularAutomataPhase() {}
 
-  auto nextState(bool current, uint nearby) -> bool const {
-    return _rand.nextFloat() < _livingChance;
+  auto nextState(Cell& current, uint nearby) -> Cell {
+    auto cell = Cell(_rand.nextFloat() < _livingChance);
+    return cell;
   }
-  auto getIterations() -> uint const {
+  auto getIterations() -> uint {
     return 1;
   }
 private:
@@ -41,11 +50,11 @@ public:
   {}
   ~ThresholdCellularAutomataPhase() {}
 
-  auto nextState(bool current, uint nearby) -> bool const {
-    auto total = nearby + (current ? 1u : 0u);
-    return total >= _overThreshold || total <= _underThreshold;
+  auto nextState(Cell& current, uint nearby) -> Cell {
+    auto total = nearby;
+    return Cell(total > _overThreshold || total < _underThreshold);
   }
-  auto getIterations() -> uint const {
+  auto getIterations() -> uint {
     return _iterations;
   }
 private:
@@ -62,9 +71,9 @@ public:
     {}
   ~CellularAutomata() {}
 
-  auto generate() -> KBVector<KBVector<bool>> const;
+  auto generate() -> KBVector<KBVector<Cell>>;
 private:
   const uint _width, _height, _seed;
   const KBVector<std::shared_ptr<CellularAutomataPhase>>& _phases;
-  auto getNearbyLivingAmount(KBVector<KBVector<bool>>(), uint x, uint y) -> uint const;
+  auto getNearbyLivingAmount(KBVector<KBVector<Cell>>& map, uint x, uint y) -> uint;
 };
