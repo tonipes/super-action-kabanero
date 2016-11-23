@@ -25,7 +25,7 @@ public:
   }
   ~Game() {}
 
-  auto init() -> void override {}
+  virtual auto init() -> void = 0;
 
   auto resize(int x, int y) -> void {}
 

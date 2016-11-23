@@ -1,3 +1,7 @@
+// NOTE: Enables swizzleing of vectors, but may cause name conflicts
+#define GLM_FORCE_SWIZZLE
+#include <glm/glm.hpp>
+
 #include "app/App.hpp"
 
 #include <sol.hpp>
@@ -12,7 +16,7 @@
 #include "resource/loader/AudioLoader.hpp"
 #include "audio/AudioPlayer.hpp"
 
-App::App(Game game) : _game(game) {
+App::App(std::shared_ptr<Game> game) : _game(game) {
   auto logger = std::make_shared<DefaultLogger>();
   auto resourceManager = std::make_shared<SyncResourceManager>();
   auto messagePublisher = std::make_shared<DefaultMessagePublisher>();
@@ -66,7 +70,7 @@ App::App(Game game) : _game(game) {
 
 auto App::init() -> void {
   Services::logger()->info("Creating game");
-  _game.init();
+  _game->init();
 }
 
 auto App::run() -> void {
@@ -80,13 +84,6 @@ auto App::run() -> void {
   auto last_update_time = Clock::now();
   auto last_draw_time = Clock::now();
 
-  Services::messagePublisher()->sendMessage(
-    Message(
-      "audioPlayer:local_forecast.ogg",
-      std::make_shared<AudioEvent>(PLAY)
-    )
-  );
-
   while (window.isOpen()) {
     auto current_time = Clock::now();
 
@@ -98,11 +95,11 @@ auto App::run() -> void {
 
     if (update_delta_ms.count() > _update_interval) {
       Services::messagePublisher()->publishMessages();
-      _game.update(update_delta);
+      _game->update(update_delta);
       last_update_time = current_time;
     }
     if (draw_delta_ms.count() > _draw_interval) {
-      _game.render(renderer);
+      _game->render(renderer);
       last_draw_time = current_time;
     }
 
