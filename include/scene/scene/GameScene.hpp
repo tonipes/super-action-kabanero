@@ -9,7 +9,7 @@
 template <typename T>
 class GameScene : public Scene<T> {
 public:
-  GameScene(std::string name) : Scene<T>(name) {}
+  GameScene(std::string name, std::shared_ptr<Node<T>> rootNode) : Scene<T>(name, rootNode) {}
   virtual ~GameScene() {}
 
   auto init() -> void override {
