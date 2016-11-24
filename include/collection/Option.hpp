@@ -90,7 +90,7 @@ private:
 
 
 template <typename T>
-auto Some(std::shared_ptr<T>& value) -> Option<T> {
+auto Some(std::shared_ptr<T> value) -> Option<T> {
   return Option<T>(value);
 }
 

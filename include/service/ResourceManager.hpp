@@ -7,6 +7,7 @@
 #include "collection/mutable/KBTypeMap.hpp"
 #include "collection/mutable/KBMap.hpp"
 #include "resource/Loader.hpp"
+#include "exception/ResourceException.hpp"
 
 class ResourceManager {
 public:
@@ -19,7 +20,7 @@ public:
 
   template <typename T>
   auto get(const std::string& filePath) const -> Option<T> {
-    auto m = _resources.get<T>();
+    auto m = _resources.get<T>().get();
 
     auto resource = m.get(filePath);
 
@@ -27,6 +28,19 @@ public:
       return Option<T>(std::dynamic_pointer_cast<T>(resource.get()));
     } else {
       return Option<T>();
+    }
+  }
+
+  template <typename T>
+  auto getRequired(const std::string& filePath) const -> std::shared_ptr<T> {
+    auto m = _resources.get<T>().get();
+
+    auto resource = m.get(filePath);
+
+    if (resource.isDefined()) {
+      return std::dynamic_pointer_cast<T>(resource.get());
+    } else {
+      throw ResourceException("Required resource not found: " + filePath);
     }
   }
 

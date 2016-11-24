@@ -31,7 +31,7 @@ public:
     return _parent;
   }
 
-  auto children() const -> const KBVector<Node>& {
+  auto children() const -> const KBVector<std::shared_ptr<Node>>& {
     return _children;
   }
 
@@ -46,8 +46,13 @@ public:
   }
 
   template <typename AttachmentType>
-  auto get() -> Option<AttachmentType> {
-    _attachments.get<AttachmentType>();
+  auto get() const -> Option<AttachmentType> {
+     auto attachment =  _attachments.get<AttachmentType>();
+    if (attachment.isDefined()) {
+      return Some<AttachmentType>(std::dynamic_pointer_cast<AttachmentType>(attachment.get()));
+    } else {
+      return Option<AttachmentType>();
+    }
   }
 
   auto transform() const -> typename T::matrixType {
@@ -121,10 +126,8 @@ protected:
   auto _setUpdateFlag() const -> void {
     if (!_shouldUpdate) {
       _shouldUpdate = true;
-      _children.foreach([](auto childPtr) {
-        if (auto child = childPtr.lock()) {
-          child->_setUpdateFlag();
-        }
+      _children.foreach([](auto child) {
+        child->_setUpdateFlag();
       });
     }
   }
@@ -136,7 +139,7 @@ protected:
 
 private:
   std::string _name;
-  KBVector<std::weak_ptr<Node>> _children;
+  KBVector<std::shared_ptr<Node>> _children;
   Option<Node> _parent;
   KBTypeMap<std::shared_ptr<NodeAttachment>> _attachments;
   T _transform;

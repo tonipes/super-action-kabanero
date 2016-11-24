@@ -19,7 +19,8 @@ public:
     origRegex("^\\s*orig:\\s*([0-9]+)\\s*,\\s*([0-9]+)$"),
     offsetRegex("^\\s*offset:\\s*([0-9]+)\\s*,\\s*([0-9]+)$"),
     indexRegex("^\\s*index:\\s*(-?[0-9]+)\\s*$"),
-    colonRegex(".+:.*") { }
+    colonRegex(".+:.*"),
+    directoryRegex("^(.+\\/).+.atlas$") { }
 
   auto load(const std::string& filePath) -> const std::shared_ptr<Resource> override;
 private:
@@ -30,4 +31,5 @@ private:
   std::regex offsetRegex;
   std::regex indexRegex;
   std::regex colonRegex;
+  std::regex directoryRegex;
 };

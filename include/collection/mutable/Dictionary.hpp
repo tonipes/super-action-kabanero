@@ -107,6 +107,15 @@ public:
     }
   }
 
+  auto get(const K& key) const -> Option<T> {
+    auto it = memory.find(key);
+    if (it != memory.end()) {
+      return Option<T>((*it).second);
+    } else {
+      return Option<T>();
+    }
+  }
+
   auto getOrElse(const K& key, const T& v) -> const T& {
     return get(key).getOrElse(v);
   }

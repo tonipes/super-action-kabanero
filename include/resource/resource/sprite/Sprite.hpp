@@ -17,6 +17,18 @@ public:
     _origin(origin),
     _offset(offset) {}
 
+  auto texturePath() const -> std::string {
+    return _texturePath;
+  }
+
+  auto xy() const -> glm::vec2 {
+    return _xy;
+  }
+
+  auto size() const -> glm::vec2 {
+    return _size;
+  }
+
 private:
   std::string _texturePath;
   glm::vec2 _xy;
