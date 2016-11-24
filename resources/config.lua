@@ -20,6 +20,8 @@ resources = {
   "resources/audio/spinning_monkeys.ogg",
   "resources/audio/gunshot.ogg",
   "resources/test.txt",
-  "resources/atlases/pack.atlas"
+  "resources/atlases/pack.atlas",
+  "resources/atlases/pack.png",
+  "resources/atlases/pack2.png"
 }
 audio_folder = "resources/audio/"
