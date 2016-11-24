@@ -47,6 +47,12 @@ Pull and update all submodules:
 git pull && git submodule update --init --recursive
 ```
 
+Build assets:
+
+```
+./build.sh assets
+```
+
 Build and run:
 
 ```

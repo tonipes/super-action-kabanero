@@ -17,16 +17,15 @@ class Game: public Updateable, public MessageSubscriber  {
 public:
   typedef Transform2D Transform;
 
-  Game(Renderer& renderer):
+  Game():
       Updateable(),
       MessageSubscriber("game"),
-      _renderer(renderer),
       _scene(GameScene<Transform3D>("testScene")) {
 
   }
   ~Game() {}
 
-  auto init() -> void override {}
+  virtual auto init() -> void = 0;
 
   auto resize(int x, int y) -> void {}
 
@@ -35,8 +34,8 @@ public:
    * @param delta time since last render.
    * @param resourceManager to get resources from.
    */
-  auto render() -> void {
-    _renderer.render<Transform3D>(_scene);
+  auto render(Renderer& renderer) -> void {
+    renderer.render<Transform3D>(_scene);
   }
 
   auto update(double delta) -> void override {
@@ -49,6 +48,5 @@ public:
   }
 
 private:
-  Renderer _renderer;
   GameScene<Transform3D> _scene; // Placeholder. There will be multiple scenes in a game
 };

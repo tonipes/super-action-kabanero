@@ -229,10 +229,10 @@ public:
    * @param i the index to be removed.
    * @return the removed element.
    */
-  auto remove(const int i) -> const T {
-    const auto r = memory[i];
+  auto remove(const int i) -> void {
+    // const auto r = memory[i];
     memory.erase(memory.begin() + i);
-    return r;
+    // return r;
   }
 
   /**
