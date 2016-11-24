@@ -7,6 +7,7 @@
 #include "message/MessageSubscriber.hpp"
 #include "scene/2D/Transform2D.hpp"
 #include "scene/3D/Transform3D.hpp"
+#include "service/Services.hpp"
 
 /**
  * Game class.
@@ -17,12 +18,7 @@ class Game: public Updateable, public MessageSubscriber  {
 public:
   typedef Transform2D Transform;
 
-  Game():
-      Updateable(),
-      MessageSubscriber("game"),
-      _scene(GameScene<Transform3D>("testScene")) {
-
-  }
+  Game() : Updateable(), MessageSubscriber("game") {}
   ~Game() {}
 
   virtual auto init() -> void = 0;
@@ -35,11 +31,15 @@ public:
    * @param resourceManager to get resources from.
    */
   auto render(Renderer& renderer) -> void {
-    renderer.render<Transform3D>(_scene);
+    activeScenes.foreach([&](auto& scene){
+      renderer.render(scene->getSceneViews());
+    });
   }
 
   auto update(double delta) -> void override {
-    _scene.update(delta);
+    activeScenes.foreach([&](auto& scene){
+      scene->update(delta);
+    });
   }
 
   auto getEventHandler(const std::string& address) const -> EventHandler& override {
@@ -47,6 +47,11 @@ public:
     return eh;
   }
 
+  auto addScene(std::shared_ptr<Scene<Transform3D>> scene) {
+    activeScenes += scene;
+    Services::messagePublisher()->addSubscriber(scene);
+  }
+
 private:
-  GameScene<Transform3D> _scene; // Placeholder. There will be multiple scenes in a game
+  KBVector<std::shared_ptr<Scene<Transform3D>>> activeScenes;
 };
