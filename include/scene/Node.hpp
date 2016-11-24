@@ -1,5 +1,8 @@
 #pragma once
 
+#define GLM_FORCE_SWIZZLE
+#include <glm/glm.hpp>
+
 #include "collection/mutable/KBVector.hpp"
 #include "collection/mutable/KBMap.hpp"
 #include "collection/mutable/KBTypeMap.hpp"
