@@ -58,7 +58,6 @@ auto AtlasLoader::load(const std::string& filePath) -> const std::shared_ptr<Res
           glm::vec2(ox / (float)w, oy / (float)h),
           glm::vec2(offsetX / (float)w, offsetY / (float)h)
         );
-        std::cout << spriteID << std::endl;
         sprites.insert(spriteID, sprite);
       }
     } else {
