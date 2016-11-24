@@ -1,3 +1,5 @@
+#include <cmath>
+
 #include "minebombers/level/CellularAutomata.hpp"
 
 auto CellularAutomata::generate() -> KBVector<KBVector<Cell>> {
@@ -10,7 +12,7 @@ auto CellularAutomata::generate() -> KBVector<KBVector<Cell>> {
         for (auto y = 0u; y < _height; y++) {
             auto nearbyWalls = getNearbyLivingAmount(map, x, y);
             if (map.isEmpty()) {
-              auto temp = Cell(false);
+              auto temp = Cell(x, y, false);
               result[x] += phase->nextState(temp, nearbyWalls);
             } else {
               result[x] += phase->nextState(map[x][y], nearbyWalls);

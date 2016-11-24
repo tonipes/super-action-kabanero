@@ -26,7 +26,10 @@
 #include "service/Services.hpp"
 
 #include "minebombers/level/CellularAutomata.hpp"
+#include "minebombers/level/FloodFill.hpp"
 #include "random/StdLibRandom.hpp"
+#include "minebombers/level/CaveGenerator.hpp"
+#include <time.h>
 
 int main(int argc, char* argv[]) {
 
@@ -113,22 +116,14 @@ int main(int argc, char* argv[]) {
     auto last_update_time = Clock::now();
     auto last_draw_time = Clock::now();
 
-    auto random = StdLibRandom();
+    unsigned int time_ui = static_cast<unsigned int>( time(NULL) );
+    auto caveGen = CaveGenerator(time_ui, 128, 128, 4, 4);
 
-    auto phases = KBVector<std::shared_ptr<CellularAutomataPhase>>();
-    phases += std::make_shared<RandomCellularAutomataPhase>(0.4f, random);
-    phases += std::make_shared<ThresholdCellularAutomataPhase>(4, 3, 4);
-    phases += std::make_shared<ThresholdCellularAutomataPhase>(3, 0, 4);
+    auto map = caveGen.generate();
 
-    auto w = 64u, h = 64u;
-
-    auto mata = CellularAutomata(w, h, 2, phases);
-    auto map = mata.generate();
-
-    for (auto x = 0u; x < w; x++) {
-      for (auto y = 0u; y < h; y++) {
-        auto s = map[x][y].isAlive() ? "#" : " ";
-        std::cout << s << " ";
+    for (auto x = 0; x < map.getWidth(); x++) {
+      for (auto y = 0; y < map.getHeight(); y++) {
+        std::cout << map[x][y].getCharRepresentation();
       }
       std::cout << std::endl;
     }

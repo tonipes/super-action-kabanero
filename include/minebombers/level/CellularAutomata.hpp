@@ -3,14 +3,7 @@
 #include <tuple>
 #include "collection/mutable/KBMap.hpp"
 #include "service/Random.hpp"
-
-class Cell {
-public:
-  Cell(bool alive): _alive(alive) {}
-  auto isAlive() -> bool { return _alive; }
-private:
-  bool _alive;
-};
+#include "minebombers/level/Cell.hpp"
 
 class CellularAutomataPhase {
 public:
@@ -27,10 +20,9 @@ public:
   _livingChance(chance),
   _rand(rand)
   {}
-  ~RandomCellularAutomataPhase() {}
 
   auto nextState(Cell& current, uint nearby) -> Cell {
-    auto cell = Cell(_rand.nextFloat() < _livingChance);
+    auto cell = Cell(current._x, current._y, _rand.nextFloat() < _livingChance);
     return cell;
   }
   auto getIterations() -> uint {
@@ -48,17 +40,32 @@ public:
   _underThreshold(underThreshold),
   _overThreshold(overThreshold)
   {}
-  ~ThresholdCellularAutomataPhase() {}
 
   auto nextState(Cell& current, uint nearby) -> Cell {
     auto total = nearby;
-    return Cell(total > _overThreshold || total < _underThreshold);
+    return Cell(current._x, current._y, total > _overThreshold || total < _underThreshold);
   }
   auto getIterations() -> uint {
     return _iterations;
   }
 private:
   const uint _iterations, _underThreshold, _overThreshold;
+};
+
+class BorderCellularAutomataPhase : public CellularAutomataPhase {
+public:
+  BorderCellularAutomataPhase(uint width, uint height) :
+  _width(width), _height(height)
+  {}
+
+  auto nextState(Cell& current, uint nearby) -> Cell {
+    return Cell(current._x, current._y, current.isAlive() || current._x == _width - 1 || current._x == 0 || current._y == _height - 1 || current._y == 0);
+  }
+  auto getIterations() -> uint {
+    return 1;
+  }
+private:
+  const uint _width, _height;
 };
 
 class CellularAutomata {

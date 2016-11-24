@@ -17,6 +17,7 @@ public:
   }
 
   auto nextInt(int mod) -> int {
+    if (mod == 0) return 0;
     return std::rand() % mod;
   }
 };
