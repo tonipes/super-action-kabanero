@@ -15,6 +15,7 @@ private:
   int _draw_interval;
   int _window_w;
   int _window_h;
+  int _tilesize;
   std::string _window_name;
   std::string _audioFolderPath;
 };

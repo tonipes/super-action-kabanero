@@ -9,7 +9,7 @@ update_interval = 16;
 draw_interval = 32;
 
 -- Graphics
-tilesize = 16
+tilesize = 32
 
 -- resources
 resources = {

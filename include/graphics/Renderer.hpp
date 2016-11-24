@@ -18,7 +18,10 @@
  */
 class Renderer {
 public:
-  Renderer(sf::RenderWindow& window) : _window(window) {}
+  Renderer(sf::RenderWindow& window, int tilesize) :
+    _window(window),
+    _tilesize(tilesize) {}
+
   ~Renderer() {}
 
   auto render(KBVector<SceneView<Transform3D>> sceneViews) -> void {
@@ -48,6 +51,7 @@ public:
 
 private:
   sf::RenderWindow& _window;
+  int _tilesize;
 
   auto _renderNode(const std::shared_ptr<Node<Transform3D>> node, const std::shared_ptr<Node<Transform3D>> cameraNode) -> void {
     auto resourceManager = Services::resourceManager();
@@ -78,7 +82,7 @@ private:
         auto camPosition = cameraNode->position();
         auto windowSize = _window.getSize();
 
-        auto relativePosition = nodePosition - camPosition;
+        auto relativePosition = (nodePosition - camPosition) * (float)_tilesize;
 
         sfSprite.move(relativePosition.x + windowSize.x / 2, -relativePosition.y + windowSize.y / 2);
 
@@ -95,4 +99,5 @@ private:
       _renderNode(child, cameraNode);
     });
   }
+
 };

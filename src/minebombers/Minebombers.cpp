@@ -32,15 +32,15 @@ auto Minebombers::init() -> void {
 
   auto terrainNode1 = std::make_shared<Node<Transform3D>>("terrain");
   terrainNode1->addAttachment(std::make_shared<SpriteAttachment>("test-ground/lava1"));
-  terrainNode1->setLocalPosition(glm::vec3(32, 0, 0));
+  terrainNode1->setLocalPosition(glm::vec3(1, 0, 0));
 
   auto terrainNode2 = std::make_shared<Node<Transform3D>>("terrain");
   terrainNode2->addAttachment(std::make_shared<SpriteAttachment>("test-ground/lava2"));
-  terrainNode2->setLocalPosition(glm::vec3(0, 64, 0));
+  terrainNode2->setLocalPosition(glm::vec3(0, 2, 0));
 
   auto terrainNode3 = std::make_shared<Node<Transform3D>>("terrain");
   terrainNode3->addAttachment(std::make_shared<SpriteAttachment>("test-ground/lava3"));
-  terrainNode3->setLocalPosition(glm::vec3(-32, -32, 0));
+  terrainNode3->setLocalPosition(glm::vec3(-1, -1, 0));
 
   rootNode->addChild(terrainNode);
   rootNode->addChild(terrainNode1);

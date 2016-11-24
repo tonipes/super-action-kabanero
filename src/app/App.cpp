@@ -71,6 +71,7 @@ App::App(std::shared_ptr<Game> game) : _game(game) {
 
 
   _audioFolderPath = config["audio_folder"].get_or<std::string>("resources/audio/");
+  _tilesize = config["tilesize"].get_or(32);
 }
 
 auto App::init() -> void {
@@ -82,7 +83,7 @@ auto App::run() -> void {
   sf::RenderWindow window(sf::VideoMode(_window_w, _window_h), _window_name);
   auto audioPlayer = std::make_shared<AudioPlayer>(_audioFolderPath);
   Services::messagePublisher()->addSubscriber(audioPlayer);
-  Renderer renderer(window);
+  Renderer renderer(window, _tilesize);
   typedef std::chrono::high_resolution_clock Clock;
   typedef std::chrono::milliseconds ms;
 
