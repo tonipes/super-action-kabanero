@@ -1,6 +1,6 @@
 #pragma once
 
-#include "message/event/AudioEvent.hpp"
+#include "message/event/AudioClipEvent.hpp"
 #include "message/EventHandler.hpp"
 #include "service/Services.hpp"
 #include "exception/EngineException.hpp"
@@ -13,6 +13,10 @@
 
 class AudioClip : public EventHandler {
 public:
+  ~AudioClip() {
+    _sound.stop();
+    std::cout << "~AudioClip()" << '\n';
+  }
   AudioClip(const std::string& audioPath) {
     auto resourceManager = Services::resourceManager();
     auto audio = resourceManager->get<Audio>(audioPath);
@@ -24,16 +28,16 @@ public:
       throw EngineException("Audio: " + audioPath + " not found");
     }
 
-    this->addEventReactor([&](AudioEvent audioEvent) {
+    this->addEventReactor([&](AudioClipEvent audioEvent) {
       auto action = audioEvent.action();
-      if (action == PLAY) {
+      if (action == CLIP_PLAY) {
         _sound.play();
-      } else if (action == PAUSE) {
-        _sound.pause();
-      } else if (action == STOP) {
-        _sound.stop();
       }
     });
+  }
+
+  auto stop() -> void {
+    _sound.stop();
   }
 
 private:
