@@ -30,10 +30,11 @@ public:
     for (auto am : tileMap.getGroups().values()) {
       if (am >= minimumOpen) enoughOpen = true;
     }
-    // Change seed for a different map, the recursively generate again until enough open is found
-    _seed = random.nextInt(2147483647);
-    if (!enoughOpen) return generate();
-
+    if (!enoughOpen) {
+      // Change seed for a different map, the recursively generate again until enough open is found
+      _seed = random.nextInt(2147483647);
+      return generate();
+    }
     SpawnPointPlacer(tileMap, _playerSectors, _numItems, random).run();
     ConstructedWallPlacer(tileMap, 32, 3, 12, random).run();
 
