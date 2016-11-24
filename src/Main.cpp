@@ -25,12 +25,6 @@
 #include "logger/DefaultLogger.hpp"
 #include "service/Services.hpp"
 
-#include "minebombers/level/CellularAutomata.hpp"
-#include "minebombers/level/FloodFill.hpp"
-#include "random/StdLibRandom.hpp"
-#include "minebombers/level/CaveGenerator.hpp"
-#include <time.h>
-
 int main(int argc, char* argv[]) {
 
   auto logger = std::make_shared<DefaultLogger>();
@@ -115,18 +109,6 @@ int main(int argc, char* argv[]) {
 
     auto last_update_time = Clock::now();
     auto last_draw_time = Clock::now();
-
-    unsigned int time_ui = static_cast<unsigned int>( time(NULL) );
-    auto caveGen = CaveGenerator(time_ui, 128, 128, 4, 4);
-
-    auto map = caveGen.generate();
-
-    for (auto x = 0; x < map.getWidth(); x++) {
-      for (auto y = 0; y < map.getHeight(); y++) {
-        std::cout << map[x][y].getCharRepresentation();
-      }
-      std::cout << std::endl;
-    }
 
     while (window.isOpen()){
       auto current_time = Clock::now();

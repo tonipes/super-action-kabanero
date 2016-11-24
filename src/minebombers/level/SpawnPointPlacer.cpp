@@ -30,6 +30,10 @@ auto SpawnPointPlacer::run() -> void {
       auto bottom = _map.getHeight() * (j + 1) / _itemSectors - 1;
       if (_map.hasTile(OPEN_SIDE, left, top, right, bottom)) {
         auto t = _map.getRandom(OPEN_SIDE, _rand, left, top, right, bottom);
+        _map[t.getX()][t.getY()].setType(ARTIFACT_LOCATION);
+      }
+      if (_map.hasTile(OPEN_MAIN, left, top, right, bottom)) {
+        auto t = _map.getRandom(OPEN_MAIN, _rand, left, top, right, bottom);
         _map[t.getX()][t.getY()].setType(ITEM_LOCATION);
       }
     }

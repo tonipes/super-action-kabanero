@@ -16,7 +16,8 @@ enum TileType {
   OPEN_MAIN,
   OPEN_SIDE,
   PLAYER_SPAWN_POINT,
-  ITEM_LOCATION
+  ITEM_LOCATION,
+  ARTIFACT_LOCATION,
 };
 
 class Tile {
@@ -59,6 +60,7 @@ public:
       case OPEN_SIDE: return ' ';
       case PLAYER_SPAWN_POINT: return '@';
       case ITEM_LOCATION: return 'I';
+      case ARTIFACT_LOCATION: return 'A';
       default: return '!'; // If you get this, you haven't defined a case for a new tile type
     }
   }
@@ -116,6 +118,15 @@ public:
 
   auto getWidth() -> int { return _width; }
   auto getHeight() -> int { return _height; }
+
+  auto debugPrint(std::ostream& stream) -> void {
+    for (auto x = 0; x < getWidth(); x++) {
+      for (auto y = 0; y < getHeight(); y++) {
+        std::cout << _tiles[x][y].getCharRepresentation();
+      }
+      std::cout << std::endl;
+    }
+  }
 
 private:
   int _width, _height;
