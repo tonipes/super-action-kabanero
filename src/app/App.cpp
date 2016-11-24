@@ -14,6 +14,7 @@
 #include "resource/loader/AudioLoader.hpp"
 #include "resource/loader/TextureLoader.hpp"
 #include "resource/loader/AudioLoader.hpp"
+#include "resource/loader/AtlasLoader.hpp"
 #include "audio/AudioPlayer.hpp"
 
 App::App(std::shared_ptr<Game> game) : _game(game) {
@@ -49,6 +50,10 @@ App::App(std::shared_ptr<Game> game) : _game(game) {
   auto texture_loader = std::make_shared<TextureLoader>();
   std::regex texture_regex("^.+\\.png$");
   resourceManager->addLoader(texture_regex, texture_loader);
+
+  auto atlas_loader = std::make_shared<AtlasLoader>();
+  std::regex atlas_regex("^.+\\.atlas$");
+  resourceManager->addLoader(atlas_regex, atlas_loader);
 
   for(auto i = 1; i <= resources.size(); i++){
     logger->debug(resources.get<std::string>(i));
