@@ -1,7 +1,9 @@
 #include "resource/loader/AtlasLoader.hpp"
 
 auto AtlasLoader::load(const std::string& filePath) -> const std::shared_ptr<Resource> {
-  auto path = "this/is/a/test/path";
+  std::smatch directoryMatch;
+  std::regex_search(filePath, directoryMatch, directoryRegex);
+  auto path = directoryMatch.str(1);
 
   std::ifstream in { filePath };
   if (!in.is_open()) {
@@ -32,7 +34,7 @@ auto AtlasLoader::load(const std::string& filePath) -> const std::shared_ptr<Res
   KBMap<std::string, Sprite> sprites;
   while (std::getline(ss, line, '\n')) {
     if (std::regex_match(line, colonRegex)) {
-      if (std::regex_search(line, match, sizeRegex) && match.size() == 2) {
+      if (std::regex_search(line, match, sizeRegex) && match.size() > 1) {
         if (startSprite) {
           sw = std::stoi(match.str(1));
           sh = std::stoi(match.str(2));
@@ -40,23 +42,24 @@ auto AtlasLoader::load(const std::string& filePath) -> const std::shared_ptr<Res
           w = std::stoi(match.str(1));
           h = std::stoi(match.str(2));
         }
-      } else if (std::regex_search(line, match, xyRegex) && match.size() == 2) {
+      } else if (std::regex_search(line, match, xyRegex) && match.size() > 1) {
+        // std::cout << "x: " << match.str(1) << " y: " << match.str(2) << std::endl;
         x = std::stoi(match.str(1));
         y = std::stoi(match.str(2));
-      } else if (std::regex_search(line, match, origRegex) && match.size() == 2) {
+      } else if (std::regex_search(line, match, origRegex) && match.size() > 1) {
         ox = std::stoi(match.str(1));
         oy = std::stoi(match.str(2));
-      } else if (std::regex_search(line, match, origRegex) && match.size() == 2) {
+      } else if (std::regex_search(line, match, origRegex) && match.size() > 1) {
         offsetX = std::stoi(match.str(1));
         offsetY = std::stoi(match.str(2));
       } else if (std::regex_match(line, indexRegex)) {
         startSprite = false;
         Sprite sprite(
           path + texID,
-          glm::vec2(x / (float)w, y / (float)h),
-          glm::vec2(sw / (float)w, sh / (float)h),
-          glm::vec2(ox / (float)w, oy / (float)h),
-          glm::vec2(offsetX / (float)w, offsetY / (float)h)
+          glm::vec2(x, y),
+          glm::vec2(sw, sh),
+          glm::vec2(ox, oy),
+          glm::vec2(offsetX, offsetY)
         );
         sprites.insert(spriteID, sprite);
       }
