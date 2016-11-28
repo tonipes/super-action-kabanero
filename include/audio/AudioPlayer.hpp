@@ -16,7 +16,7 @@
 /**
  * AudioPlayer class.
  */
-class AudioPlayer: public MessageSubscriber {
+class AudioPlayer: public MessageSubscriber, public EventHandler {
 public:
   AudioPlayer(std::string audioFolderPath, int maxClipCount = 4) :
       MessageSubscriber("audioPlayer"),
@@ -25,7 +25,7 @@ public:
 
   ~AudioPlayer() { std::cout << "~AudioPlayer" << std::endl; }
 
-  auto getEventHandler(const std::string& path) const -> EventHandler& override {
+  auto getEventHandler(const std::string& path) -> EventHandler& override {
     auto parts = split(path, '/');
     auto type = parts[0];
     auto id = parts[1];
@@ -55,6 +55,12 @@ public:
     } else {
       throw EngineException("Error with audio event");
     }
+  }
+
+  auto getAllEventHandlers() -> KBVector<EventHandler> override {
+    auto v = KBVector<EventHandler>();
+    v += *this;
+    return v;
   }
 
 private:

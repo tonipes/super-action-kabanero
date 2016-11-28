@@ -30,15 +30,15 @@ auto Minebombers::init() -> void {
   auto terrainNode = std::make_shared<Node<Transform3D>>("terrain");
   terrainNode->addAttachment(std::make_shared<SpriteAttachment>("test-ground/lava0"));
 
-  auto terrainNode1 = std::make_shared<Node<Transform3D>>("terrain");
+  auto terrainNode1 = std::make_shared<Node<Transform3D>>("terrain1");
   terrainNode1->addAttachment(std::make_shared<SpriteAttachment>("test-ground/lava1"));
   terrainNode1->setLocalPosition(glm::vec3(1, 0, 0));
 
-  auto terrainNode2 = std::make_shared<Node<Transform3D>>("terrain");
+  auto terrainNode2 = std::make_shared<Node<Transform3D>>("terrain2");
   terrainNode2->addAttachment(std::make_shared<SpriteAttachment>("test-ground/lava2"));
   terrainNode2->setLocalPosition(glm::vec3(0, 2, 0));
 
-  auto terrainNode3 = std::make_shared<Node<Transform3D>>("terrain");
+  auto terrainNode3 = std::make_shared<Node<Transform3D>>("terrain3");
   terrainNode3->addAttachment(std::make_shared<SpriteAttachment>("test-ground/lava3"));
   terrainNode3->setLocalPosition(glm::vec3(-1, -1, 0));
 
@@ -46,6 +46,8 @@ auto Minebombers::init() -> void {
   rootNode->addChild(terrainNode1);
   rootNode->addChild(terrainNode2);
   rootNode->addChild(terrainNode3);
+
+  Services::logger()->debug("num children: " + std::to_string(rootNode->children().values().length()));
 
   auto cameraNode = std::make_shared<Node<Transform3D>>("camera");
   rootNode->addChild(cameraNode);

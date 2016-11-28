@@ -9,6 +9,7 @@
 #include "collection/Option.hpp"
 #include "scene/Transform.hpp"
 #include "scene/NodeAttachment.hpp"
+#include "message/EventHandler.hpp"
 #include <typeinfo>
 #include <iostream>
 #include <memory>
@@ -19,7 +20,7 @@
  * Node interface.
  */
 template <typename T>
-class Node : public std::enable_shared_from_this<Node<T>> {
+class Node : public EventHandler, public std::enable_shared_from_this<Node<T>> {
 public:
   Node(std::string name) : _name(name) {}
 
@@ -31,12 +32,12 @@ public:
     return _parent;
   }
 
-  auto children() const -> const KBVector<std::shared_ptr<Node>>& {
+  auto children() const -> const KBMap<std::string, std::shared_ptr<Node>>& {
     return _children;
   }
 
   auto addChild(std::shared_ptr<Node> child) -> void {
-    _children += child;
+    _children.insert(child->name(), child);
     child->_setParent(this->shared_from_this());
     child->_setUpdateFlag();
   }
@@ -126,7 +127,7 @@ protected:
   auto _setUpdateFlag() const -> void {
     if (!_shouldUpdate) {
       _shouldUpdate = true;
-      _children.foreach([](auto child) {
+      _children.values().foreach([](auto child) {
         child->_setUpdateFlag();
       });
     }
@@ -139,7 +140,7 @@ protected:
 
 private:
   std::string _name;
-  KBVector<std::shared_ptr<Node>> _children;
+  KBMap<std::string, std::shared_ptr<Node>> _children;
   Option<Node> _parent;
   KBTypeMap<std::shared_ptr<NodeAttachment>> _attachments;
   T _transform;

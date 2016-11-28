@@ -14,7 +14,7 @@
  * @todo Resizing could also do resizing with message.
  * @todo Could be more generic. (transform)
  */
-class Game: public Updateable, public MessageSubscriber  {
+class Game: public Updateable, public MessageSubscriber, public EventHandler {
 public:
   typedef Transform2D Transform;
 
@@ -42,9 +42,14 @@ public:
     });
   }
 
-  auto getEventHandler(const std::string& address) const -> EventHandler& override {
-    auto eh = EventHandler();
-    return eh;
+  auto getEventHandler(const std::string& address) -> EventHandler& override {
+    return *this;
+  }
+
+  auto getAllEventHandlers() -> KBVector<EventHandler> override {
+    auto v = KBVector<EventHandler>();
+    v += *this;
+    return v;
   }
 
   auto addScene(std::shared_ptr<Scene<Transform3D>> scene) {

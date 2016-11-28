@@ -22,7 +22,7 @@ public:
     return _sceneViews;
   }
 
-  auto root() -> Node<T>& {
+  auto root() -> std::shared_ptr<Node<T>> {
     return _root;
   }
 
