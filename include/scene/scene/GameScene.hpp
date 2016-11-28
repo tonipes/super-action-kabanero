@@ -19,7 +19,7 @@ public:
   }
 
   auto update(double delta) -> void override {
-    // std::cout << "GameScene update with delta of " << delta << std::endl;
+    this->rootNode()->update(delta);
   }
 
   auto getEventHandler(const std::string& address) -> EventHandler& override {

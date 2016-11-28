@@ -10,6 +10,7 @@
 #include "scene/Transform.hpp"
 #include "scene/NodeAttachment.hpp"
 #include "message/EventHandler.hpp"
+#include "behavior/Behavior.hpp"
 #include <typeinfo>
 #include <iostream>
 #include <memory>
@@ -114,6 +115,21 @@ public:
     return true;
   }
 
+  template <typename BehaviorType>
+  auto addBehavior() -> void {
+    auto behavior = std::make_shared<BehaviorType>(this);
+    _behaviors += behavior;
+  }
+
+  auto update(float delta) -> void {
+    _behaviors.foreach([&](auto& behavior) {
+      behavior->update(delta);
+    });
+    _children.values().foreach([&](auto child) {
+      child->update(delta);
+    });
+  }
+
 protected:
   mutable bool _shouldUpdate = true;
 
@@ -144,6 +160,7 @@ private:
   Option<Node> _parent;
   KBTypeMap<std::shared_ptr<NodeAttachment>> _attachments;
   T _transform;
+  KBVector<std::shared_ptr<Behavior>> _behaviors;
   mutable typename T::matrixType _worldTransform;
 };
 

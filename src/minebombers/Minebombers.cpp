@@ -3,6 +3,8 @@
 #include "service/Services.hpp"
 #include "message/event/AudioClipEvent.hpp"
 #include "message/event/AudioTrackEvent.hpp"
+#include "minebombers/behaviors/CameraBehavior.hpp"
+#include "minebombers/events/TestEvent.hpp"
 
 auto Minebombers::init() -> void {
   auto messagePublisher = Services::messagePublisher();
@@ -50,6 +52,7 @@ auto Minebombers::init() -> void {
   Services::logger()->debug("num children: " + std::to_string(rootNode->children().values().length()));
 
   auto cameraNode = std::make_shared<Node<Transform3D>>("camera");
+  cameraNode->addBehavior<CameraBehavior>();
   rootNode->addChild(cameraNode);
 
   auto scene = std::make_shared<GameScene<Transform3D>>("gameScene", rootNode);
@@ -58,4 +61,17 @@ auto Minebombers::init() -> void {
   scene->addSceneView(sceneView);
 
   addScene(scene);
+
+  messagePublisher->sendMessage(
+    Message(
+      "gameScene:camera",
+      std::make_shared<TestEvent>(A)
+    )
+  );
+  messagePublisher->sendMessage(
+    Message(
+      "gameScene:camera",
+      std::make_shared<TestEvent>(B)
+    )
+  );
 }
