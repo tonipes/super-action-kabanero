@@ -21,8 +21,12 @@ public:
   InputTranslator() {}
   ~InputTranslator() {}
 
+  /*This method processes the event and sends information to Services::messagepublisher,
+  * the same message must be sent when pressing button and releasing the same button.
+  */
+
   auto processMessage(sf::Event event) -> void {
-    //for testing
+
     auto logger = std::make_shared<DefaultLogger>();
 
         if(event.type == sf::Event::KeyPressed) {
