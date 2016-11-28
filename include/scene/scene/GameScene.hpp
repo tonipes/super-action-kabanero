@@ -42,8 +42,25 @@ public:
   }
 
   auto getAllEventHandlers() -> KBVector<EventHandler> override {
+    auto nodes = _getAllNodes(this->rootNode());
     auto v = KBVector<EventHandler>();
-    v += *this;
+    nodes.foreach([&](auto ptr) {
+      v += *ptr;
+    });
+    return v;
+  }
+public:
+
+  auto _getAllNodes(std::shared_ptr<Node<T>> node) -> KBVector<std::shared_ptr<Node<T>>> {
+    auto v = KBVector<std::shared_ptr<Node<T>>>();
+    v += node;
+    auto children = node->children().values();
+    children.foreach([&](auto child) {
+      auto n = _getAllNodes(child);
+      for (auto c : n) {
+        v += c;
+      }
+    });
     return v;
   }
 };

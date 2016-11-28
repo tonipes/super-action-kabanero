@@ -10,7 +10,7 @@
 #include "scene/Transform.hpp"
 #include "scene/NodeAttachment.hpp"
 #include "message/EventHandler.hpp"
-#include "behavior/Behavior.hpp"
+#include "game/Behavior.hpp"
 #include <typeinfo>
 #include <iostream>
 #include <memory>
@@ -123,7 +123,7 @@ public:
 
   auto update(float delta) -> void {
     _behaviors.foreach([&](auto& behavior) {
-      behavior->update(delta);
+      behavior->update(delta, *this);
     });
     _children.values().foreach([&](auto child) {
       child->update(delta);
@@ -160,7 +160,7 @@ private:
   Option<Node> _parent;
   KBTypeMap<std::shared_ptr<NodeAttachment>> _attachments;
   T _transform;
-  KBVector<std::shared_ptr<Behavior>> _behaviors;
+  KBVector<std::shared_ptr<Behavior<T>>> _behaviors;
   mutable typename T::matrixType _worldTransform;
 };
 
