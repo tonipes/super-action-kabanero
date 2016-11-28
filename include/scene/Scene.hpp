@@ -23,7 +23,7 @@ public:
     return _graph.getSceneViews();
   }
 
-  auto rootNode() -> Node<T>& {
+  auto rootNode() -> std::shared_ptr<Node<T>> {
     return _graph.root();
   }
 

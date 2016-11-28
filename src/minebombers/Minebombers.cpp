@@ -5,6 +5,8 @@
 #include "message/event/AudioTrackEvent.hpp"
 #include "minebombers/level/LevelCompiler.hpp"
 #include "minebombers/level/CaveGenerator.hpp"
+#include "minebombers/behaviors/CameraBehavior.hpp"
+#include "minebombers/events/TestEvent.hpp"
 
 auto Minebombers::init() -> void {
   auto messagePublisher = Services::messagePublisher();
@@ -41,8 +43,11 @@ auto Minebombers::init() -> void {
   rootNode->addChild(levelCompiler.materializeGround(tileMap));
   rootNode->addChild(levelCompiler.materializeObjects(tileMap));
 
+  Services::logger()->debug("num children: " + std::to_string(rootNode->children().values().length()));
+
   auto cameraNode = std::make_shared<Node<Transform3D>>("camera");
   cameraNode->setLocalPosition(glm::vec3(12, 11, 0));
+  cameraNode->addBehavior<CameraBehavior>();
   rootNode->addChild(cameraNode);
 
   auto scene = std::make_shared<GameScene<Transform3D>>("gameScene", rootNode);
@@ -51,4 +56,17 @@ auto Minebombers::init() -> void {
   scene->addSceneView(sceneView);
 
   addScene(scene);
+
+  messagePublisher->sendMessage(
+    Message(
+      "gameScene:camera",
+      std::make_shared<TestEvent>(A)
+    )
+  );
+  messagePublisher->sendMessage(
+    Message(
+      "gameScene:camera",
+      std::make_shared<TestEvent>(B)
+    )
+  );
 }

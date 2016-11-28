@@ -95,7 +95,7 @@ private:
 
     auto children = node->children();
 
-    children.foreach([&](const auto& child) {
+    children.values().foreach([&](const auto& child) {
       _renderNode(child, cameraNode);
     });
   }

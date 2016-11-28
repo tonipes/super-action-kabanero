@@ -16,6 +16,7 @@
 #include "resource/loader/AudioLoader.hpp"
 #include "resource/loader/AtlasLoader.hpp"
 #include "audio/AudioPlayer.hpp"
+#include "input/InputTranslator.hpp"
 
 App::App(std::shared_ptr<Game> game) : _game(game) {
   auto logger = std::make_shared<DefaultLogger>();
@@ -90,6 +91,9 @@ auto App::run() -> void {
   auto last_update_time = Clock::now();
   auto last_draw_time = Clock::now();
 
+
+  std::shared_ptr<InputTranslator> inputTranslator = std::make_shared<InputTranslator>();
+
   while (window.isOpen()) {
     auto current_time = Clock::now();
 
@@ -111,6 +115,7 @@ auto App::run() -> void {
 
     sf::Event event;
     while (window.pollEvent(event)) {
+      inputTranslator->processMessage(event);
       if (event.type == sf::Event::Closed) {
         window.close();
       } else if (event.type == sf::Event::Resized) {

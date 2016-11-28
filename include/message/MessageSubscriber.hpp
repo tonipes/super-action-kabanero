@@ -17,7 +17,9 @@ public:
    * @param  path The path to the event handler, formatted "foo/bar/baz/..."
    * @return      Event handler
    */
-  virtual auto getEventHandler(const std::string& path) const -> EventHandler& = 0;
+  virtual auto getEventHandler(const std::string& path) -> EventHandler& = 0;
+
+  virtual auto getAllEventHandlers() -> KBVector<EventHandler> = 0;
 
   auto socket() const -> std::string {
     return _socket;
