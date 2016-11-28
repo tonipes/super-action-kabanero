@@ -39,3 +39,6 @@ bin/
 imgui.ini
 *.sublime-workspace
 *.DS_Store
+
+# Built assets
+resources/atlases

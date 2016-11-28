@@ -1,21 +1,27 @@
 #pragma once
 
+#define GLM_FORCE_SWIZZLE
+#include <glm/glm.hpp>
+
 #include "collection/mutable/KBVector.hpp"
 #include "collection/mutable/KBMap.hpp"
 #include "collection/mutable/KBTypeMap.hpp"
 #include "collection/Option.hpp"
 #include "scene/Transform.hpp"
 #include "scene/NodeAttachment.hpp"
+#include "message/EventHandler.hpp"
+#include "behavior/Behavior.hpp"
 #include <typeinfo>
 #include <iostream>
 #include <memory>
 #include "util/MatrixUtil.hpp"
+#include "glm/gtx/string_cast.hpp"
 
 /**
  * Node interface.
  */
 template <typename T>
-class Node : public std::enable_shared_from_this<Node<T>> {
+class Node : public EventHandler, public std::enable_shared_from_this<Node<T>> {
 public:
   Node(std::string name) : _name(name) {}
 
@@ -27,12 +33,12 @@ public:
     return _parent;
   }
 
-  auto children() const -> const KBVector<Node>& {
+  auto children() const -> const KBMap<std::string, std::shared_ptr<Node>>& {
     return _children;
   }
 
   auto addChild(std::shared_ptr<Node> child) -> void {
-    _children += child;
+    _children.insert(child->name(), child);
     child->_setParent(this->shared_from_this());
     child->_setUpdateFlag();
   }
@@ -42,8 +48,13 @@ public:
   }
 
   template <typename AttachmentType>
-  auto get() -> Option<AttachmentType> {
-    _attachments.get<AttachmentType>();
+  auto get() const -> Option<AttachmentType> {
+     auto attachment =  _attachments.get<AttachmentType>();
+    if (attachment.isDefined()) {
+      return Some<AttachmentType>(std::dynamic_pointer_cast<AttachmentType>(attachment.get()));
+    } else {
+      return Option<AttachmentType>();
+    }
   }
 
   auto transform() const -> typename T::matrixType {
@@ -104,6 +115,21 @@ public:
     return true;
   }
 
+  template <typename BehaviorType>
+  auto addBehavior() -> void {
+    auto behavior = std::make_shared<BehaviorType>(this);
+    _behaviors += behavior;
+  }
+
+  auto update(float delta) -> void {
+    _behaviors.foreach([&](auto& behavior) {
+      behavior->update(delta);
+    });
+    _children.values().foreach([&](auto child) {
+      child->update(delta);
+    });
+  }
+
 protected:
   mutable bool _shouldUpdate = true;
 
@@ -117,10 +143,8 @@ protected:
   auto _setUpdateFlag() const -> void {
     if (!_shouldUpdate) {
       _shouldUpdate = true;
-      _children.foreach([](auto childPtr) {
-        if (auto child = childPtr.lock()) {
-          child->_setUpdateFlag();
-        }
+      _children.values().foreach([](auto child) {
+        child->_setUpdateFlag();
       });
     }
   }
@@ -132,10 +156,11 @@ protected:
 
 private:
   std::string _name;
-  KBVector<std::weak_ptr<Node>> _children;
+  KBMap<std::string, std::shared_ptr<Node>> _children;
   Option<Node> _parent;
   KBTypeMap<std::shared_ptr<NodeAttachment>> _attachments;
   T _transform;
+  KBVector<std::shared_ptr<Behavior>> _behaviors;
   mutable typename T::matrixType _worldTransform;
 };
 
@@ -143,9 +168,9 @@ template <typename T>
 auto operator<<(std::ostream& os, const Node<T>& node) -> std::ostream& {
   os << "Node: " <<
     "  name: " << node.name() << std::endl <<
-    "  position: " << node.position() << std::endl <<
-    "  rotation: " << node.rotation() << std::endl <<
-    "  scale: " << node.scale();
+    "  position: " << glm::to_string(node.position()) << std::endl <<
+    "  rotation: " << glm::to_string(node.rotation()) << std::endl <<
+    "  scale: " << glm::to_string(node.scale());
 
   return os;
 

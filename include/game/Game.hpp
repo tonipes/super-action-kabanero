@@ -7,26 +7,21 @@
 #include "message/MessageSubscriber.hpp"
 #include "scene/2D/Transform2D.hpp"
 #include "scene/3D/Transform3D.hpp"
+#include "service/Services.hpp"
 
 /**
  * Game class.
  * @todo Resizing could also do resizing with message.
  * @todo Could be more generic. (transform)
  */
-class Game: public Updateable, public MessageSubscriber  {
+class Game: public Updateable, public MessageSubscriber, public EventHandler {
 public:
   typedef Transform2D Transform;
 
-  Game(Renderer& renderer):
-      Updateable(),
-      MessageSubscriber("game"),
-      _renderer(renderer),
-      _scene(GameScene<Transform3D>("testScene")) {
-
-  }
+  Game() : Updateable(), MessageSubscriber("game") {}
   ~Game() {}
 
-  auto init() -> void override {}
+  virtual auto init() -> void = 0;
 
   auto resize(int x, int y) -> void {}
 
@@ -35,20 +30,33 @@ public:
    * @param delta time since last render.
    * @param resourceManager to get resources from.
    */
-  auto render() -> void {
-    _renderer.render<Transform3D>(_scene);
+  auto render(Renderer& renderer) -> void {
+    activeScenes.foreach([&](auto& scene){
+      renderer.render(scene->getSceneViews());
+    });
   }
 
   auto update(double delta) -> void override {
-    _scene.update(delta);
+    activeScenes.foreach([&](auto& scene){
+      scene->update(delta);
+    });
   }
 
-  auto getEventHandler(const std::string& address) const -> EventHandler& override {
-    auto eh = EventHandler();
-    return eh;
+  auto getEventHandler(const std::string& address) -> EventHandler& override {
+    return *this;
+  }
+
+  auto getAllEventHandlers() -> KBVector<EventHandler> override {
+    auto v = KBVector<EventHandler>();
+    v += *this;
+    return v;
+  }
+
+  auto addScene(std::shared_ptr<Scene<Transform3D>> scene) {
+    activeScenes += scene;
+    Services::messagePublisher()->addSubscriber(scene);
   }
 
 private:
-  Renderer _renderer;
-  GameScene<Transform3D> _scene; // Placeholder. There will be multiple scenes in a game
+  KBVector<std::shared_ptr<Scene<Transform3D>>> activeScenes;
 };

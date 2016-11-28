@@ -26,6 +26,17 @@ public:
     };
   }
 
+  // template <typename F>
+  // auto addEventReactor(F&& func) -> void {
+  //   typedef function_traits<F> traits;
+  //   typedef typename traits::template arg<0>::type argType;
+  //
+  //   reactors[t] = [func{std::move(func)}](const std::shared_ptr<Event>& event) -> void {
+  //     auto castEvent = std::dynamic_pointer_cast<argType>(event);
+  //     func(*castEvent);
+  //   };
+  // }
+
 private:
   KBTypeMap<std::function<void(const std::shared_ptr<Event>&)>> reactors;
 };

@@ -6,6 +6,8 @@
 #include "util/StringUtil.hpp"
 #include "exception/EngineException.hpp"
 
+#include <string>
+
 /**
  * Default implementation of message publisher
  */
@@ -25,18 +27,34 @@ public:
   auto publishMessages() -> void override {
     for (auto& message : _messages) {
       auto socketAndPath = split(message.address(), ':');
-      if (socketAndPath.length() != 2) {
-        throw EngineException("Invalid message address: " + message.address());
+      if (socketAndPath.length() == 0) {
+        throw EngineException("No message address provided");
       }
       auto socket = socketAndPath[0];
-      auto path = socketAndPath[1];
-      auto subscriber = _subscribers[socket];
+      if (socket.compare("all") == 0) { // They match
+        _subscribers.values().foreach([&](auto subscriber) {
+          if (auto sharedPtr = subscriber.lock()) {
+            sharedPtr->getAllEventHandlers().foreach([&](auto eventHandler) {
+              eventHandler.handleEvent(message.event());
+            });
+          }
+        });
+      } else if (socketAndPath.length() == 1) {
+        auto subscriber = _subscribers[socket];
 
-      if (auto sharedPtr = subscriber.lock()) {
-        auto& eventHandler = sharedPtr->getEventHandler(path);
-        eventHandler.handleEvent(message.event());
+        if (auto sharedPtr = subscriber.lock()) {
+          auto& eventHandler = sharedPtr->getEventHandler("");
+          eventHandler.handleEvent(message.event());
+        }
+      } else {
+        auto path = socketAndPath[1];
+        auto subscriber = _subscribers[socket];
+
+        if (auto sharedPtr = subscriber.lock()) {
+          auto& eventHandler = sharedPtr->getEventHandler(path);
+          eventHandler.handleEvent(message.event());
+        }
       }
-
     }
     _messages = KBVector<Message>();
   }

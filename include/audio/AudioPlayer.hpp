@@ -4,37 +4,74 @@
 #include <regex>
 
 #include "resource/resource/Audio.hpp"
+#include "exception/EngineException.hpp"
 #include "message/Message.hpp"
 #include "message/MessageSubscriber.hpp"
 #include "service/Services.hpp"
 #include "audio/AudioClip.hpp"
+#include "audio/AudioTrack.hpp"
 #include "collection/mutable/KBMap.hpp"
 #include "util/StringUtil.hpp"
 
 /**
  * AudioPlayer class.
  */
-class AudioPlayer: public MessageSubscriber {
+class AudioPlayer: public MessageSubscriber, public EventHandler {
 public:
-  AudioPlayer(std::string audioFolderPath) :
+  AudioPlayer(std::string audioFolderPath, int maxClipCount = 4) :
       MessageSubscriber("audioPlayer"),
-      _audioFolderPath(audioFolderPath) {}
+      _maxClipCount(maxClipCount),
+      _audioFolderPath(audioFolderPath) { }
 
-  ~AudioPlayer() {std::cout << "~AudioPlayer" << std::endl;}
+  ~AudioPlayer() { std::cout << "~AudioPlayer" << std::endl; }
 
-  auto getEventHandler(const std::string& path) const -> EventHandler& override {
-    if (!clips.contains(path)) {
-      std::string fullPath = _audioFolderPath + path;
-      clips[path] = std::make_shared<AudioClip>(fullPath);
+  auto getEventHandler(const std::string& path) -> EventHandler& override {
+    auto parts = split(path, '/');
+    auto type = parts[0];
+    auto id = parts[1];
+    // std::cout << "type: " << type << '\n';
+    // std::cout << "id: " << id << '\n';
+
+    if (type.compare("track") == 0) { // Track event
+      // std::cout << "track" << '\n';
+
+      if (!tracks.contains(id)) {
+        tracks[id] = std::make_shared<AudioTrack>();
+      }
+      return *tracks[id];
+
+    } else if (type.compare("clip") == 0) { // Clip event
+      auto len = (int) clips.length();
+
+      if(len == _maxClipCount - 1){
+        clips.remove(0);
+      }
+
+      std::string fullPath = _audioFolderPath + id;
+      clips += std::make_unique<AudioClip>(fullPath);
+
+      return *clips[clips.length()-1];
+
+    } else {
+      throw EngineException("Error with audio event");
     }
-    return *clips[path];
+  }
+
+  auto getAllEventHandlers() -> KBVector<EventHandler> override {
+    auto v = KBVector<EventHandler>();
+    v += *this;
+    return v;
   }
 
 private:
   AudioPlayer(AudioPlayer& audioPlayer) : MessageSubscriber(audioPlayer.socket()){}
-  bool isPlaying = false;
-  sf::Sound _music;
-  mutable KBMap<std::string, std::shared_ptr<AudioClip>> clips;
-  // AudioClip testClip = AudioClip(_audioFolderPath + "local_forecast.ogg");
+
+  // mutable std::vector<int> clips;
+  // mutable std::vector<std::unique_ptr<AudioClip>> clips;
+  mutable KBVector<std::unique_ptr<AudioClip>> clips;
+
+  mutable KBMap<std::string, std::shared_ptr<AudioTrack>> tracks;
+
   std::string _audioFolderPath;
+  int _maxClipCount;
 };

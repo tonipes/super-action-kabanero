@@ -3,4 +3,7 @@
 /**
  * NodeAttachment interface.
  */
-class NodeAttachment { };
+class NodeAttachment {
+public:
+  virtual ~NodeAttachment() { };
+};

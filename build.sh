@@ -27,6 +27,11 @@ else
     (cd "$BUILD_DIR" && make docs) || exit $?
   fi
 
+  if [ "$1" = "assets" ]; then
+    echo "Building assets"
+    java -jar tools/runnable-texturepacker.jar raw_assets/sprites resources/atlases pack tools/texturepacker-settings.json
+  fi
+
   if [ "$1" = "make" ] || [ "$1" = "run" ] || [ "$1" = "testrun" ] || [ "$1" = "test" ]; then
     echo "Running make"
     (cd "$BUILD_DIR" && make) || exit $?

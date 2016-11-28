@@ -2,6 +2,7 @@
 
 #include "message/Event.hpp"
 #include <string>
+#include <memory>
 
 /**
  * Message class.
