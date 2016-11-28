@@ -21,6 +21,10 @@ public:
     return _action;
   }
 
+  auto isPressed() const -> bool {
+    return _isPressed;
+  }
+
 private:
   GameInputAction _action;
   bool _isPressed;
