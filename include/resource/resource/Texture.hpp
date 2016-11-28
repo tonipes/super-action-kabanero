@@ -11,7 +11,7 @@ class Texture : public Resource {
 public:
   Texture(sf::Texture texture) : _texture(texture) {}
 
-  auto getTexture() const -> sf::Texture {return _texture;}
+  auto getTexture() const -> const sf::Texture& {return _texture;}
 
   friend std::ostream& operator<<(std::ostream& os, Texture rexture);
 

@@ -3,6 +3,8 @@
 #include "service/Services.hpp"
 #include "message/event/AudioClipEvent.hpp"
 #include "message/event/AudioTrackEvent.hpp"
+#include "minebombers/level/LevelCompiler.hpp"
+#include "minebombers/level/CaveGenerator.hpp"
 #include "minebombers/behaviors/CameraBehavior.hpp"
 #include "minebombers/events/TestEvent.hpp"
 
@@ -29,29 +31,22 @@ auto Minebombers::init() -> void {
 
   auto rootNode = std::make_shared<Node<Transform3D>>("world");
 
-  auto terrainNode = std::make_shared<Node<Transform3D>>("terrain");
-  terrainNode->addAttachment(std::make_shared<SpriteAttachment>("test-ground/lava0"));
+  int seed = 4;
 
-  auto terrainNode1 = std::make_shared<Node<Transform3D>>("terrain1");
-  terrainNode1->addAttachment(std::make_shared<SpriteAttachment>("test-ground/lava1"));
-  terrainNode1->setLocalPosition(glm::vec3(1, 0, 0));
+  auto random = StdLibRandom();
+  random.seed(seed);
 
-  auto terrainNode2 = std::make_shared<Node<Transform3D>>("terrain2");
-  terrainNode2->addAttachment(std::make_shared<SpriteAttachment>("test-ground/lava2"));
-  terrainNode2->setLocalPosition(glm::vec3(0, 2, 0));
+  auto caveGen = CaveGenerator(seed, 64, 64, 4, 3);
+  auto tileMap = caveGen.generate();
+  auto levelCompiler = LevelCompiler(random);
 
-  auto terrainNode3 = std::make_shared<Node<Transform3D>>("terrain3");
-  terrainNode3->addAttachment(std::make_shared<SpriteAttachment>("test-ground/lava3"));
-  terrainNode3->setLocalPosition(glm::vec3(-1, -1, 0));
-
-  rootNode->addChild(terrainNode);
-  rootNode->addChild(terrainNode1);
-  rootNode->addChild(terrainNode2);
-  rootNode->addChild(terrainNode3);
+  rootNode->addChild(levelCompiler.materializeGround(tileMap));
+  rootNode->addChild(levelCompiler.materializeObjects(tileMap));
 
   Services::logger()->debug("num children: " + std::to_string(rootNode->children().values().length()));
 
   auto cameraNode = std::make_shared<Node<Transform3D>>("camera");
+  cameraNode->setLocalPosition(glm::vec3(12, 11, 0));
   cameraNode->addBehavior<CameraBehavior>();
   rootNode->addChild(cameraNode);
 

@@ -4,6 +4,8 @@
 #include "minebombers/level/CellularAutomata.hpp"
 #include "minebombers/level/SpawnPointPlacer.hpp"
 #include "minebombers/level/ConstructedWallPlacer.hpp"
+#include "minebombers/level/FloodFill.hpp"
+#include "random/StdLibRandom.hpp"
 
 class CaveGenerator {
 public:

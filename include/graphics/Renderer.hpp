@@ -53,6 +53,7 @@ private:
   sf::RenderWindow& _window;
   int _tilesize;
 
+
   auto _renderNode(const std::shared_ptr<Node<Transform3D>> node, const std::shared_ptr<Node<Transform3D>> cameraNode) -> void {
     auto resourceManager = Services::resourceManager();
     auto atlas = resourceManager->getRequired<Atlas>("resources/atlases/pack.atlas");
@@ -65,12 +66,10 @@ private:
       if (someSprite.isDefined()) {
         auto sprite = someSprite.get();
         auto texPath = sprite.texturePath();
-        const auto tex = resourceManager->getRequired<Texture>(texPath)->getTexture();
-        auto texSize = tex.getSize();
         auto xy = sprite.xy();
         auto spriteSize = sprite.size();
 
-        sf::Sprite sfSprite(tex);
+        sf::Sprite sfSprite(resourceManager->getRequired<Texture>(texPath)->getTexture());
         sfSprite.setTextureRect(sf::IntRect(
           xy.x,
           xy.y,
