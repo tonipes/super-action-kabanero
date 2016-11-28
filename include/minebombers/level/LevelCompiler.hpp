@@ -1,6 +1,10 @@
 #pragma once
 
 #include "minebombers/level/TileMap.hpp"
+#include "scene/Node.hpp"
+#include "scene/3D/Transform3D.hpp"
+#include "scene/attachment/SpriteAttachment.hpp"
+#include <sstream>
 
 class LevelCompiler {
 public:
