@@ -2,7 +2,6 @@
 #define GLM_FORCE_SWIZZLE
 #include <glm/glm.hpp>
 
-#include <Box2D/Box2D.h>
 #include <sol.hpp>
 
 #include "app/App.hpp"
@@ -77,6 +76,7 @@ App::App(std::shared_ptr<Game> game) : _game(game) {
 
 auto App::init() -> void {
   Services::logger()->info("Creating game");
+
   _game->init();
 }
 
@@ -90,6 +90,7 @@ auto App::run() -> void {
 
   auto last_update_time = Clock::now();
   auto last_draw_time = Clock::now();
+
 
   std::shared_ptr<InputTranslator> inputTranslator = std::make_shared<InputTranslator>();
 
