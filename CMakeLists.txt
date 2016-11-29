@@ -29,6 +29,14 @@ add_subdirectory("${CMAKE_SOURCE_DIR}/lib/imgui-sfml")
 
 add_subdirectory(test)
 
+set(BOX2D_INSTALL_DOC OFF)
+set(BOX2D_BUILD_EXAMPLES OFF)
+set(BOX2D_INSTALL OFF CACHE BOOL "Install Box2D libs, includes, and CMake scripts")
+set(BOX2D_INSTALL_DOC OFF CACHE BOOL "Install Box2D documentation")
+set(BOX2D_BUILD_SHARED OFF CACHE BOOL "Build Box2D shared libraries")
+set(BOX2D_BUILD_EXAMPLES OFF CACHE BOOL "Build Box2D examples")
+add_subdirectory("lib/box2d/Box2D")
+
 # Documentation
 find_package(Doxygen)
 option(BUILD_DOCUMENTATION "Create and install the HTML based API
@@ -80,3 +88,11 @@ if (OPENGL_FOUND)
   # or: target_link_libraries(${EXECUTABLE_NAME} ${OPENGL_gl_LIBRARY})
   target_link_libraries(${EXECUTABLE_NAME} m)  # if you use maths.h
 endif()
+
+target_include_directories(${EXECUTABLE_NAME} PUBLIC
+	${CMAKE_CURRENT_SOURCE_DIR}/lib/Box2D/Box2D
+)
+
+target_link_libraries(${EXECUTABLE_NAME}
+	Box2D
+)

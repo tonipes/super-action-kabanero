@@ -13,3 +13,6 @@
 [submodule "lib/glm"]
 	path = lib/glm
 	url = https://github.com/g-truc/glm.git
+[submodule "lib/box2d"]
+	path = lib/box2d
+	url = https://github.com/erincatto/Box2D.git
