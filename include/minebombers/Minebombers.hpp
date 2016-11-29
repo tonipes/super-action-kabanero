@@ -5,7 +5,7 @@
 
 class Minebombers : public Game {
 public:
-  Minebombers() : _physWorld(b2Vec2(0.0f,0.0f)) {}
+  Minebombers() : _physWorld(b2Vec2(0.0f,0.0f)), _phys_elapsed(0.0), _phys_step(0.033) {}
   auto init() -> void;
   auto update(double delta) -> void override {
     Game::update(delta);
@@ -17,6 +17,6 @@ public:
   }
 private:
   b2World _physWorld;
-  double _phys_elapsed = 0.0;
-  const double _phys_step = 1000.0 / 30.0;
+  double _phys_elapsed;
+  const double _phys_step;
 };

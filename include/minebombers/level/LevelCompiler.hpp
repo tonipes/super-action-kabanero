@@ -77,6 +77,7 @@ public:
     b2BodyDef bodyDef;
     bodyDef.type = b2_dynamicBody;
     bodyDef.position.Set(x, y);
+    bodyDef.allowSleep = false;
     b2Body* body = _world.CreateBody(&bodyDef);
     b2CircleShape circleShape;
     circleShape.m_p.Set(0, 0); //position, relative to body position
