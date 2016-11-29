@@ -3,6 +3,7 @@
 #include "app/App.hpp"
 #include "minebombers/Minebombers.hpp"
 
+
 int main(int argc, char* argv[]) {
   if(argc > 1 && std::string(argv[1]) == "testrun") {
     // Program is run with 'testrun' parameter.
