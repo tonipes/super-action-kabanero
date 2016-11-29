@@ -2,10 +2,10 @@
 #define GLM_FORCE_SWIZZLE
 #include <glm/glm.hpp>
 
-#include "app/App.hpp"
-
+#include <Box2D/Box2D.h>
 #include <sol.hpp>
 
+#include "app/App.hpp"
 #include "service/Services.hpp"
 #include "logger/DefaultLogger.hpp"
 #include "resource/resourceManager/SyncResourceManager.hpp"
@@ -91,10 +91,42 @@ auto App::run() -> void {
   auto last_update_time = Clock::now();
   auto last_draw_time = Clock::now();
 
-
   std::shared_ptr<InputTranslator> inputTranslator = std::make_shared<InputTranslator>();
 
+  // Shameless box2d test
+  b2Vec2 gravity(0.0f, -10.0f);
+  b2World world(gravity);
+  b2BodyDef groundBodyDef;
+  groundBodyDef.position.Set(0.0f, -10.0f);
+  auto groundBody = world.CreateBody(&groundBodyDef);
+  b2PolygonShape groundBox;
+  groundBox.SetAsBox(50.0f, 10.0f);
+  groundBody->CreateFixture(&groundBox, 0.0f);
+
+  b2BodyDef bodyDef;
+  bodyDef.type = b2_dynamicBody;
+  bodyDef.position.Set(0.0f, 4.0f);
+  b2Body* body = world.CreateBody(&bodyDef);
+  b2PolygonShape dynamicBox;
+  dynamicBox.SetAsBox(1.0f, 1.0f);
+  b2FixtureDef fixtureDef;
+  fixtureDef.shape = &dynamicBox;
+  fixtureDef.density = 1.0f;
+  fixtureDef.friction = 0.3f;
+  body->CreateFixture(&fixtureDef);
+
   while (window.isOpen()) {
+    
+    // b2d test
+    world.Step(1.0f / 60.0f, 6, 2);
+    auto position = body->GetPosition();
+    auto angle = body->GetAngle();
+    std::stringstream s;
+    s << "pos: " << position.x << "," <<  position.y << ". ang: " << angle;
+    std::string str = s.str();
+    Services::logger()->debug(s.str());
+    // b2d test end
+
     auto current_time = Clock::now();
 
     auto update_delta_ms = std::chrono::duration_cast<ms>(current_time - last_update_time);
