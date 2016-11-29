@@ -11,7 +11,7 @@
 template <typename T>
 class GameScene : public Scene<T>, public EventHandler {
 public:
-  GameScene(std::string name, std::shared_ptr<Node<T>> rootNode) : Scene<T>(name, rootNode), _physWorld(b2Vec2(0.0f,0.0f)) {}
+  GameScene(std::string name, std::shared_ptr<Node<T>> rootNode) : Scene<T>(name, rootNode) {}
   virtual ~GameScene() {}
 
   auto init() -> void override {
@@ -19,11 +19,6 @@ public:
   }
 
   auto update(double delta) -> void override {
-    _phys_elapsed += delta;
-    while (_phys_elapsed >= _phys_step) {
-      _phys_elapsed -= _phys_step;
-      _physWorld.Step(_phys_step, 8, 3);
-    }
     this->rootNode()->update(delta);
   }
 
@@ -55,9 +50,6 @@ public:
     return v;
   }
 private:
-  b2World _physWorld;
-  double _phys_elapsed = 0.0;
-  const double _phys_step = 1000.0 / 30.0;
   auto _getAllNodes(std::shared_ptr<Node<T>> node) -> KBVector<std::shared_ptr<Node<T>>> {
     auto v = KBVector<std::shared_ptr<Node<T>>>();
     v += node;

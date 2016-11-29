@@ -26,10 +26,6 @@ class Node : public EventHandler, public std::enable_shared_from_this<Node<T>> {
 public:
   Node(std::string name) : _name(name) {}
 
-  auto physics() const -> b2BodyDef {
-    return _physBody;
-  }
-
   auto name() const -> std::string {
     return _name;
   }
@@ -161,7 +157,6 @@ protected:
 
 private:
   std::string _name;
-  b2BodyDef _physBody;
   KBMap<std::string, std::shared_ptr<Node>> _children;
   Option<Node> _parent;
   KBTypeMap<std::shared_ptr<NodeAttachment>> _attachments;
