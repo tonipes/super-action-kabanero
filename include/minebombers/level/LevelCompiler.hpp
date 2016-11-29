@@ -33,7 +33,7 @@ public:
         oss << "wall" << x << "-" << y;
         auto node = std::make_shared<Node<Transform3D>>(oss.str());
         node->setLocalPosition(glm::vec3(x, y, 1));
-        auto physBody = createPhysSquare(x, y);
+        auto createPhysBody = true;
         auto health = 100.0f;
         if (map[x][y].getType() == CAVE_WALL) {
           node->addAttachment(getSprite("tiles/pebble_brown", 8));
@@ -46,8 +46,13 @@ public:
         } else if (map[x][y].getType() == WINDOW) {
           health = 10.0f;
           node->addAttachment(getSprite("tiles/window", 0));
+        } else {
+          createPhysBody = false;
         }
-        node->addBehavior<TerrainBehaviour>(health, physBody);
+        if (createPhysBody) {
+          auto physBody = createPhysSquare(x, y);
+          node->addBehavior<TerrainBehaviour>(health, physBody);
+        }
         objects->addChild(node);
       }
     }

@@ -31,7 +31,7 @@ auto Minebombers::init() -> void {
 
   auto rootNode = std::make_shared<Node<Transform3D>>("world");
 
-  int seed = 4;
+  int seed = 5;
 
   auto random = StdLibRandom();
   random.seed(seed);
@@ -47,7 +47,7 @@ auto Minebombers::init() -> void {
   Services::logger()->debug("num children: " + std::to_string(rootNode->children().values().length()));
 
   auto cameraNode = std::make_shared<Node<Transform3D>>("camera");
-  cameraNode->setLocalPosition(glm::vec3(12, 11, 0));
+  cameraNode->setLocalPosition(glm::vec3(0, 0, 0));
   cameraNode->addBehavior<CameraBehavior>(0.2f);
   rootNode->addChild(cameraNode);
 

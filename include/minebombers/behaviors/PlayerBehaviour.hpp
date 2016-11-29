@@ -39,12 +39,10 @@ public:
       moveDirection.y /= 1.41421356237f;
     }
 
-    moveDirection.x *= 2;
-    moveDirection.y *= 2;
+    moveDirection.x *= 4.5f;
+    moveDirection.y *= 4.5f;
 
     _physBody->SetLinearVelocity(b2Vec2(moveDirection.x, moveDirection.y));
-    std::cout << _physBody->GetLinearVelocity().x << "\n";
-    std::cout << _physBody->GetPosition().x << "\n";
     auto pos = _physBody->GetPosition();
 
     node.setLocalPosition(glm::vec3(pos.x, pos.y, 2));
