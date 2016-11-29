@@ -49,8 +49,7 @@ public:
     });
     return v;
   }
-public:
-
+private:
   auto _getAllNodes(std::shared_ptr<Node<T>> node) -> KBVector<std::shared_ptr<Node<T>>> {
     auto v = KBVector<std::shared_ptr<Node<T>>>();
     v += node;

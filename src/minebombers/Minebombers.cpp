@@ -31,23 +31,24 @@ auto Minebombers::init() -> void {
 
   auto rootNode = std::make_shared<Node<Transform3D>>("world");
 
-  int seed = 4;
+  int seed = 5;
 
   auto random = StdLibRandom();
   random.seed(seed);
 
   auto caveGen = CaveGenerator(seed, 64, 64, 4, 3);
   auto tileMap = caveGen.generate();
-  auto levelCompiler = LevelCompiler(random);
+  auto levelCompiler = LevelCompiler(random, _physWorld);
 
-  rootNode->addChild(levelCompiler.materializeGround(tileMap));
+  //rootNode->addChild(levelCompiler.materializeGround(tileMap));
   rootNode->addChild(levelCompiler.materializeObjects(tileMap));
+  rootNode->addChild(levelCompiler.materializePlayer(tileMap));
 
   Services::logger()->debug("num children: " + std::to_string(rootNode->children().values().length()));
 
   auto cameraNode = std::make_shared<Node<Transform3D>>("camera");
-  cameraNode->setLocalPosition(glm::vec3(12, 11, 0));
-  cameraNode->addBehavior<CameraBehavior>(1.1f);
+  cameraNode->setLocalPosition(glm::vec3(0, 0, 0));
+  cameraNode->addBehavior<CameraBehavior>(0.2f);
   rootNode->addChild(cameraNode);
 
   auto scene = std::make_shared<GameScene<Transform3D>>("gameScene", rootNode);

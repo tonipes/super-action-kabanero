@@ -2,10 +2,9 @@
 #define GLM_FORCE_SWIZZLE
 #include <glm/glm.hpp>
 
-#include "app/App.hpp"
-
 #include <sol.hpp>
 
+#include "app/App.hpp"
 #include "service/Services.hpp"
 #include "logger/DefaultLogger.hpp"
 #include "resource/resourceManager/SyncResourceManager.hpp"
@@ -77,6 +76,7 @@ App::App(std::shared_ptr<Game> game) : _game(game) {
 
 auto App::init() -> void {
   Services::logger()->info("Creating game");
+
   _game->init();
 }
 
@@ -95,6 +95,7 @@ auto App::run() -> void {
   std::shared_ptr<InputTranslator> inputTranslator = std::make_shared<InputTranslator>();
 
   while (window.isOpen()) {
+
     auto current_time = Clock::now();
 
     auto update_delta_ms = std::chrono::duration_cast<ms>(current_time - last_update_time);

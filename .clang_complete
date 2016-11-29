@@ -1,5 +1,6 @@
 -Ilib/imgui
 -Ilib/imgui-sfml
+-Ilib/Box2D/Box2D
 -Ilib/sol2/single/sol
 -DGLM_FORCE_SWIZZLE=ON
 -Ilib/glm
