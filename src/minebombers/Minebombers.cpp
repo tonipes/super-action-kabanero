@@ -47,7 +47,7 @@ auto Minebombers::init() -> void {
 
   auto cameraNode = std::make_shared<Node<Transform3D>>("camera");
   cameraNode->setLocalPosition(glm::vec3(12, 11, 0));
-  cameraNode->addBehavior<CameraBehavior>();
+  cameraNode->addBehavior<CameraBehavior>(1.1f);
   rootNode->addChild(cameraNode);
 
   auto scene = std::make_shared<GameScene<Transform3D>>("gameScene", rootNode);

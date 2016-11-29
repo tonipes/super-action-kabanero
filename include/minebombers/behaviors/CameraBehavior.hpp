@@ -11,7 +11,7 @@
 
 class CameraBehavior : public Behavior<Transform3D> {
 public:
-  CameraBehavior(Node<Transform3D>* node) {
+  CameraBehavior(Node<Transform3D>* node, float camSpeed) : _camSpeed(camSpeed) {
     node->addEventReactor([&](TestEvent event) {
       auto action = event.action();
       if (action == A) {
@@ -43,7 +43,7 @@ public:
     if (moveLeft) moveDirection.x -= 1;
 
     auto pos = node.position();
-    node.setLocalPosition(pos + glm::vec3(moveDirection, 0));
+    node.setLocalPosition(pos + glm::vec3(moveDirection, 0) * _camSpeed);
   }
 
 private:
@@ -51,4 +51,5 @@ private:
   bool moveRight = false;
   bool moveDown = false;
   bool moveLeft = false;
+  float _camSpeed;
 };

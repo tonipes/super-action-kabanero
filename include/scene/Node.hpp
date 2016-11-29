@@ -115,9 +115,9 @@ public:
     return true;
   }
 
-  template <typename BehaviorType>
-  auto addBehavior() -> void {
-    auto behavior = std::make_shared<BehaviorType>(this);
+  template <typename BehaviorType, typename... Args>
+  auto addBehavior(Args&&... args) -> void {
+    auto behavior = std::make_shared<BehaviorType>(this, std::forward<Args>(args)...);
     _behaviors += behavior;
   }
 
