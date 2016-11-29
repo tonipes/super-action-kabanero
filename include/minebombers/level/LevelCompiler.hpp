@@ -69,7 +69,7 @@ public:
     bodyDef.position.Set(x, y);
     b2Body* body = _world.CreateBody(&bodyDef);
     b2PolygonShape box;
-    box.SetAsBox(1.0f, 1.0f);
+    box.SetAsBox(0.5f, 0.5f);
     body->CreateFixture(&box, 0.0f);
     return body;
   }
