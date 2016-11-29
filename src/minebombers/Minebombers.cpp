@@ -40,8 +40,7 @@ auto Minebombers::init() -> void {
   auto tileMap = caveGen.generate();
   auto levelCompiler = LevelCompiler(random, _physWorld);
 
-  //rootNode->addChild(levelCompiler.materializeGround(tileMap));
-  rootNode->addChild(levelCompiler.materializeObjects(tileMap));
+  rootNode->addChild(levelCompiler.materializeLevel(tileMap));
   rootNode->addChild(levelCompiler.materializePlayer(tileMap));
 
   Services::logger()->debug("num children: " + std::to_string(rootNode->children().values().length()));
