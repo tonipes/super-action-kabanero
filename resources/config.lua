@@ -5,8 +5,8 @@ window_name = "HelloWindow"
 test_string = "This is only a test"
 
 -- Timing [ms]
-update_interval = 16;
-draw_interval = 32;
+update_fps = 60;
+draw_fps = 60;
 
 -- Graphics
 tilesize = 32

@@ -61,8 +61,8 @@ App::App(std::shared_ptr<Game> game) : _game(game) {
   }
 
   // Intervals
-  _update_interval = config["update_interval"].get_or(32);
-  _draw_interval = config["draw_interval"].get_or(32);
+  _update_interval = 1.0 / config["update_fps"].get_or(30);
+  _draw_interval = 1.0 / config["draw_fps"].get_or(30);
 
   // Get window parameters from config file and create window
   _window_w = config["window_width"].get_or(800);
@@ -94,6 +94,8 @@ auto App::run() -> void {
 
   std::shared_ptr<InputTranslator> inputTranslator = std::make_shared<InputTranslator>();
 
+  auto timeAccumulator = 0.0f;
+
   while (window.isOpen()) {
 
     auto current_time = Clock::now();
@@ -101,17 +103,26 @@ auto App::run() -> void {
     auto update_delta_ms = std::chrono::duration_cast<ms>(current_time - last_update_time);
     double update_delta = update_delta_ms.count() / 1000.0;
 
+    std::cout << update_delta << std::endl;
+    std::cout << _update_interval << std::endl;
+
+    timeAccumulator += update_delta;
+
     auto draw_delta_ms = std::chrono::duration_cast<ms>(current_time - last_draw_time);
     double draw_delta = draw_delta_ms.count() / 1000.0;
 
-    if (update_delta_ms.count() > _update_interval) {
+    auto max_steps = 3;
+    auto i = 0;
+
+    while (timeAccumulator > _update_interval && i < max_steps) {
       Services::messagePublisher()->publishMessages();
-      _game->update(update_delta);
-      last_update_time = current_time;
+      _game->update(_update_interval);
+      timeAccumulator -= _update_interval;
+      ++i;
     }
+    last_update_time = current_time;
     if (draw_delta_ms.count() > _draw_interval) {
       _game->render(renderer);
-      last_draw_time = current_time;
     }
 
     sf::Event event;

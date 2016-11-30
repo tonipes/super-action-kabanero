@@ -9,11 +9,7 @@ public:
   auto init() -> void;
   auto update(double delta) -> void override {
     Game::update(delta);
-    _phys_elapsed += delta;
-    while (_phys_elapsed >= _phys_step) {
-      _phys_elapsed -= _phys_step;
-      _physWorld.Step(_phys_step, 8, 3);
-    }
+    _physWorld.Step(_phys_step, 8, 3);
   }
 private:
   b2World _physWorld;
