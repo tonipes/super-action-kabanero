@@ -103,9 +103,6 @@ auto App::run() -> void {
     auto update_delta_ms = std::chrono::duration_cast<ms>(current_time - last_update_time);
     double update_delta = update_delta_ms.count() / 1000.0;
 
-    std::cout << update_delta << std::endl;
-    std::cout << _update_interval << std::endl;
-
     timeAccumulator += update_delta;
 
     auto draw_delta_ms = std::chrono::duration_cast<ms>(current_time - last_draw_time);
