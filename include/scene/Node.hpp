@@ -74,6 +74,7 @@ public:
   }
 
   auto position() const -> typename T::vectorType {
+    // return glm::vec3(0, 0, 0);
     return MatrixUtil::getTransform(worldTransform());
   }
 
@@ -143,6 +144,7 @@ protected:
       return parentNode.worldTransform() * _transform.matrix();
     }).getOrElse(_transform.matrix());
     _setUpdateFlag();
+    _shouldUpdate = false;
   }
 
   auto _setUpdateFlag() const -> void {
