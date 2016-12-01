@@ -30,6 +30,17 @@ public:
   auto setGroup(int i) -> void { _areaGroup = i; }
   auto isGrouped() const -> bool { return _areaGroup >= 0; }
 
+  auto isSeeThrough() const -> bool {
+    switch(getType()) {
+      case INDESCTRUCTIBLE_WALL:
+      case CAVE_WALL:
+      case CONSTRUCTED_WALL:
+        return false;
+      default:
+        return true;
+    }
+  }
+
   auto isOpen() const -> bool {
     switch (getType()) {
       case OPEN_MAIN:

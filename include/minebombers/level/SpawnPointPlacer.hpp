@@ -5,12 +5,12 @@
 
 class SpawnPointPlacer {
 public:
-  SpawnPointPlacer(TileMap& map, int playerSectors, int itemSectors, Random& rand) :
+  SpawnPointPlacer(std::shared_ptr<TileMap>& map, int playerSectors, int itemSectors, Random& rand) :
    _map(map), _playerSectors(playerSectors), _itemSectors(itemSectors), _rand(rand) {}
 
   auto run() -> void;
 private:
   Random& _rand;
   int _playerSectors, _itemSectors;
-  TileMap& _map;
+  std::shared_ptr<TileMap>& _map;
 };

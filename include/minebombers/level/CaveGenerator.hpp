@@ -12,7 +12,7 @@ public:
   CaveGenerator(int seed, uint width, uint height, int playerSectors, int numItems) :
   _seed(seed), _width(width), _height(height), _playerSectors(playerSectors), _numItems(numItems) {}
 
-  auto generate() -> TileMap {
+  auto generate() -> std::shared_ptr<TileMap> {
     auto random = StdLibRandom(); //TODO
     random.seed(_seed);
 
@@ -29,7 +29,7 @@ public:
 
     int minimumOpen = _width * _height * 45 / 100; // We want at least X% to be open & main area, or we discard the map
     bool enoughOpen = false;
-    for (auto am : tileMap.getGroups().values()) {
+    for (auto am : tileMap->getGroups().values()) {
       if (am >= minimumOpen) enoughOpen = true;
     }
     if (!enoughOpen) {

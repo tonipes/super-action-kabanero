@@ -13,19 +13,19 @@
 class LevelCompiler {
 public:
   LevelCompiler(Random& rand, b2World& w): _rand(rand), _world(w) {}
-  auto materializeLevel(TileMap& map) -> std::shared_ptr<Node<Transform3D>> {
+  auto materializeLevel(std::shared_ptr<TileMap> map) -> std::shared_ptr<Node<Transform3D>> {
     auto level = std::make_shared<Node<Transform3D>>("level");
     auto ground = std::make_shared<Node<Transform3D>>("ground");
     ground->setLocalPosition(glm::vec3(0,0,0));
     auto obj = std::make_shared<Node<Transform3D>>("obj");
     obj->setLocalPosition(glm::vec3(0,0,2));
-    for (auto x = 0; x < map.getWidth(); x++) {
-      for (auto y = 0; y < map.getHeight(); y++) {
+    for (auto x = 0; x < map->getWidth(); x++) {
+      for (auto y = 0; y < map->getHeight(); y++) {
         auto tileNode =  std::make_shared<Node<Transform3D>>(name("tile", x, y));
         auto floorNode = std::make_shared<Node<Transform3D>>(name("floor", x, y));
         floorNode->addAttachment(getSprite("tiles/dirt", 2));
         floorNode->setLocalPosition(glm::vec3(x, y, 0));
-        switch (map[x][y].getType()) {
+        switch ((*map)[x][y].getType()) {
           case CAVE_WALL :
             tileNode->addChild(getTerrain("tiles/pebble_brown", 8, 100.0f, x, y));
             break;
@@ -48,12 +48,12 @@ public:
     return level;
   }
 
-  auto initFog(TileMap& map, std::shared_ptr<FogMap> fogMap) -> std::shared_ptr<Node<Transform3D>> {
-    fogMap->init(map.getWidth(), map.getHeight());
+  auto initFog(std::shared_ptr<TileMap> map, std::shared_ptr<FogMap> fogMap) -> std::shared_ptr<Node<Transform3D>> {
+    fogMap->init(map->getWidth(), map->getHeight());
     auto fogNode = std::make_shared<Node<Transform3D>>("fog");
     fogNode->setLocalPosition(glm::vec3(0,0,100));
-    for (auto x = 0; x < map.getWidth(); x++) {
-      for (auto y = 0; y < map.getHeight(); y++) {
+    for (auto x = 0; x < map->getWidth(); x++) {
+      for (auto y = 0; y < map->getHeight(); y++) {
         auto node = std::make_shared<Node<Transform3D>>(name("fog", x, y));
         node->addAttachment(getSprite("tiles/fog", -1));
         node->setLocalPosition(glm::vec3(x-0.5f,y+0.5f,0));
@@ -65,8 +65,8 @@ public:
     return fogNode;
   }
 
-  auto materializePlayer(TileMap& map) -> std::shared_ptr<Node<Transform3D>> {
-    auto tile = map.getRandom(PLAYER_SPAWN_POINT, _rand);
+  auto materializePlayer(std::shared_ptr<TileMap> map) -> std::shared_ptr<Node<Transform3D>> {
+    auto tile = map->getRandom(PLAYER_SPAWN_POINT, _rand);
     auto node = std::make_shared<Node<Transform3D>>("player");
     node->setLocalPosition(glm::vec3(tile.getX(), tile.getY(), 2));
     node->addAttachment(getSprite("tiles/spriggan_druid", -1));

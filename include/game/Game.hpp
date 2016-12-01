@@ -21,7 +21,7 @@ public:
   Game() : Updateable(), MessageSubscriber("game") {}
   ~Game() {}
 
-  virtual auto init() -> void = 0;
+  virtual auto init() -> void override = 0;
 
   auto resize(int x, int y) -> void {}
 
