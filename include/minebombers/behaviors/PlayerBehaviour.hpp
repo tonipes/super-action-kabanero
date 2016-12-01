@@ -48,6 +48,7 @@ public:
     node.setLocalPosition(glm::vec3(pos.x, pos.y, 2));
     auto pos2 = node.position().xy();
     Services::messagePublisher()->sendMessage(Message("gameScene:camera", std::make_shared<PlayerLocationEvent>(pos2)));
+    Services::messagePublisher()->sendMessage(Message("gameScene:fog", std::make_shared<PlayerLocationEvent>(pos2)));
   }
 
 private:

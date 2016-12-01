@@ -1,10 +1,12 @@
 #pragma once
 
 #include "minebombers/level/TileMap.hpp"
+#include "minebombers/level/FogMap.hpp"
 #include "scene/Node.hpp"
 #include "scene/3D/Transform3D.hpp"
 #include "scene/attachment/SpriteAttachment.hpp"
 #include "minebombers/behaviors/TerrainBehaviour.hpp"
+#include "minebombers/behaviors/FogBehaviour.hpp"
 #include "minebombers/behaviors/PlayerBehaviour.hpp"
 #include <sstream>
 
@@ -46,6 +48,23 @@ public:
     return level;
   }
 
+  auto initFog(TileMap& map, std::shared_ptr<FogMap> fogMap) -> std::shared_ptr<Node<Transform3D>> {
+    fogMap->init(map.getWidth(), map.getHeight());
+    auto fogNode = std::make_shared<Node<Transform3D>>("fog");
+    fogNode->setLocalPosition(glm::vec3(0,0,100));
+    for (auto x = 0; x < map.getWidth(); x++) {
+      for (auto y = 0; y < map.getHeight(); y++) {
+        auto node = std::make_shared<Node<Transform3D>>(name("fog", x, y));
+        node->addAttachment(getSprite("tiles/fog", -1));
+        node->setLocalPosition(glm::vec3(x-0.5f,y+0.5f,0));
+        fogNode->addChild(node);
+        (*fogMap)[x][y] = node;
+      }
+    }
+    fogNode->addBehavior<FogBehaviour>(fogMap);
+    return fogNode;
+  }
+
   auto materializePlayer(TileMap& map) -> std::shared_ptr<Node<Transform3D>> {
     auto tile = map.getRandom(PLAYER_SPAWN_POINT, _rand);
     auto node = std::make_shared<Node<Transform3D>>("player");
@@ -55,6 +74,8 @@ public:
     node->addBehavior<PlayerBehaviour>(physCircle);
     return node;
   }
+
+
 
   auto createPhysSquare(float x, float y) -> b2Body* {
     b2BodyDef bodyDef;
