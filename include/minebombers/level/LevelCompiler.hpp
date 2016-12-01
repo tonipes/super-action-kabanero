@@ -12,7 +12,11 @@ class LevelCompiler {
 public:
   LevelCompiler(Random& rand, b2World& w): _rand(rand), _world(w) {}
   auto materializeLevel(TileMap& map) -> std::shared_ptr<Node<Transform3D>> {
-    auto ground = std::make_shared<Node<Transform3D>>("level");
+    auto level = std::make_shared<Node<Transform3D>>("level");
+    auto ground = std::make_shared<Node<Transform3D>>("ground");
+    ground->setLocalPosition(glm::vec3(0,0,0));
+    auto obj = std::make_shared<Node<Transform3D>>("obj");
+    obj->setLocalPosition(glm::vec3(0,0,2));
     for (auto x = 0; x < map.getWidth(); x++) {
       for (auto y = 0; y < map.getHeight(); y++) {
         auto tileNode =  std::make_shared<Node<Transform3D>>(name("tile", x, y));
@@ -34,10 +38,12 @@ public:
             break;
         }
         ground->addChild(floorNode);
-        ground->addChild(tileNode);
+        obj->addChild(tileNode);
       }
     }
-    return ground;
+    //level->addChild(ground);
+    level->addChild(obj);
+    return level;
   }
 
   auto materializePlayer(TileMap& map) -> std::shared_ptr<Node<Transform3D>> {
@@ -89,7 +95,7 @@ private:
   }
   auto getTerrain(std::string sprites, int spriteVar, float health, int x, int y) -> std::shared_ptr<Node<Transform3D>> {
     auto node = std::make_shared<Node<Transform3D>>(name("obj",x,y));
-    node->setLocalPosition(glm::vec3(x, y, 1));
+    node->setLocalPosition(glm::vec3(x, y, 0));
     node->addAttachment(getSprite(sprites, spriteVar));
     auto physBody = createPhysSquare(x, y);
     node->addBehavior<TerrainBehaviour>(health, physBody);

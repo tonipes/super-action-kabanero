@@ -79,6 +79,7 @@ private:
   }
 
   auto _renderNode(const std::shared_ptr<Node<Transform3D>> node, const std::shared_ptr<Node<Transform3D>> cameraNode, const Atlas& atlas) -> void {
+    if (!node->isRenderOn()) return;
     const auto& resourceManager = Services::resourceManager();
     auto spriteAttachment = node->get<SpriteAttachment>();
 

@@ -24,11 +24,14 @@
 template <typename T>
 class Node : public EventHandler, public std::enable_shared_from_this<Node<T>> {
 public:
-  Node(std::string name) : _name(name) {}
+  Node(std::string name) : _name(name), _render(true) {}
 
   auto physics() const -> b2BodyDef {
     return _physBody;
   }
+
+  auto isRenderOn() const -> bool { return _render; }
+  auto setRenderOn(bool b) -> void { _render = b; }
 
   auto name() const -> std::string {
     return _name;
@@ -165,6 +168,7 @@ private:
   std::string _name;
   b2BodyDef _physBody;
   KBMap<std::string, std::shared_ptr<Node>> _children;
+  bool _render;
   Option<Node> _parent;
   KBTypeMap<std::shared_ptr<NodeAttachment>> _attachments;
   T _transform;
