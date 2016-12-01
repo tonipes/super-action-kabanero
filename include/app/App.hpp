@@ -11,8 +11,8 @@ public:
   auto run() -> void;
 private:
   std::shared_ptr<Game> _game;
-  int _update_interval;
-  int _draw_interval;
+  double _update_interval;
+  double _draw_interval;
   int _window_w;
   int _window_h;
   int _tilesize;
