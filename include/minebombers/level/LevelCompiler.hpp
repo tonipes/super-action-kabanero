@@ -61,7 +61,7 @@ public:
         (*fogMap)[x][y] = node;
       }
     }
-    fogNode->addBehavior<FogBehaviour>(fogMap);
+    fogNode->addBehavior<FogBehaviour>(map, fogMap);
     return fogNode;
   }
 

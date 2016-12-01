@@ -20,7 +20,6 @@ public:
     _map = KBVector<KBVector<std::shared_ptr<Node<Transform3D>>>>();
     _visited = KBVector<KBVector<FogVisibility>>();
     for (auto x = 0; x < width; x++) {
-      std::cout << _visited.length() << "\n";
       _map += KBVector<std::shared_ptr<Node<Transform3D>>>();
       _visited += KBVector<FogVisibility>();
       for (auto y = 0; y < height; y++) {
