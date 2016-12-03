@@ -14,22 +14,23 @@ class ContactListener : public b2ContactListener {
     void* a_userData = contact->GetFixtureA()->GetBody()->GetUserData();
     void* b_userData = contact->GetFixtureB()->GetBody()->GetUserData();
 
-    if (a_userData){
+    if (a_userData)
       a_path = *(std::string*) a_userData;
-      Services::messagePublisher()->sendMessage(Message("gameScene:" + a_path, std::make_shared<CollisionEvent>(TEST) ));
 
-    }
-    if (b_userData){
+    if (b_userData)
       b_path = *(std::string*) b_userData;
-      Services::messagePublisher()->sendMessage(Message("gameScene:" + b_path, std::make_shared<CollisionEvent>(TEST) ));
 
-    }
+    if (!a_path.empty())
+      Services::messagePublisher()->sendMessage(Message("gameScene:" + a_path, std::make_shared<CollisionEvent>(BEGIN, b_path)));
 
-    Services::logger()->debug("BeginContact with " + a_path + " & " + b_path);
+    if (!b_path.empty())
+      Services::messagePublisher()->sendMessage(Message("gameScene:" + b_path, std::make_shared<CollisionEvent>(BEGIN, a_path)));
+
+    // Services::logger()->debug("BeginContact with " + a_path + " & " + b_path);
 
   }
 
   void EndContact(b2Contact* contact) {
-    Services::logger()->debug("EndContact");
+    // Services::logger()->debug("EndContact");
   }
 };

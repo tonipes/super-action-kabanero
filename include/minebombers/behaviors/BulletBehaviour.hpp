@@ -15,6 +15,7 @@ class BulletBehavior : public Behavior<Transform3D> {
 public:
   BulletBehavior(Node<Transform3D>* node, b2Body *physBody, float maxTime) : _physBody(physBody), _maxTime(maxTime){
     node->addEventReactor([&](CollisionEvent event) {
+      Services::logger()->debug("Bullet collided with [" + event.path() + "]");
       destroy = true;
     });
   }
