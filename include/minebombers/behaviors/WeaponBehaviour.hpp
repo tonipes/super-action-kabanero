@@ -61,19 +61,6 @@ public:
   }
 
 
-  // auto materializePlayer(TileMap& map)  -> std::shared_ptr<Node<Transform3D>> {
-  //   auto tile = map.getRandom(PLAYER_SPAWN_POINT, _rand);
-  //   auto node = std::make_shared<Node<Transform3D>>("player");
-  //   node->setLocalPosition(glm::vec3(tile.getX(), tile.getY(), 2));
-  //   node->addAttachment(getSprite("tiles/spriggan_druid", -1));
-  //   auto physCircle = createPhysCircle(tile.getX(), tile.getY());
-  //   node->addBehavior<PlayerBehaviour>(physCircle);
-  //   return node;
-  // }
-// protected:
-//   auto _Clock;
-//   auto _Time;
-
 private:
   auto meterializeAmmo()  -> std::shared_ptr<Node<Transform3D>> {
     auto node = std::make_shared<Node<Transform3D>>(_ammoName);
@@ -81,7 +68,7 @@ private:
     // node->addBehavior<AmmoBehaviour>(physCircle);
     return node;
   }
-  
+
   auto getSprite(std::string baseName, int variations) -> std::shared_ptr<SpriteAttachment> {
         return std::make_shared<SpriteAttachment>(baseName);
   }
