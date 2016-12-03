@@ -120,6 +120,12 @@ public:
     }).getOrElse(localScale());
   }
 
+  auto path() const -> std::string {
+    return _parent.map([&](const auto& parentNode) {
+      return parentNode.path() + "/" + name();
+    }).getOrElse(name());
+  }
+
   auto operator==(Node<T> other) -> bool {
     return true;
   }

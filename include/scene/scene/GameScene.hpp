@@ -26,7 +26,7 @@ public:
     auto names = split(address, '/');
     auto node = this->rootNode();
     auto notFound = false;
-    for (auto i = 0; i < names.length(); i++) {
+    for (auto i = 1; i < names.length(); i++) {
       auto n = node->children().get(names[i]);
       if (n.isDefined()) {
         node = n.get();
