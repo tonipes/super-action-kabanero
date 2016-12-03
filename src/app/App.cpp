@@ -62,7 +62,8 @@ App::App(std::shared_ptr<Game> game) : _game(game) {
 
   // Intervals
   _update_interval = 1.0 / config["update_fps"].get_or(30);
-  _draw_interval = 1.0 / config["draw_fps"].get_or(30);
+  // Add a little leniency for smoother fps
+  _draw_interval = 1.0 / config["draw_fps"].get_or(30) - 0.001;
 
   // Get window parameters from config file and create window
   _window_w = config["window_width"].get_or(800);
@@ -87,6 +88,7 @@ auto App::run() -> void {
   Renderer renderer(window, _tilesize);
   typedef std::chrono::high_resolution_clock Clock;
   typedef std::chrono::milliseconds ms;
+  typedef std::chrono::nanoseconds ns;
 
   auto last_update_time = Clock::now();
   auto last_draw_time = Clock::now();
@@ -96,17 +98,22 @@ auto App::run() -> void {
 
   auto timeAccumulator = 0.0f;
 
+  auto frameCount = 0;
+  auto updateCount = 0;
+
+  auto secondCounter = 0.0;
+
   while (window.isOpen()) {
 
     auto current_time = Clock::now();
 
-    auto update_delta_ms = std::chrono::duration_cast<ms>(current_time - last_update_time);
-    double update_delta = update_delta_ms.count() / 1000.0;
+    auto update_delta_ms = std::chrono::duration_cast<ns>(current_time - last_update_time);
+    double update_delta = update_delta_ms.count() / 1000000000.0;
 
     timeAccumulator += update_delta;
 
-    auto draw_delta_ms = std::chrono::duration_cast<ms>(current_time - last_draw_time);
-    double draw_delta = draw_delta_ms.count() / 1000.0;
+    auto draw_delta_ms = std::chrono::duration_cast<ns>(current_time - last_draw_time);
+    double draw_delta = draw_delta_ms.count() / 1000000000.0;
 
     auto max_steps = 3;
     auto i = 0;
@@ -116,10 +123,20 @@ auto App::run() -> void {
       _game->update(_update_interval);
       timeAccumulator -= _update_interval;
       ++i;
+      ++updateCount;
     }
     last_update_time = current_time;
-    if (draw_delta_ms.count() > _draw_interval) {
+    if (draw_delta > _draw_interval) {
+      ++frameCount;
+      secondCounter += draw_delta;
       _game->render(renderer);
+      last_draw_time = current_time;
+    }
+    if (secondCounter > 1.0) {
+      Services::logger()->debug("Draw FPS: " + std::to_string(frameCount) + " Update FPS: " + std::to_string(updateCount));
+      frameCount = 0;
+      updateCount = 0;
+      secondCounter -= 1.0;
     }
 
     sf::Event event;
