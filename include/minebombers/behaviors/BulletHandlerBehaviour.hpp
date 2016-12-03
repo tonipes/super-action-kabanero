@@ -50,7 +50,7 @@ public:
 
         node.addChild(bulletNode);
 
-        Services::logger()->debug("Create bullet:  " + bulletNode->name() );
+        Services::logger()->debug("Create bullet:  " + bulletNode->path() );
 
       } else if (e.getAction() == DESTROY_BULLET) {
         Services::logger()->debug("destroy bullet");
