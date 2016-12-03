@@ -2,6 +2,9 @@
 
 #include <sstream>
 #include "collection/mutable/KBMap.hpp"
+#include "scene/Node.hpp"
+#include "scene/3D/Transform3D.hpp"
+#include <sstream>
 
 class FogVisibility {
 public:
