@@ -9,10 +9,10 @@ class FloodFill {
 public:
   FloodFill(KBVector<KBVector<Cell>>& map) : _map(map) {}
 
-  auto calculateOpen() -> TileMap;
+  auto calculateOpen() -> std::shared_ptr<TileMap>;
 private:
   KBVector<KBVector<Cell>> _map;
   KBMap<int, int> _amounts;
   uint _groupCounter;
-  auto flood(KBVector<Cell>& open, TileMap& mod) -> void;
+  auto flood(KBVector<Cell>& open, std::shared_ptr<TileMap>& mod) -> void;
 };

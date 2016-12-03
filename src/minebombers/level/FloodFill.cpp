@@ -1,9 +1,9 @@
 #include "minebombers/level/FloodFill.hpp"
 
-auto FloodFill::calculateOpen() -> TileMap {
+auto FloodFill::calculateOpen() -> std::shared_ptr<TileMap> {
   const auto width = _map.length();
   const auto height = _map[0].length();
-  auto mod = TileMap(width, height);
+  auto mod = std::make_shared<TileMap>(width, height);
   for (auto x = 0u; x < width; x++) {
     for (auto y = 0u; y < height; y++) {
       auto type = UNDEFINED;
@@ -12,7 +12,7 @@ auto FloodFill::calculateOpen() -> TileMap {
       } else if (_map[x][y].isAlive()) {
         type = CAVE_WALL;
       }
-      mod[x][y].setType(type);
+      (*mod)[x][y].setType(type);
     }
   }
 
@@ -21,9 +21,9 @@ auto FloodFill::calculateOpen() -> TileMap {
   _amounts = KBMap<int, int>();
   for (auto x = 0u; x < width; x++) {
     for (auto y = 0u; y < height; y++) {
-      if (mod[x][y].getType() != UNDEFINED || mod[x][y].isGrouped()) continue;
+      if ((*mod)[x][y].getType() != UNDEFINED || (*mod)[x][y].isGrouped()) continue;
       open += _map[x][y];
-      mod[x][y].setGroup(_groupCounter);
+      (*mod)[x][y].setGroup(_groupCounter);
       _amounts[_groupCounter] = 1;
       flood(open, mod);
       _groupCounter++;
@@ -39,20 +39,20 @@ auto FloodFill::calculateOpen() -> TileMap {
   }
   for (auto x = 0u; x < width; x++) {
     for (auto y = 0u; y < height; y++) {
-      if (mod[x][y].getType() == UNDEFINED) mod[x][y].setOpen(mod[x][y].getGroup() == biggestGroup);
+      if ((*mod)[x][y].getType() == UNDEFINED) (*mod)[x][y].setOpen((*mod)[x][y].getGroup() == biggestGroup);
     }
   }
-  mod.setGroups(_amounts);
+  mod->setGroups(_amounts);
   return mod;
 }
 
-auto FloodFill::flood(KBVector<Cell>& open, TileMap& mod) -> void {
+auto FloodFill::flood(KBVector<Cell>& open, std::shared_ptr<TileMap>& mod) -> void {
   auto cell = open[0];
   open.remove(0);
   auto neighbors = Cell::getDirectNeighbors(_map, cell._x, cell._y);
   for (auto c : neighbors) {
-    if (mod[c._x][c._y].isGrouped() || mod[c._x][c._y].getType() != UNDEFINED) continue;
-    mod[c._x][c._y].setGroup(_groupCounter);
+    if ((*mod)[c._x][c._y].isGrouped() || (*mod)[c._x][c._y].getType() != UNDEFINED) continue;
+    (*mod)[c._x][c._y].setGroup(_groupCounter);
     _amounts[_groupCounter]++;
     open += c;
   }

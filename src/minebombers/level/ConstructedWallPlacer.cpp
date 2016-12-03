@@ -5,12 +5,12 @@ auto ConstructedWallPlacer::run() -> void {
   int tries = 0;
   const auto MAX_TRIES = 50;
   for (auto w = 0; w < _numWalls; w++) {
-    if (!_map.hasTile(OPEN_MAIN)) break;
+    if (!_map->hasTile(OPEN_MAIN)) break;
     if (tries >= MAX_TRIES) {
       tries = 0;
       continue;
     }
-    auto tile = _map.getRandom(OPEN_MAIN, _rand);
+    auto tile = _map->getRandom(OPEN_MAIN, _rand);
     if (_rand.nextFloat() < 0.5f) { // 50% chance of horiz, 50% chance of vert
       xDir = 1;
       yDir = 0;
@@ -48,7 +48,7 @@ auto ConstructedWallPlacer::run() -> void {
         else type = DOOR;
       }
       auto tile = line[i];
-      _map[tile.getX()][tile.getY()].setType(type);
+      (*_map)[tile.getX()][tile.getY()].setType(type);
     }
   }
 }
@@ -56,10 +56,10 @@ auto ConstructedWallPlacer::run() -> void {
 auto ConstructedWallPlacer::process(KBVector<Tile>& processed, Tile& tile, int xDir, int yDir, int invXDir, int invYDir) -> KBVector<Tile>& {
   const auto x = tile.getX(), y = tile.getY();
    // If we hit a wall, stop
-  if (!_map[x][y].isOpen()) return processed;
+  if (!(*_map)[x][y].isOpen()) return processed;
   processed += tile;
   //If our line touches a wall, stop, but include the last tile
-  if (!_map[x + invXDir][y + invYDir].isOpen() || !_map[x - invXDir][y - invYDir].isOpen()) return processed;
-  auto next = _map[x + xDir][y + yDir];
+  if (!(*_map)[x + invXDir][y + invYDir].isOpen() || !(*_map)[x - invXDir][y - invYDir].isOpen()) return processed;
+  auto next = (*_map)[x + xDir][y + yDir];
   return process(processed, next, xDir, yDir, invXDir, invYDir);
 }

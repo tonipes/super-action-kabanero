@@ -5,7 +5,7 @@
 
 class ConstructedWallPlacer {
 public:
-  ConstructedWallPlacer(TileMap& map, int numWalls, int minWallLen, int maxWallLen, Random& rand):
+  ConstructedWallPlacer(std::shared_ptr<TileMap>& map, int numWalls, int minWallLen, int maxWallLen, Random& rand):
    _map(map), _numWalls(numWalls), _minWallLen(minWallLen), _maxWallLen(maxWallLen), _rand(rand) {}
 
   auto run() -> void;
@@ -13,5 +13,5 @@ private:
   auto process(KBVector<Tile>& processed, Tile& tile, int xDir, int yDir, int invXDir, int invYDir) -> KBVector<Tile>&;
   Random& _rand;
   int _numWalls, _minWallLen, _maxWallLen;
-  TileMap& _map;
+  std::shared_ptr<TileMap>& _map;
 };

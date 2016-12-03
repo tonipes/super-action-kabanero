@@ -1,66 +1,72 @@
 #pragma once
 
 #include "minebombers/level/TileMap.hpp"
+#include "minebombers/level/FogMap.hpp"
 #include "scene/Node.hpp"
 #include "scene/3D/Transform3D.hpp"
 #include "scene/attachment/SpriteAttachment.hpp"
 #include "minebombers/behaviors/TerrainBehaviour.hpp"
+#include "minebombers/behaviors/FogBehaviour.hpp"
 #include "minebombers/behaviors/PlayerBehaviour.hpp"
 #include <sstream>
 
 class LevelCompiler {
 public:
   LevelCompiler(Random& rand, b2World& w): _rand(rand), _world(w) {}
-  auto materializeGround(TileMap& map) -> std::shared_ptr<Node<Transform3D>> {
+  auto materializeLevel(std::shared_ptr<TileMap> map) -> std::shared_ptr<Node<Transform3D>> {
+    auto level = std::make_shared<Node<Transform3D>>("level");
     auto ground = std::make_shared<Node<Transform3D>>("ground");
-    for (auto x = 0; x < map.getWidth(); x++) {
-      for (auto y = 0; y < map.getHeight(); y++) {
-        std::ostringstream oss;
-        oss << "ground" << x << "-" << y;
-        auto node = std::make_shared<Node<Transform3D>>(oss.str());
-        node->addAttachment(getSprite("tiles/dirt", 2));
-        node->setLocalPosition(glm::vec3(x, y, 0));
-        ground->addChild(node);
+    ground->setLocalPosition(glm::vec3(0,0,0));
+    auto obj = std::make_shared<Node<Transform3D>>("obj");
+    obj->setLocalPosition(glm::vec3(0,0,2));
+    for (auto x = 0; x < map->getWidth(); x++) {
+      for (auto y = 0; y < map->getHeight(); y++) {
+        auto tileNode =  std::make_shared<Node<Transform3D>>(name("tile", x, y));
+        auto floorNode = std::make_shared<Node<Transform3D>>(name("floor", x, y));
+        floorNode->addAttachment(getSprite("tiles/dirt", 2));
+        floorNode->setLocalPosition(glm::vec3(x, y, 0));
+        switch ((*map)[x][y].getType()) {
+          case CAVE_WALL :
+            tileNode->addChild(getTerrain("tiles/pebble_brown", 8, 100.0f, x, y));
+            break;
+          case INDESCTRUCTIBLE_WALL :
+            tileNode->addChild(getTerrain("tiles/stone_brick", 11, 10000000.0f, x, y));
+            break;
+          case CONSTRUCTED_WALL :
+            tileNode->addChild(getTerrain("tiles/rect_gray", 3, 40.0f, x, y));
+            break;
+          case WINDOW :
+            tileNode->addChild(getTerrain("tiles/window", 0, 10.0f, x, y));
+            break;
+        }
+        ground->addChild(floorNode);
+        obj->addChild(tileNode);
       }
     }
-    return ground;
-  }
-  auto materializeObjects(TileMap& map) -> std::shared_ptr<Node<Transform3D>> {
-    auto objects = std::make_shared<Node<Transform3D>>("objects");
-    for (auto x = 0; x < map.getWidth(); x++) {
-      for (auto y = 0; y < map.getHeight(); y++) {
-        std::ostringstream oss;
-        oss << "wall" << x << "-" << y;
-        auto node = std::make_shared<Node<Transform3D>>(oss.str());
-        node->setLocalPosition(glm::vec3(x, y, 1));
-        auto createPhysBody = true;
-        auto health = 100.0f;
-        if (map[x][y].getType() == CAVE_WALL) {
-          node->addAttachment(getSprite("tiles/pebble_brown", 8));
-        } else if (map[x][y].getType() == INDESCTRUCTIBLE_WALL) {
-          health = 10000000.0f;
-          node->addAttachment(getSprite("tiles/stone_brick", 11));
-        } else if (map[x][y].getType() == CONSTRUCTED_WALL) {
-          health = 40.0f;
-          node->addAttachment(getSprite("tiles/rect_gray", 3));
-        } else if (map[x][y].getType() == WINDOW) {
-          health = 10.0f;
-          node->addAttachment(getSprite("tiles/window", 0));
-        } else {
-          createPhysBody = false;
-        }
-        if (createPhysBody) {
-          auto physBody = createPhysSquare(x, y);
-          node->addBehavior<TerrainBehaviour>(health, physBody);
-        }
-        objects->addChild(node);
-      }
-    }
-    return objects;
+    //level->addChild(ground);
+    level->addChild(obj);
+    return level;
   }
 
-  auto materializePlayer(TileMap& map)  -> std::shared_ptr<Node<Transform3D>> {
-    auto tile = map.getRandom(PLAYER_SPAWN_POINT, _rand);
+  auto initFog(std::shared_ptr<TileMap> map, std::shared_ptr<FogMap> fogMap) -> std::shared_ptr<Node<Transform3D>> {
+    fogMap->init(map->getWidth(), map->getHeight());
+    auto fogNode = std::make_shared<Node<Transform3D>>("fog");
+    fogNode->setLocalPosition(glm::vec3(0,0,100));
+    for (auto x = 0; x < map->getWidth(); x++) {
+      for (auto y = 0; y < map->getHeight(); y++) {
+        auto node = std::make_shared<Node<Transform3D>>(name("fog", x, y));
+        node->addAttachment(getSprite("tiles/fog", -1));
+        node->setLocalPosition(glm::vec3(x-0.5f,y+0.5f,0));
+        fogNode->addChild(node);
+        (*fogMap)[x][y] = node;
+      }
+    }
+    fogNode->addBehavior<FogBehaviour>(map, fogMap);
+    return fogNode;
+  }
+
+  auto materializePlayer(std::shared_ptr<TileMap> map) -> std::shared_ptr<Node<Transform3D>> {
+    auto tile = map->getRandom(PLAYER_SPAWN_POINT, _rand);
     auto node = std::make_shared<Node<Transform3D>>("player");
     node->setLocalPosition(glm::vec3(tile.getX(), tile.getY(), 2));
     node->addAttachment(getSprite("tiles/spriggan_druid", -1));
@@ -68,6 +74,8 @@ public:
     node->addBehavior<PlayerBehaviour>(physCircle);
     return node;
   }
+
+
 
   auto createPhysSquare(float x, float y) -> b2Body* {
     b2BodyDef bodyDef;
@@ -100,5 +108,18 @@ private:
       std::ostringstream oss;
       oss << baseName << _rand.nextInt(variations);
       return std::make_shared<SpriteAttachment>(oss.str());
+  }
+  auto name(std::string base, int x, int y) -> std::string {
+    std::ostringstream oss;
+    oss << base << x << "-" << y;
+    return oss.str();
+  }
+  auto getTerrain(std::string sprites, int spriteVar, float health, int x, int y) -> std::shared_ptr<Node<Transform3D>> {
+    auto node = std::make_shared<Node<Transform3D>>(name("obj",x,y));
+    node->setLocalPosition(glm::vec3(x, y, 0));
+    node->addAttachment(getSprite(sprites, spriteVar));
+    auto physBody = createPhysSquare(x, y);
+    node->addBehavior<TerrainBehaviour>(health, physBody);
+    return node;
   }
 };

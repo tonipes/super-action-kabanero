@@ -58,6 +58,7 @@ public:
 
     node.setLocalPosition(glm::vec3(pos.x, pos.y, 2));
     auto pos2 = node.position().xy();
+    
     Services::messagePublisher()->sendMessage(Message("gameScene:world/camera", std::make_shared<PlayerLocationEvent>(pos2)));
 
     glm::vec2 fireDirection;
@@ -91,6 +92,7 @@ public:
         shootTimer += delta;
       }
     }
+    Services::messagePublisher()->sendMessage(Message("gameScene:world/fog", std::make_shared<PlayerLocationEvent>(pos2)));
   }
 
 private:
