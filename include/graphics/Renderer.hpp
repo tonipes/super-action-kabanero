@@ -85,8 +85,8 @@ private:
 
   auto _isWithinWindow(const glm::vec3& nodePosition) -> bool {
     const auto& relativePosition = (nodePosition - _cameraPosition) * (float)_tilesize;
-    auto halfWidth = _windowSize.x / 2.0f;
-    auto halfHeight = _windowSize.y / 2.0f;
+    auto halfWidth = _windowSize.x / 2.0f + _tilesize;
+    auto halfHeight = _windowSize.y / 2.0f + _tilesize;
 
     return
       relativePosition.x < halfWidth &&
