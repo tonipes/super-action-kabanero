@@ -2,6 +2,7 @@
 
 #include <Box2D/Box2D.h>
 #include "game/Game.hpp"
+#include "physics/ContactListener.hpp"
 
 class Minebombers : public Game {
 public:
@@ -13,6 +14,7 @@ public:
   }
 private:
   b2World _physWorld;
+  ContactListener _contactListener;
   double _phys_elapsed;
   const double _phys_step;
 };
