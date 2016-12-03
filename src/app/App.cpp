@@ -83,6 +83,8 @@ auto App::init() -> void {
 
 auto App::run() -> void {
   sf::RenderWindow window(sf::VideoMode(_window_w, _window_h), _window_name);
+  window.setKeyRepeatEnabled(false);
+
   auto audioPlayer = std::make_shared<AudioPlayer>(_audioFolderPath);
   Services::messagePublisher()->addSubscriber(audioPlayer);
   Renderer renderer(window, _tilesize);
