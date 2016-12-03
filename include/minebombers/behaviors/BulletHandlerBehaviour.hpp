@@ -50,7 +50,9 @@ public:
 
         node.addChild(bulletNode);
 
-        Services::logger()->debug("Create bullet:  " + bulletNode->path() );
+        // Add path to physics body's user data for Collision Listener
+        auto path = new std::string(bulletNode->path());
+        physBody->SetUserData( path );
 
       } else if (e.getAction() == DESTROY_BULLET) {
         Services::logger()->debug("destroy bullet");

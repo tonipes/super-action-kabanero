@@ -71,13 +71,13 @@ auto Minebombers::init() -> void {
 
   messagePublisher->sendMessage(
     Message(
-      "gameScene:camera",
+      "gameScene:world/camera",
       std::make_shared<TestEvent>(A)
     )
   );
   messagePublisher->sendMessage(
     Message(
-      "gameScene:camera",
+      "gameScene:world/camera",
       std::make_shared<TestEvent>(B)
     )
   );
