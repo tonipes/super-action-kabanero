@@ -77,7 +77,7 @@ App::App(std::shared_ptr<Game> game) : _game(game) {
 
 auto App::init() -> void {
   Services::logger()->info("Creating game");
-  
+
   Services::messagePublisher()->addSubscriber(_game);
 
   _game->init();

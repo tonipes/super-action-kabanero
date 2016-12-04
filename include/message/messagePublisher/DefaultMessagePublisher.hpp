@@ -22,8 +22,6 @@ public:
   }
 
   auto addSubscriber(const std::shared_ptr<MessageSubscriber>& subscriber) -> void override {
-    Services::logger()->debug("add subs");
-    Services::logger()->debug(subscriber->socket());
     _subscribers[subscriber->socket()] = subscriber;
   }
 
