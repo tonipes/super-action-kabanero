@@ -70,8 +70,18 @@ public:
     auto node = std::make_shared<Node<Transform3D>>("player");
     node->setLocalPosition(glm::vec3(tile.getX(), tile.getY(), 2));
     node->addAttachment(getSprite("tiles/spriggan_druid", -1));
+
+    auto material_att = std::make_shared<CollisionMaterialAttachment>();
+    material_att->bulletRebound = true;
+    node->addAttachment(material_att);
+
     auto physCircle = createPhysCircle(tile.getX(), tile.getY());
-    node->addBehavior<PlayerBehaviour>(physCircle);
+
+    auto collisionData = new CollisionData("", material_att); // No path
+    physCircle->SetUserData(collisionData);
+
+    node->setPhysics(physCircle);
+    node->addBehavior<PlayerBehaviour>();
     return node;
   }
 
@@ -118,8 +128,17 @@ private:
     auto node = std::make_shared<Node<Transform3D>>(name("obj",x,y));
     node->setLocalPosition(glm::vec3(x, y, 0));
     node->addAttachment(getSprite(sprites, spriteVar));
+
+    auto material_att = std::make_shared<CollisionMaterialAttachment>();
+    node->addAttachment(material_att);
+
     auto physBody = createPhysSquare(x, y);
-    node->addBehavior<TerrainBehaviour>(health, physBody);
+
+    auto collisionData = new CollisionData("", material_att); // No path
+    physBody->SetUserData(collisionData);
+
+    node->setPhysics(physBody);
+    node->addBehavior<TerrainBehaviour>(health);
     return node;
   }
 };

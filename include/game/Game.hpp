@@ -40,6 +40,14 @@ public:
     activeScenes.foreach([&](auto& scene){
       scene->update(delta);
     });
+    for(auto n : _toBeDestryed) {
+      auto parent = n->parent();
+      if(parent.isDefined()){
+        n->physics()->GetWorld()->DestroyBody( n->physics() );
+        parent.get().removeChild(n->name());
+      }
+    }
+    _toBeDestryed = KBVector<std::shared_ptr<Node<Transform3D>>>();
   }
 
   auto getEventHandler(const std::string& address) -> EventHandler& override {
@@ -57,6 +65,7 @@ public:
     Services::messagePublisher()->addSubscriber(scene);
   }
 
-private:
+protected:
+  KBVector<std::shared_ptr<Node<Transform3D>>> _toBeDestryed;
   KBVector<std::shared_ptr<Scene<Transform3D>>> activeScenes;
 };

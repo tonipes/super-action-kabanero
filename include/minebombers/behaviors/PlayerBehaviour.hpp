@@ -14,7 +14,7 @@
 
 class PlayerBehaviour : public Behavior<Transform3D> {
 public:
-  PlayerBehaviour(Node<Transform3D>* node, b2Body *physBody) : _physBody(physBody) {
+  PlayerBehaviour(Node<Transform3D>* node) {
     node->addEventReactor([&](GameInputEvent event) {
       auto action = event.action();
       auto isPressed = event.isPressed();
@@ -53,12 +53,12 @@ public:
     moveDirection.x *= 4.5f;
     moveDirection.y *= 4.5f;
 
-    _physBody->SetLinearVelocity(b2Vec2(moveDirection.x, moveDirection.y));
-    auto pos = _physBody->GetPosition();
+    node.physics()->SetLinearVelocity(b2Vec2(moveDirection.x, moveDirection.y));
+    auto pos = node.physics()->GetPosition();
 
     node.setLocalPosition(glm::vec3(pos.x, pos.y, 2));
     auto pos2 = node.position().xy();
-    
+
     Services::messagePublisher()->sendMessage(Message("gameScene:world/camera", std::make_shared<PlayerLocationEvent>(pos2)));
 
     glm::vec2 fireDirection;
@@ -74,29 +74,26 @@ public:
     auto shoot = fireDirection.x != 0 || fireDirection.y != 0;
 
     if (shoot) {
-      if (shootTimer > shootInterval){
-        // Services::logger()->debug("Fire!");
+      Services::messagePublisher()->sendMessage(Message("gameScene:world/bulletHandler",
+        std::make_shared<BulletEvent>(CREATE_BULLET, pos.x, pos.y, fireDirection.x, fireDirection.y, 20.0f)));
 
-        Services::messagePublisher()->sendMessage(Message("gameScene:world/bulletHandler",
-          std::make_shared<BulletEvent>(CREATE_BULLET, pos.x, pos.y, fireDirection.x, fireDirection.y, 20.0f)));
-
-        Services::messagePublisher()->sendMessage(
-          Message(
-            "audioPlayer:clip/gunshot.ogg",
-            std::make_shared<AudioClipEvent>(CLIP_PLAY)
-          )
-        );
-
-        shootTimer = 0.0f;
-      } else {
-        shootTimer += delta;
-      }
+      Services::messagePublisher()->sendMessage(
+        Message(
+          "audioPlayer:clip/gunshot.ogg",
+          std::make_shared<AudioClipEvent>(CLIP_PLAY)
+        )
+      );
     }
+
     Services::messagePublisher()->sendMessage(Message("gameScene:world/fog", std::make_shared<PlayerLocationEvent>(pos2)));
+
+    fireUp = false;
+    fireRight = false;
+    fireDown = false;
+    fireLeft = false;
   }
 
 private:
-  b2Body *_physBody;
   bool moveUp = false;
   bool moveRight = false;
   bool moveDown = false;
@@ -107,7 +104,4 @@ private:
   bool fireDown = false;
   bool fireLeft = false;
 
-  float shootInterval = 0.25f;
-  float shootTimer = shootInterval;
-  // bool shoot = false;
 };

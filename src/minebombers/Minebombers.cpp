@@ -3,16 +3,19 @@
 #include "service/Services.hpp"
 
 #include "message/event/AudioClipEvent.hpp"
+#include "message/event/DestroyNodeEvent.hpp"
 #include "message/event/AudioTrackEvent.hpp"
 #include "minebombers/level/LevelCompiler.hpp"
 #include "minebombers/level/CaveGenerator.hpp"
 #include "minebombers/behaviors/CameraBehavior.hpp"
 #include "minebombers/behaviors/BulletHandlerBehaviour.hpp"
 #include "minebombers/events/TestEvent.hpp"
+#include "collection/Option.hpp"
 
 #include "physics/ContactListener.hpp"
 
 auto Minebombers::init() -> void {
+
   auto messagePublisher = Services::messagePublisher();
   // messagePublisher->sendMessage(
   //   Message(
@@ -82,4 +85,25 @@ auto Minebombers::init() -> void {
       std::make_shared<TestEvent>(B)
     )
   );
+
+  addEventReactor([&](DestroyNodeEvent event) {
+    auto rootNode = activeScenes[0]->rootNode(); // ???
+
+    auto path = event.path();
+
+    // Bit hacky. Can't destroy root
+    auto i = path.find('/');
+    if (i != std::string::npos) {
+      auto p = path.substr(i+1, path.length());
+      auto node = rootNode->getNode(p);
+      if(node.isDefined()){
+        if(!node.get()->toBeDestroyed()){
+          node.get()->markToBeDestroyed();
+          _toBeDestryed += node.get();
+        }
+      }
+    }
+
+  });
+
 }
