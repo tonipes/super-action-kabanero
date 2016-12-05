@@ -45,7 +45,7 @@ public:
         }
         break;
         case sf::Keyboard::Space : {
-          Services::messagePublisher()->sendMessage(Message(path, std::make_shared<GameInputEvent>(JUMP, true)));
+          Services::messagePublisher()->sendMessage(Message(path, std::make_shared<GameInputEvent>(FIRE, true)));
         }
         break;
         case sf::Keyboard::Up : {
@@ -90,7 +90,7 @@ public:
         }
         break;
         case sf::Keyboard::Space : {
-          Services::messagePublisher()->sendMessage(Message(path, std::make_shared<GameInputEvent>(JUMP, false)));
+          Services::messagePublisher()->sendMessage(Message(path, std::make_shared<GameInputEvent>(FIRE, false)));
         }
         case sf::Keyboard::Up : {
           Services::messagePublisher()->sendMessage(Message(path, std::make_shared<GameInputEvent>(FIRE_UP, false)));

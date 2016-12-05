@@ -4,6 +4,7 @@
 
 #include "message/event/AudioClipEvent.hpp"
 #include "message/event/DestroyNodeEvent.hpp"
+#include "message/event/CreateNodeEvent.hpp"
 #include "message/event/AudioTrackEvent.hpp"
 #include "minebombers/level/LevelCompiler.hpp"
 #include "minebombers/level/CaveGenerator.hpp"
@@ -86,12 +87,15 @@ auto Minebombers::init() -> void {
     )
   );
 
+  // These reactors should probably be somewhere further down in the tree.
+  // Uses only the first scene in activeScenes
   addEventReactor([&](DestroyNodeEvent event) {
     auto rootNode = activeScenes[0]->rootNode(); // ???
 
     auto path = event.path();
 
     // Bit hacky. Can't destroy root
+    // Needs to drop the first part from the path
     auto i = path.find('/');
     if (i != std::string::npos) {
       auto p = path.substr(i+1, path.length());
@@ -106,4 +110,30 @@ auto Minebombers::init() -> void {
 
   });
 
+  // Can't add directly under the rood node
+  addEventReactor([&](CreateNodeEvent event) {
+    auto rootNode = activeScenes[0]->rootNode(); // ???
+    auto path = event.parentPath();
+
+    Services::logger()->debug(path);
+
+    // Bit hacky. Can't directly under the rood node root
+    // Needs to drop the first part from the path
+    auto i = path.find('/');
+    if (i != std::string::npos) {
+      auto p = path.substr(i+1, path.length());
+      auto parentOption = rootNode->getNode(p);
+      if(parentOption.isDefined()){
+        auto parent = parentOption.get();
+        // Shamelesly modifying tree and world directly.
+        b2Body* body = _physWorld.CreateBody(event.bodyDef().get());
+        body->CreateFixture(event.shape().get(), 1.0f);
+
+        event.node()->setPhysics(body);
+        parent->addChild(event.node());
+      }
+    }
+    Services::logger()->debug("CreateNode");
+
+  });
 }

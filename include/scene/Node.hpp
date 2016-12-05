@@ -72,6 +72,8 @@ public:
   }
 
   auto addChild(std::shared_ptr<Node> child) -> void {
+    // Services::logger()->debug("add child");
+    // std::cout << "Addchild" << '\n';
     _children.insert(child->name(), child);
     child->_setParent(this->shared_from_this());
     child->_setUpdateFlag();

@@ -2,6 +2,8 @@
 
 #include "minebombers/events/PlayerLocationEvent.hpp"
 #include "minebombers/events/BulletEvent.hpp"
+#include "minebombers/behaviors/BombBehaviour.hpp"
+#include "message/event/CreateNodeEvent.hpp"
 #include "message/event/GameInputEvent.hpp"
 #include "message/event/AudioClipEvent.hpp"
 #include "game/Behavior.hpp"
@@ -35,6 +37,8 @@ public:
         fireLeft = isPressed;
       } else if (action == FIRE_UP) {
         fireUp = isPressed;
+      } else if (action == FIRE) {
+        throwBomb = isPressed;
       }
     });
   }
@@ -85,15 +89,48 @@ public:
       );
     }
 
+    if (throwBomb) {
+      counter++;
+
+      auto bombNode = std::make_shared<Node<Transform3D>>("bomb_"+std::to_string(counter));
+      bombNode->setLocalPosition(glm::vec3(pos.x, pos.y, 5));
+
+      auto sprite_att = std::make_shared<SpriteAttachment>("test-effect/bolt01");
+      auto material_att = std::make_shared<CollisionMaterialAttachment>();
+
+      bombNode->addBehavior<BombBehaviour>(5.0f);
+      bombNode->addAttachment(sprite_att);
+
+      // b2BodyDef bodyDef;
+      auto bodyDef = std::make_shared<b2BodyDef>();
+
+      bodyDef->type = b2_dynamicBody;
+      bodyDef->position.Set(pos.x, pos.y);
+      bodyDef->allowSleep = false;
+      bodyDef->fixedRotation = true;
+      bodyDef->linearDamping = 0.5f;
+
+      auto shape = std::make_shared<b2CircleShape>();
+      shape->m_p.Set(0, 0);
+      shape->m_radius = 0.2f;
+
+      Services::messagePublisher()->sendMessage(Message("game", std::make_shared<CreateNodeEvent>(
+        "world/bulletHandler", bodyDef, shape, bombNode
+      )));
+
+    }
+
     Services::messagePublisher()->sendMessage(Message("gameScene:world/fog", std::make_shared<PlayerLocationEvent>(pos2)));
 
     fireUp = false;
     fireRight = false;
     fireDown = false;
     fireLeft = false;
+    throwBomb = false;
   }
 
 private:
+  int counter = 0;
   bool moveUp = false;
   bool moveRight = false;
   bool moveDown = false;
@@ -103,5 +140,7 @@ private:
   bool fireRight = false;
   bool fireDown = false;
   bool fireLeft = false;
+
+  bool throwBomb = false;
 
 };
