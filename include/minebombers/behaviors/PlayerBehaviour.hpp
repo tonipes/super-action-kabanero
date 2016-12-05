@@ -57,10 +57,17 @@ public:
     moveDirection.x *= 4.5f;
     moveDirection.y *= 4.5f;
 
-    node.physics()->SetLinearVelocity(b2Vec2(moveDirection.x, moveDirection.y));
-    auto pos = node.physics()->GetPosition();
+    const auto& physAttachment = node.get<PhysicsAttachment>();
+    physAttachment.foreach([&](auto phys) {
+      // const auto& pos = phys.position();
+      // this->setLocalPosition(glm::vec3(pos.x, pos.y, this->localPosition().z));
+      phys.setVelocity(moveDirection.x, moveDirection.y);
+    });
 
-    node.setLocalPosition(glm::vec3(pos.x, pos.y, 2));
+    // auto pos = node.physics()->GetPosition();
+
+    // node.setLocalPosition(glm::vec3(pos.x, pos.y, 2));
+    auto pos = node.position().xy();
     auto pos2 = node.position().xy();
 
     Services::messagePublisher()->sendMessage(Message("gameScene:world/camera", std::make_shared<PlayerLocationEvent>(pos2)));

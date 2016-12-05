@@ -44,8 +44,12 @@ public:
     });
     for(auto n : _toBeDestryed) {
       auto parent = n->parent();
-      if(parent.isDefined()){
-        n->physics()->GetWorld()->DestroyBody( n->physics() );
+      if (parent.isDefined()) {
+        const auto& physAttachment = n->get<PhysicsAttachment>();
+        physAttachment.foreach([&](auto& phys) {
+          phys.destroy();
+        });
+        // n->physics()->GetWorld()->DestroyBody( n->physics() );
         parent.get().removeChild(n->name());
       }
     }

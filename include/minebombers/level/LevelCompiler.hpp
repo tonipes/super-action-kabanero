@@ -8,6 +8,7 @@
 #include "minebombers/behaviors/TerrainBehaviour.hpp"
 #include "minebombers/behaviors/FogBehaviour.hpp"
 #include "minebombers/behaviors/PlayerBehaviour.hpp"
+#include "minebombers/behaviors/WallBehavior.hpp"
 #include <sstream>
 
 class LevelCompiler {
@@ -15,6 +16,7 @@ public:
   LevelCompiler(Random& rand, b2World& w): _rand(rand), _world(w) {}
   auto materializeLevel(std::shared_ptr<TileMap> map) -> std::shared_ptr<Node<Transform3D>> {
     auto level = std::make_shared<Node<Transform3D>>("level");
+    level->setSleep(true);
     auto ground = std::make_shared<Node<Transform3D>>("ground");
     ground->setLocalPosition(glm::vec3(0,0,0));
     auto obj = std::make_shared<Node<Transform3D>>("obj");
@@ -57,6 +59,7 @@ public:
         auto node = std::make_shared<Node<Transform3D>>(name("fog", x, y));
         node->addAttachment(getSprite("tiles/fog", -1));
         node->setLocalPosition(glm::vec3(x-0.5f,y+0.5f,0));
+        node->setSleep(true);
         fogNode->addChild(node);
         (*fogMap)[x][y] = node;
       }
@@ -80,7 +83,11 @@ public:
     auto collisionData = new CollisionData("", material_att); // No path
     physCircle->SetUserData(collisionData);
 
-    node->setPhysics(physCircle);
+    auto physAttachment = std::make_shared<PhysicsAttachment>(physCircle);
+
+    node->addAttachment(physAttachment);
+
+    // node->setPhysics(physCircle);
     node->addBehavior<PlayerBehaviour>();
     return node;
   }
@@ -131,13 +138,17 @@ private:
 
     auto material_att = std::make_shared<CollisionMaterialAttachment>();
     node->addAttachment(material_att);
+    node->addBehavior<WallBehavior>();
 
     auto physBody = createPhysSquare(x, y);
 
     auto collisionData = new CollisionData("", material_att); // No path
     physBody->SetUserData(collisionData);
 
-    node->setPhysics(physBody);
+    auto physAttachment = std::make_shared<PhysicsAttachment>(physBody);
+    node->addAttachment(physAttachment);
+
+    // node->setPhysics(physBody);
     node->addBehavior<TerrainBehaviour>(health);
     return node;
   }

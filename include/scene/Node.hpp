@@ -10,6 +10,7 @@
 #include "collection/Option.hpp"
 #include "scene/Transform.hpp"
 #include "scene/NodeAttachment.hpp"
+#include "scene/attachment/PhysicsAttachment.hpp"
 #include "message/EventHandler.hpp"
 #include "service/Services.hpp"
 #include "game/Behavior.hpp"
@@ -158,6 +159,10 @@ public:
     return true;
   }
 
+  auto setSleep(bool val) -> void {
+    _isSleeping = true;
+  }
+
   template <typename BehaviorType, typename... Args>
   auto addBehavior(Args&&... args) -> void {
     auto behavior = std::make_shared<BehaviorType>(this, std::forward<Args>(args)...);
@@ -165,12 +170,19 @@ public:
   }
 
   auto update(float delta) -> void {
-    _behaviors.foreach([&](auto& behavior) {
-      behavior->update(delta, *this);
-    });
-    _children.values().foreach([&](auto child) {
-      child->update(delta);
-    });
+    if (!_isSleeping) {
+      const auto& physAttachment = this->get<PhysicsAttachment>();
+      physAttachment.foreach([&](auto phys) {
+        const auto& pos = phys.position();
+        this->setLocalPosition(glm::vec3(pos.x, pos.y, this->localPosition().z));
+      });
+      _behaviors.foreach([&](auto& behavior) {
+        behavior->update(delta, *this);
+      });
+      _children.values().foreach([&](auto child) {
+        child->update(delta);
+      });
+    }
   }
 
   auto toBeDestroyed() -> bool {
@@ -211,6 +223,7 @@ private:
   mutable KBMap<std::string, std::shared_ptr<Node>> _children;
   bool _render;
   bool _toBeDestroyed = false;
+  bool _isSleeping = false;
   Option<Node> _parent;
   KBTypeMap<std::shared_ptr<NodeAttachment>> _attachments;
   T _transform;
