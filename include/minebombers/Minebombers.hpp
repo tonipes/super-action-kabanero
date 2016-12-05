@@ -11,8 +11,8 @@ public:
 
   auto init() -> void override;
   auto update(double delta) -> void override {
-    _physWorld.Step(_phys_step, 8, 3);
     Game::update(delta);
+    _physWorld.Step(_phys_step, 8, 3);
   }
 private:
   b2World _physWorld;
