@@ -20,8 +20,6 @@ public:
   }
 
   auto update(float delta, Node<Transform3D>& node) -> void override {
-    auto pos = node.physics()->GetPosition();
-    node.setLocalPosition(glm::vec3(pos.x, pos.y, 2));
     if(!exploded){
       if(_fuseTime > _fuseLength){
         Services::logger()->debug("BOOM!");

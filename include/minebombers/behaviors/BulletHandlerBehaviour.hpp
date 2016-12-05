@@ -3,6 +3,8 @@
 #include "minebombers/events/BulletEvent.hpp"
 #include "minebombers/behaviors/BulletBehaviour.hpp"
 #include "minebombers/attachments/CollisionMaterialAttachment.hpp"
+#include "scene/attachment/PhysicsAttachment.hpp"
+#include "scene/attachment/SpriteAttachment.hpp"
 
 #include "message/event/GameInputEvent.hpp"
 #include "physics/CollisionData.hpp"
@@ -51,7 +53,12 @@ public:
         auto physBody = createPhysCircle(real_x, real_y);
 
         physBody->SetLinearVelocity(b2Vec2(vx * speed, vy * speed));
-        bulletNode->setPhysics(physBody);
+
+        auto physAttachment = std::make_shared<PhysicsAttachment>(physBody);
+
+        bulletNode->addAttachment(physAttachment);
+
+        // bulletNode->setPhysics(physBody);
 
         bulletNode->addBehavior<BulletBehavior>(10.0f);
         bulletNode->addAttachment(sprite_att);

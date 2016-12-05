@@ -26,8 +26,8 @@ public:
 
   auto update(float delta, Node<Transform3D>& node) -> void override {
     // Services::logger()->debug("Bullet update");
-    auto pos = node.physics()->GetPosition();
-    node.setLocalPosition(glm::vec3(pos.x, pos.y, 2));
+    // auto pos = node.physics()->GetPosition();
+    // node.setLocalPosition(glm::vec3(pos.x, pos.y, 2));
 
     if(destroy) {
       // Services::logger()->debug("destroy");
