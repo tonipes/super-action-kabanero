@@ -2,6 +2,8 @@
 
 #include "minebombers/events/PlayerLocationEvent.hpp"
 #include "minebombers/events/BulletEvent.hpp"
+#include "minebombers/behaviors/BombBehaviour.hpp"
+#include "message/event/CreateNodeEvent.hpp"
 #include "message/event/GameInputEvent.hpp"
 #include "message/event/AudioClipEvent.hpp"
 #include "game/Behavior.hpp"
@@ -14,7 +16,7 @@
 
 class PlayerBehaviour : public Behavior<Transform3D> {
 public:
-  PlayerBehaviour(Node<Transform3D>* node, b2Body *physBody) : _physBody(physBody) {
+  PlayerBehaviour(Node<Transform3D>* node) {
     node->addEventReactor([&](GameInputEvent event) {
       auto action = event.action();
       auto isPressed = event.isPressed();
@@ -35,6 +37,8 @@ public:
         fireLeft = isPressed;
       } else if (action == FIRE_UP) {
         fireUp = isPressed;
+      } else if (action == FIRE) {
+        throwBomb = isPressed;
       }
     });
   }
@@ -53,12 +57,12 @@ public:
     moveDirection.x *= 4.5f;
     moveDirection.y *= 4.5f;
 
-    _physBody->SetLinearVelocity(b2Vec2(moveDirection.x, moveDirection.y));
-    auto pos = _physBody->GetPosition();
+    node.physics()->SetLinearVelocity(b2Vec2(moveDirection.x, moveDirection.y));
+    auto pos = node.physics()->GetPosition();
 
     node.setLocalPosition(glm::vec3(pos.x, pos.y, 2));
     auto pos2 = node.position().xy();
-    
+
     Services::messagePublisher()->sendMessage(Message("gameScene:world/camera", std::make_shared<PlayerLocationEvent>(pos2)));
 
     glm::vec2 fireDirection;
@@ -74,29 +78,59 @@ public:
     auto shoot = fireDirection.x != 0 || fireDirection.y != 0;
 
     if (shoot) {
-      if (shootTimer > shootInterval){
-        // Services::logger()->debug("Fire!");
+      Services::messagePublisher()->sendMessage(Message("gameScene:world/bulletHandler",
+        std::make_shared<BulletEvent>(CREATE_BULLET, pos.x, pos.y, fireDirection.x, fireDirection.y, 20.0f)));
 
-        Services::messagePublisher()->sendMessage(Message("gameScene:world/bulletHandler",
-          std::make_shared<BulletEvent>(CREATE_BULLET, pos.x, pos.y, fireDirection.x, fireDirection.y, 20.0f)));
-
-        Services::messagePublisher()->sendMessage(
-          Message(
-            "audioPlayer:clip/gunshot.ogg",
-            std::make_shared<AudioClipEvent>(CLIP_PLAY)
-          )
-        );
-
-        shootTimer = 0.0f;
-      } else {
-        shootTimer += delta;
-      }
+      Services::messagePublisher()->sendMessage(
+        Message(
+          "audioPlayer:clip/gunshot.ogg",
+          std::make_shared<AudioClipEvent>(CLIP_PLAY)
+        )
+      );
     }
+
+    if (throwBomb) {
+      counter++;
+
+      auto bombNode = std::make_shared<Node<Transform3D>>("bomb_"+std::to_string(counter));
+      bombNode->setLocalPosition(glm::vec3(pos.x, pos.y, 5));
+
+      auto sprite_att = std::make_shared<SpriteAttachment>("test-effect/bolt01");
+      auto material_att = std::make_shared<CollisionMaterialAttachment>();
+
+      bombNode->addBehavior<BombBehaviour>(5.0f);
+      bombNode->addAttachment(sprite_att);
+
+      // b2BodyDef bodyDef;
+      auto bodyDef = std::make_shared<b2BodyDef>();
+
+      bodyDef->type = b2_dynamicBody;
+      bodyDef->position.Set(pos.x, pos.y);
+      bodyDef->allowSleep = false;
+      bodyDef->fixedRotation = true;
+      bodyDef->linearDamping = 0.5f;
+
+      auto shape = std::make_shared<b2CircleShape>();
+      shape->m_p.Set(0, 0);
+      shape->m_radius = 0.2f;
+
+      Services::messagePublisher()->sendMessage(Message("game", std::make_shared<CreateNodeEvent>(
+        "world/bulletHandler", bodyDef, shape, bombNode
+      )));
+
+    }
+
     Services::messagePublisher()->sendMessage(Message("gameScene:world/fog", std::make_shared<PlayerLocationEvent>(pos2)));
+
+    fireUp = false;
+    fireRight = false;
+    fireDown = false;
+    fireLeft = false;
+    throwBomb = false;
   }
 
 private:
-  b2Body *_physBody;
+  int counter = 0;
   bool moveUp = false;
   bool moveRight = false;
   bool moveDown = false;
@@ -107,7 +141,6 @@ private:
   bool fireDown = false;
   bool fireLeft = false;
 
-  float shootInterval = 0.25f;
-  float shootTimer = shootInterval;
-  // bool shoot = false;
+  bool throwBomb = false;
+
 };

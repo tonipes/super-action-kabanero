@@ -1,5 +1,7 @@
 #pragma once
 
+#include <tuple>
+
 #include "game/Updateable.hpp"
 #include "scene/Scene.hpp"
 #include "scene/scene/GameScene.hpp"
@@ -40,6 +42,20 @@ public:
     activeScenes.foreach([&](auto& scene){
       scene->update(delta);
     });
+    for(auto n : _toBeDestryed) {
+      auto parent = n->parent();
+      if(parent.isDefined()){
+        n->physics()->GetWorld()->DestroyBody( n->physics() );
+        parent.get().removeChild(n->name());
+      }
+    }
+    // for(auto n : _toBeAdded){
+    //   Services::logger()->debug("Parent name: " + std::get<0>(n)->name());
+    //   Services::logger()->debug("Node name: " + std::get<1>(n)->name());
+    //   std::get<0>(n)->addChild(std::get<1>(n));
+    // }
+    _toBeDestryed = KBVector<std::shared_ptr<Node<Transform3D>>>();
+    // _toBeAdded = KBVector<std::tuple<std::shared_ptr<Node<Transform3D>>, std::shared_ptr<Node<Transform3D>>>>();
   }
 
   auto getEventHandler(const std::string& address) -> EventHandler& override {
@@ -57,6 +73,9 @@ public:
     Services::messagePublisher()->addSubscriber(scene);
   }
 
-private:
+protected:
+  KBVector<std::shared_ptr<Node<Transform3D>>> _toBeDestryed;
+  KBVector<std::tuple<std::shared_ptr<Node<Transform3D>>, std::shared_ptr<Node<Transform3D>>>> _toBeAdded;
+
   KBVector<std::shared_ptr<Scene<Transform3D>>> activeScenes;
 };

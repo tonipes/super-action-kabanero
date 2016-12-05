@@ -35,7 +35,8 @@ public:
       }
     }
     if (notFound) {
-      throw EngineException("No node with address: [" + address + "] found");
+      Services::logger()->error("No node with address: [" + address + "] found");
+      // throw EngineException("No node with address: [" + address + "] found");
     }
 
     return *node;

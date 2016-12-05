@@ -5,29 +5,46 @@
 #include <Box2D/Box2D.h>
 #include "service/Services.hpp"
 #include "message/event/CollisionEvent.hpp"
+#include "physics/CollisionData.hpp"
 
 class ContactListener : public b2ContactListener {
   void BeginContact(b2Contact* contact) {
-    std::string a_path = "";
-    std::string b_path = "";
+    CollisionData* a_data = NULL;
+    CollisionData* b_data = NULL;
 
     void* a_userData = contact->GetFixtureA()->GetBody()->GetUserData();
     void* b_userData = contact->GetFixtureB()->GetBody()->GetUserData();
 
-    if (a_userData)
-      a_path = *(std::string*) a_userData;
+    if (a_userData) {
+      a_data = (CollisionData*) a_userData;
+    }
+    if (b_userData) {
+      b_data = (CollisionData*) b_userData;
+    }
+    if (a_data && b_data){
 
-    if (b_userData)
-      b_path = *(std::string*) b_userData;
+      // Player and terrain doesn't have paths set in their collisiondata
+      // Don't send messages to them
 
-    if (!a_path.empty())
-      Services::messagePublisher()->sendMessage(Message("gameScene:" + a_path, std::make_shared<CollisionEvent>(BEGIN, b_path)));
+      if(!a_data->path().empty()){
+        Services::messagePublisher()->sendMessage(
+          Message("gameScene:" + a_data->path(), std::make_shared<CollisionEvent>(
+            BEGIN,
+            b_data->path(),
+            b_data->collisionMaterialAttachment()
+          ))
+        );
+      }
 
-    if (!b_path.empty())
-      Services::messagePublisher()->sendMessage(Message("gameScene:" + b_path, std::make_shared<CollisionEvent>(BEGIN, a_path)));
-
-    // Services::logger()->debug("BeginContact with " + a_path + " & " + b_path);
-
+      if(!b_data->path().empty()){
+      Services::messagePublisher()->sendMessage(
+        Message("gameScene:" + b_data->path(), std::make_shared<CollisionEvent>(
+          BEGIN,
+          a_data->path(),
+          a_data->collisionMaterialAttachment()
+        ))
+      );
+    }}
   }
 
   void EndContact(b2Contact* contact) {

@@ -11,11 +11,14 @@
 #include "scene/Transform.hpp"
 #include "scene/NodeAttachment.hpp"
 #include "message/EventHandler.hpp"
+#include "service/Services.hpp"
 #include "game/Behavior.hpp"
 #include <typeinfo>
 #include <iostream>
+#include <string>
 #include <memory>
 #include "util/MatrixUtil.hpp"
+#include "util/StringUtil.hpp"
 #include "glm/gtx/string_cast.hpp"
 
 /**
@@ -26,8 +29,11 @@ class Node : public EventHandler, public std::enable_shared_from_this<Node<T>> {
 public:
   Node(std::string name) : _name(name), _render(true) {}
 
-  auto physics() const -> b2BodyDef {
+  auto physics() const -> b2Body* {
     return _physBody;
+  }
+  auto setPhysics(b2Body* physBody) -> void {
+    _physBody = physBody;
   }
 
   auto isRenderOn() const -> bool { return _render; }
@@ -45,7 +51,29 @@ public:
     return _children;
   }
 
+  auto removeChild(std::string name) const -> const void {
+    _children.remove(name);
+  }
+
+  auto getNode(std::string path) const -> const Option<std::shared_ptr<Node>> {
+    auto i = path.find('/');
+    if (i != std::string::npos){
+      auto first_token = path.substr(0, i);
+      auto rest = path.substr(i+1, path.length());
+      auto c = children().get(first_token);
+      if(c.isDefined()){
+        return c.get()->getNode(rest);
+      } else {
+        return Option<std::shared_ptr<Node>>();
+      }
+    } else{
+      return _children.get(path);
+    }
+  }
+
   auto addChild(std::shared_ptr<Node> child) -> void {
+    // Services::logger()->debug("add child");
+    // std::cout << "Addchild" << '\n';
     _children.insert(child->name(), child);
     child->_setParent(this->shared_from_this());
     child->_setUpdateFlag();
@@ -145,6 +173,13 @@ public:
     });
   }
 
+  auto toBeDestroyed() -> bool {
+    return _toBeDestroyed;
+  }
+  auto markToBeDestroyed() -> void {
+    _toBeDestroyed = true;
+  }
+
 protected:
   mutable bool _shouldUpdate = true;
 
@@ -172,9 +207,10 @@ protected:
 
 private:
   std::string _name;
-  b2BodyDef _physBody;
-  KBMap<std::string, std::shared_ptr<Node>> _children;
+  b2Body* _physBody;
+  mutable KBMap<std::string, std::shared_ptr<Node>> _children;
   bool _render;
+  bool _toBeDestroyed = false;
   Option<Node> _parent;
   KBTypeMap<std::shared_ptr<NodeAttachment>> _attachments;
   T _transform;

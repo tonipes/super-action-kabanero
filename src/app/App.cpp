@@ -78,6 +78,8 @@ App::App(std::shared_ptr<Game> game) : _game(game) {
 auto App::init() -> void {
   Services::logger()->info("Creating game");
 
+  Services::messagePublisher()->addSubscriber(_game);
+
   _game->init();
 }
 
@@ -87,6 +89,7 @@ auto App::run() -> void {
 
   auto audioPlayer = std::make_shared<AudioPlayer>(_audioFolderPath);
   Services::messagePublisher()->addSubscriber(audioPlayer);
+
   Renderer renderer(window, _tilesize);
   typedef std::chrono::high_resolution_clock Clock;
   typedef std::chrono::milliseconds ms;

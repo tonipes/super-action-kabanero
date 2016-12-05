@@ -5,6 +5,7 @@
 #include "collection/mutable/KBMap.hpp"
 #include "util/StringUtil.hpp"
 #include "exception/EngineException.hpp"
+#include "service/Services.hpp"
 
 #include <string>
 
