@@ -20,7 +20,6 @@ public:
     if (_dmgToTake != 0) {
       _health -= _dmgToTake;
       _dmgToTake = 0;
-      std::cout << _health << "\n";
       if (_health <= 0) {
         Services::messagePublisher()->sendMessage(Message("game",std::make_shared<DestroyNodeEvent>(_node->path())));
         (*_map)[x][y].setType(OPEN_SIDE);

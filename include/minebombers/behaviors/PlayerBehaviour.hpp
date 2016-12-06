@@ -11,6 +11,8 @@
 #include "scene/3D/Transform3D.hpp"
 #include "service/Services.hpp"
 #include <Box2D/Box2D.h>
+#include "random/StdLibRandom.hpp"
+#include "minebombers/attachments/GunAttachment.hpp"
 
 #include <glm/vec2.hpp>
 
@@ -41,9 +43,19 @@ public:
         throwBomb = isPressed;
       }
     });
+    node->addEventReactor([&](CollisionEvent event) {
+      if(event.collisionMaterialAttachment()->hasItem) {
+        _newGun = event.collisionMaterialAttachment()->itemLink->getGun();
+        changeGun = true;
+      }
+    });
+
   }
 
   auto update(float delta, Node<Transform3D>& node) -> void override {
+    if (changeGun) {
+      node.addAttachment(_newGun);
+    }
     glm::vec2 moveDirection;
     if (moveUp) moveDirection.y += 1;
     if (moveDown) moveDirection.y -= 1;
@@ -85,9 +97,18 @@ public:
     auto shoot = fireDirection.x != 0 || fireDirection.y != 0;
 
     if (shoot) {
-      Services::messagePublisher()->sendMessage(Message("gameScene:world/bulletHandler",
-        std::make_shared<BulletEvent>(CREATE_BULLET, pos.x, pos.y, fireDirection.x, fireDirection.y, 20.0f)));
-
+      auto gun = node.get<GunAttachment>().get();
+      auto random = StdLibRandom();
+      for (auto i = 0; i < gun.bulletAmount; i++) {
+        random.seed(_bulletsShot);
+        auto xVar = random.nextFloat(), yVar = random.nextFloat(); // Bad variation, we shoud calculate angle and vary that instead
+        auto spreadFactor = gun.accuracy;
+        fireDirection.x += (xVar * 2 * spreadFactor) - spreadFactor;
+        fireDirection.y += (yVar * 2 * spreadFactor) - spreadFactor;
+        _bulletsShot++;
+        Services::messagePublisher()->sendMessage(Message("gameScene:world/bulletHandler",
+          std::make_shared<BulletEvent>(CREATE_BULLET, pos.x, pos.y, fireDirection.x, fireDirection.y, gun.bulletSpeed)));
+      }
       Services::messagePublisher()->sendMessage(
         Message(
           "audioPlayer:clip/gunshot.ogg",
@@ -148,6 +169,10 @@ private:
   bool fireDown = false;
   bool fireLeft = false;
 
+  int _bulletsShot = 0;
+
   bool throwBomb = false;
 
+  bool changeGun = false;
+  std::shared_ptr<GunAttachment> _newGun;
 };

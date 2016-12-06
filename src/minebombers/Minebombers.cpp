@@ -46,13 +46,13 @@ auto Minebombers::init() -> void {
   auto random = StdLibRandom();
   random.seed(seed);
 
-  auto caveGen = CaveGenerator(seed, 64, 64, 4, 3);
+  auto caveGen = CaveGenerator(seed, 100, 100, 4, 3);
   auto tileMap = caveGen.generate();
   auto fogMap = std::make_shared<FogMap>();
   auto levelCompiler = LevelCompiler(random, _physWorld);
 
   rootNode->addChild(levelCompiler.materializeLevel(tileMap));
-  rootNode->addChild(levelCompiler.materializePlayer(tileMap));
+  levelCompiler.materializePlayer(rootNode, tileMap);
   rootNode->addChild(levelCompiler.initFog(tileMap, fogMap));
 
   Services::logger()->debug("num children: " + std::to_string(rootNode->children().values().length()));
