@@ -15,15 +15,21 @@
 
 class ItemNodeBehaviour : public Behavior<Transform3D> {
 public:
-  ItemNodeBehaviour(Node<Transform3D>* node, std::shared_ptr<GunAttachment> gun) :_gun(gun) {
+  ItemNodeBehaviour(Node<Transform3D>* node) {
+    node->addEventReactor([&](CollisionEvent event) {
+      if(event.collisionMaterialAttachment()->isPlayer){
+        destroy = true;
+      }
+    });
   }
 
   auto update(float delta, Node<Transform3D>& node) -> void override {
-  }
-
-  auto getGun() -> std::shared_ptr<GunAttachment> {
-    return _gun;
+    if(destroy) {
+      Services::logger()->debug("destroy itemnode");
+      Services::messagePublisher()->sendMessage(Message("game",std::make_shared<DestroyNodeEvent>(node.path())));
+      destroy = false;
+    }
   }
 private:
-  std::shared_ptr<GunAttachment> _gun;
+  bool destroy = false;
 };

@@ -48,23 +48,25 @@ public:
       if(event.collisionMaterialAttachment()->collisionDamage > 0.0f){
         takeDamage = true;
       }
-      else if(event.collisionMaterialAttachment()->hasItem) {
-        _newGun = event.collisionMaterialAttachment()->itemLink->getGun();
-        changeGun = true;
+      else if(event.collisionMaterialAttachment()->gunItem.isDefined()) {
+        Services::logger()->debug("Player got new gun");
+        _newGun = event.collisionMaterialAttachment()->gunItem;
+        // changeGun = true;
       }
     });
   }
 
   auto update(float delta, Node<Transform3D>& node) -> void override {
-    if (changeGun) {
-      node.addAttachment(_newGun);
+    if (_newGun.isDefined()) {
+      node.addAttachment(_newGun.get());
+      _newGun = Option<std::shared_ptr<GunAttachment>>();
     }
     glm::vec2 moveDirection;
     if (moveUp) moveDirection.y += 1;
     if (moveDown) moveDirection.y -= 1;
     if (moveRight) moveDirection.x += 1;
     if (moveLeft) moveDirection.x -= 1;
-    if (moveDirection.x != 0 && moveDirection.y != 0) { // Focken geniuous
+    if (moveDirection.x != 0 && moveDirection.y != 0) {
       moveDirection.x /= 1.41421356237f;
       moveDirection.y /= 1.41421356237f;
     }
@@ -75,14 +77,9 @@ public:
     const auto& physAttachment = node.get<PhysicsAttachment>();
     physAttachment.foreach([&](auto phys) {
       const auto& pos = phys.position();
-      // Services::logger()->debug(std::to_string(pos.x) + ", " + std::to_string(pos.y));
-      // this->setLocalPosition(glm::vec3(pos.x, pos.y, this->localPosition().z));
       phys.setVelocity(moveDirection.x, moveDirection.y);
     });
 
-    // auto pos = node.physics()->GetPosition();
-
-    // node.setLocalPosition(glm::vec3(pos.x, pos.y, 2));
     auto pos = node.position().xy();
     auto pos2 = node.position().xy();
 
@@ -109,8 +106,8 @@ public:
         random.seed(_bulletsShot);
         auto xVar = random.nextFloat(), yVar = random.nextFloat(); // Bad variation, we shoud calculate angle and vary that instead
         auto spreadFactor = gun.accuracy;
-        fireDirection.x += (xVar * 2 * spreadFactor) - spreadFactor;
-        fireDirection.y += (yVar * 2 * spreadFactor) - spreadFactor;
+        // fireDirection.x += (xVar * 2 * spreadFactor) - spreadFactor;
+        // fireDirection.y += (yVar * 2 * spreadFactor) - spreadFactor;
         _bulletsShot++;
         Services::messagePublisher()->sendMessage(Message("gameScene:world/bulletHandler",
           std::make_shared<BulletEvent>(CREATE_BULLET, pos.x, pos.y, fireDirection.x, fireDirection.y, gun.bulletSpeed)));
@@ -133,11 +130,9 @@ public:
       auto material_att = std::make_shared<CollisionMaterialAttachment>();
 
       bombNode->addBehavior<BombBehaviour>(5.0f);
-      // bombNode->addBehavior<EnemyOrbBehavior>();
       bombNode->addAttachment(sprite_att);
       bombNode->addAttachment(material_att);
 
-      // b2BodyDef bodyDef;
       auto bodyDef = std::make_shared<b2BodyDef>();
 
       bodyDef->type = b2_dynamicBody;
@@ -189,5 +184,6 @@ private:
   bool throwBomb = false;
 
   bool changeGun = false;
-  std::shared_ptr<GunAttachment> _newGun;
+  Option<std::shared_ptr<GunAttachment>> _newGun = Option<std::shared_ptr<GunAttachment>>();
+  // std::shared_ptr<GunAttachment> _newGun;
 };

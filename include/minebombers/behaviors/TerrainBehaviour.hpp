@@ -1,8 +1,18 @@
 #pragma once
 
 #include <iostream>
-#include "message/event/DestroyNodeEvent.hpp"
+// #include "message/event/DestroyNodeEvent.hpp"
 #include "minebombers/level/TileMap.hpp"
+#include "scene/3D/Transform3D.hpp"
+#include "game/Behavior.hpp"
+#include "service/Services.hpp"
+#include "message/event/DestroyNodeEvent.hpp"
+#include "game/Behavior.hpp"
+#include "scene/Node.hpp"
+#include "scene/3D/Transform3D.hpp"
+#include "service/Services.hpp"
+#include "random/StdLibRandom.hpp"
+#include "minebombers/attachments/GunAttachment.hpp"
 
 class TerrainBehaviour : public Behavior<Transform3D> {
 public:
@@ -13,8 +23,14 @@ public:
    _dmgToTake(0),
    _map(map),
    x(xc),
-   y(yc)
-  {}
+   y(yc){
+
+    node->addEventReactor([&](CollisionEvent event) {
+      if(event.collisionMaterialAttachment()->collisionDamage > 0.0f){
+        this->takeDamage( event.collisionMaterialAttachment()->collisionDamage );
+      }
+    });
+  }
 
   auto update(float delta, Node<Transform3D>& node) -> void override {
     if (_dmgToTake != 0) {
@@ -28,7 +44,7 @@ public:
     node.setSleep(true);
   }
 
-  auto takeDamage(float dmg) {
+  auto takeDamage(float dmg) -> void {
     _dmgToTake += dmg;
     _node->wakeRecursivelyUpwards();
   }

@@ -12,7 +12,7 @@ public:
   bulletSpeed(sped),
   sprite(spri)
    {}
-  // public magic, avoiding boilerplate since 1995
+
   float damage;
   float fireRate; // per second
   int bulletAmount; // bullets per shoot

@@ -115,6 +115,7 @@ public:
 
     auto material_att = std::make_shared<CollisionMaterialAttachment>();
     material_att->bulletRebound = true;
+    material_att->isPlayer = true;
 
     node->addAttachment(material_att);
     auto gun = std::make_shared<GunAttachment>(5.0f, 1.0f, 1, 0.4f, 8.0f, "tiles/sniper_normal");
@@ -205,9 +206,6 @@ private:
 
     material_att->staticMaterial = true;
 
-    material_att->damageable = true;
-    material_att->terrainLink = terrainBehaviour;
-
     node->addAttachment(material_att);
 
     auto physBody = createPhysSquare(x, y);
@@ -222,10 +220,10 @@ private:
     node->setLocalPosition(glm::vec3(x,y,0));
     node->addAttachment(getSprite(gun->sprite, -1));
 
-    auto itBeh = node->addBehavior<ItemNodeBehaviour>(gun);
+    auto itBeh = node->addBehavior<ItemNodeBehaviour>();
     auto material_att = std::make_shared<CollisionMaterialAttachment>();
-    material_att->hasItem = true;
-    material_att->itemLink = itBeh;
+    material_att->gunItem = Some<std::shared_ptr<GunAttachment>>(gun);
+    // material_att->itemLink = itBeh;
     node->addAttachment(material_att);
 
     auto physBody = createPhysSquare(x, y);

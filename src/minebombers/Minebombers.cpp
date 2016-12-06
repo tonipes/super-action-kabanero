@@ -49,21 +49,14 @@ auto Minebombers::init() -> void {
   auto random = StdLibRandom();
   random.seed(seed);
 
-  auto caveGen = CaveGenerator(seed, 70, 70, 4, 3);
+  auto caveGen = CaveGenerator(seed, 32, 32, 4, 3);
   auto tileMap = caveGen.generate();
   auto fogMap = std::make_shared<FogMap>();
   auto levelCompiler = LevelCompiler(random, _physWorld);
 
-<<<<<<< HEAD
   levelCompiler.materializeLevel(tileMap, rootNode);
   levelCompiler.materializePlayer(tileMap, rootNode);
   levelCompiler.initFog(tileMap, fogMap, rootNode);
-
-=======
-  rootNode->addChild(levelCompiler.materializeLevel(tileMap));
-  levelCompiler.materializePlayer(rootNode, tileMap);
-  rootNode->addChild(levelCompiler.initFog(tileMap, fogMap));
->>>>>>> destructible-terrain
 
   Services::logger()->debug("num children: " + std::to_string(rootNode->children().values().length()));
 
@@ -73,32 +66,32 @@ auto Minebombers::init() -> void {
   rootNode->addChild(cameraNode);
 
   // Just for testing
-  auto enemyNode = std::make_shared<Node<Transform3D>>("test_enemy");
-  enemyNode->setLocalPosition(glm::vec3(30, 24, 5));
-
-  auto sprite_att = std::make_shared<SpriteAttachment>("test-effect/orb_of_destruction");
-  auto material_att = std::make_shared<CollisionMaterialAttachment>();
-  
-  material_att->collisionDamage = 1.0f;
-
-  enemyNode->addBehavior<EnemyOrbBehavior>();
-  enemyNode->addAttachment(sprite_att);
-  enemyNode->addAttachment(material_att);
-
-  auto bodyDef = std::make_shared<b2BodyDef>();
-
-  bodyDef->type = b2_dynamicBody;
-  bodyDef->position.Set(24, 30);
-  bodyDef->allowSleep = false;
-  bodyDef->fixedRotation = true;
-  bodyDef->linearDamping = 0.5f;
-
-  auto shape = std::make_shared<b2CircleShape>();
-  shape->m_p.Set(0, 0);
-  shape->m_radius = 0.2f;
-  Services::messagePublisher()->sendMessage(Message("game", std::make_shared<CreateNodeEvent>(
-    "world/bulletHandler", bodyDef, shape, enemyNode
-  )));
+  // auto enemyNode = std::make_shared<Node<Transform3D>>("test_enemy");
+  // enemyNode->setLocalPosition(glm::vec3(30, 24, 5));
+  //
+  // auto sprite_att = std::make_shared<SpriteAttachment>("test-effect/orb_of_destruction");
+  // auto material_att = std::make_shared<CollisionMaterialAttachment>();
+  //
+  // material_att->collisionDamage = 1.0f;
+  //
+  // enemyNode->addBehavior<EnemyOrbBehavior>();
+  // enemyNode->addAttachment(sprite_att);
+  // enemyNode->addAttachment(material_att);
+  //
+  // auto bodyDef = std::make_shared<b2BodyDef>();
+  //
+  // bodyDef->type = b2_dynamicBody;
+  // bodyDef->position.Set(24, 30);
+  // bodyDef->allowSleep = false;
+  // bodyDef->fixedRotation = true;
+  // bodyDef->linearDamping = 0.5f;
+  //
+  // auto shape = std::make_shared<b2CircleShape>();
+  // shape->m_p.Set(0, 0);
+  // shape->m_radius = 0.2f;
+  // Services::messagePublisher()->sendMessage(Message("game", std::make_shared<CreateNodeEvent>(
+  //   "world/bulletHandler", bodyDef, shape, enemyNode
+  // )));
 
   auto bulletHandler = std::make_shared<Node<Transform3D>>("bulletHandler");
   bulletHandler->setLocalPosition(glm::vec3(0, 0, 0));
