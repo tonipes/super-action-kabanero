@@ -72,6 +72,8 @@ auto Minebombers::init() -> void {
 
   auto sprite_att = std::make_shared<SpriteAttachment>("test-effect/orb_of_destruction");
   auto material_att = std::make_shared<CollisionMaterialAttachment>();
+  
+  material_att->collisionDamage = 1.0f;
 
   enemyNode->addBehavior<EnemyOrbBehavior>();
   enemyNode->addAttachment(sprite_att);

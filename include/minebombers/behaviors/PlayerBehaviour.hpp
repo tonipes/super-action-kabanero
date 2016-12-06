@@ -42,6 +42,11 @@ public:
         throwBomb = isPressed;
       }
     });
+    node->addEventReactor([&](CollisionEvent event) {
+      if(event.collisionMaterialAttachment()->collisionDamage > 0.0f){
+        takeDamage = true;
+      }
+    });
   }
 
   auto update(float delta, Node<Transform3D>& node) -> void override {
@@ -131,6 +136,14 @@ public:
 
     }
 
+    if(takeDamage) {
+      Services::messagePublisher()->sendMessage(Message(
+        "audioPlayer:clip/pain.ogg",
+        std::make_shared<AudioClipEvent>(CLIP_PLAY)
+      ));
+      takeDamage=false;
+    }
+
     Services::messagePublisher()->sendMessage(Message("gameScene:world/fog", std::make_shared<PlayerLocationEvent>(pos2)));
 
     fireUp = false;
@@ -142,6 +155,7 @@ public:
 
 private:
   int counter = 0;
+  bool takeDamage = false;
   bool moveUp = false;
   bool moveRight = false;
   bool moveDown = false;
