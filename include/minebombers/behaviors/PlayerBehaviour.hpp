@@ -12,6 +12,8 @@
 #include "scene/3D/Transform3D.hpp"
 #include "service/Services.hpp"
 #include <Box2D/Box2D.h>
+#include "random/StdLibRandom.hpp"
+#include "minebombers/attachments/GunAttachment.hpp"
 
 #include <glm/vec2.hpp>
 
@@ -46,10 +48,17 @@ public:
       if(event.collisionMaterialAttachment()->collisionDamage > 0.0f){
         takeDamage = true;
       }
+      else if(event.collisionMaterialAttachment()->hasItem) {
+        _newGun = event.collisionMaterialAttachment()->itemLink->getGun();
+        changeGun = true;
+      }
     });
   }
 
   auto update(float delta, Node<Transform3D>& node) -> void override {
+    if (changeGun) {
+      node.addAttachment(_newGun);
+    }
     glm::vec2 moveDirection;
     if (moveUp) moveDirection.y += 1;
     if (moveDown) moveDirection.y -= 1;
@@ -80,6 +89,7 @@ public:
     Services::messagePublisher()->sendMessage(Message("gameScene:world/camera", std::make_shared<PlayerLocationEvent>(pos2)));
 
     glm::vec2 fireDirection;
+    _fireDelay -= delta;
 
     if (fireUp) fireDirection.y += 1;
     if (fireDown) fireDirection.y -= 1;
@@ -91,10 +101,20 @@ public:
     }
     auto shoot = fireDirection.x != 0 || fireDirection.y != 0;
 
-    if (shoot) {
-      Services::messagePublisher()->sendMessage(Message("gameScene:world/bulletHandler",
-        std::make_shared<BulletEvent>(CREATE_BULLET, pos.x, pos.y, fireDirection.x, fireDirection.y, 20.0f)));
-
+    if (shoot && _fireDelay <= 0) {
+      auto gun = node.get<GunAttachment>().get();
+      _fireDelay = 1.0f / gun.fireRate;
+      auto random = StdLibRandom();
+      for (auto i = 0; i < gun.bulletAmount; i++) {
+        random.seed(_bulletsShot);
+        auto xVar = random.nextFloat(), yVar = random.nextFloat(); // Bad variation, we shoud calculate angle and vary that instead
+        auto spreadFactor = gun.accuracy;
+        fireDirection.x += (xVar * 2 * spreadFactor) - spreadFactor;
+        fireDirection.y += (yVar * 2 * spreadFactor) - spreadFactor;
+        _bulletsShot++;
+        Services::messagePublisher()->sendMessage(Message("gameScene:world/bulletHandler",
+          std::make_shared<BulletEvent>(CREATE_BULLET, pos.x, pos.y, fireDirection.x, fireDirection.y, gun.bulletSpeed)));
+      }
       Services::messagePublisher()->sendMessage(
         Message(
           "audioPlayer:clip/gunshot.ogg",
@@ -146,10 +166,6 @@ public:
 
     Services::messagePublisher()->sendMessage(Message("gameScene:world/fog", std::make_shared<PlayerLocationEvent>(pos2)));
 
-    fireUp = false;
-    fireRight = false;
-    fireDown = false;
-    fireLeft = false;
     throwBomb = false;
   }
 
@@ -166,6 +182,12 @@ private:
   bool fireDown = false;
   bool fireLeft = false;
 
+  int _bulletsShot = 0;
+
+  float _fireDelay = 0;
+
   bool throwBomb = false;
 
+  bool changeGun = false;
+  std::shared_ptr<GunAttachment> _newGun;
 };

@@ -23,8 +23,9 @@ public:
 
   auto update(float delta, Node<Transform3D>& node) -> void override {
     if (x == -1 || y == -1) return;
-    if (!_fog->isVisited(x, y)) {
-      auto los = RayCast::lineOfSight(_map, x + 0.5f, y + 0.5f, 50, 0.3f, 8.0f);
+    //if (!_fog->isVisited(x, y)) {
+    if (true) {
+      auto los = RayCast::lineOfSight(_map, x + 0.5f, y + 0.5f, 100, 0.02f, 8.0f);
       for (auto ray : los) {
         for (auto t : ray->getTiles()) {
           (*_fog)[t.getX()][t.getY()]->setRenderOn(false);
