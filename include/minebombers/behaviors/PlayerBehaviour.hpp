@@ -3,6 +3,7 @@
 #include "minebombers/events/PlayerLocationEvent.hpp"
 #include "minebombers/events/BulletEvent.hpp"
 #include "minebombers/behaviors/BombBehaviour.hpp"
+#include "minebombers/behaviors/EnemyOrbBehavior.hpp"
 #include "message/event/CreateNodeEvent.hpp"
 #include "message/event/GameInputEvent.hpp"
 #include "message/event/AudioClipEvent.hpp"
@@ -59,7 +60,8 @@ public:
 
     const auto& physAttachment = node.get<PhysicsAttachment>();
     physAttachment.foreach([&](auto phys) {
-      // const auto& pos = phys.position();
+      const auto& pos = phys.position();
+      // Services::logger()->debug(std::to_string(pos.x) + ", " + std::to_string(pos.y));
       // this->setLocalPosition(glm::vec3(pos.x, pos.y, this->localPosition().z));
       phys.setVelocity(moveDirection.x, moveDirection.y);
     });
@@ -106,7 +108,9 @@ public:
       auto material_att = std::make_shared<CollisionMaterialAttachment>();
 
       bombNode->addBehavior<BombBehaviour>(5.0f);
+      // bombNode->addBehavior<EnemyOrbBehavior>();
       bombNode->addAttachment(sprite_att);
+      bombNode->addAttachment(material_att);
 
       // b2BodyDef bodyDef;
       auto bodyDef = std::make_shared<b2BodyDef>();

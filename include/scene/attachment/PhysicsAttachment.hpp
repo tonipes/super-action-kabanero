@@ -20,6 +20,11 @@ public:
   auto destroy() -> void {
     _body->GetWorld()->DestroyBody( _body );
   }
+
+  auto body() const -> b2Body* {
+    return _body;
+  }
+
 private:
   b2Body* _body;
 };

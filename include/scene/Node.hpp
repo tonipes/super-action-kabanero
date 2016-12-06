@@ -4,6 +4,8 @@
 #include <glm/glm.hpp>
 #include <Box2D/Box2D.h>
 
+#include "physics/CollisionData.hpp"
+#include "exception/EngineException.hpp"
 #include "collection/mutable/KBVector.hpp"
 #include "collection/mutable/KBMap.hpp"
 #include "collection/mutable/KBTypeMap.hpp"
@@ -11,6 +13,7 @@
 #include "scene/Transform.hpp"
 #include "scene/NodeAttachment.hpp"
 #include "scene/attachment/PhysicsAttachment.hpp"
+#include "minebombers/attachments/CollisionMaterialAttachment.hpp"
 #include "message/EventHandler.hpp"
 #include "service/Services.hpp"
 #include "game/Behavior.hpp"
@@ -66,10 +69,18 @@ public:
   }
 
   auto addChild(std::shared_ptr<Node> child) -> void {
-    // Services::logger()->debug("add child");
-    // std::cout << "Addchild" << '\n';
+
     _children.insert(child->name(), child);
     child->_setParent(this->shared_from_this());
+
+    auto materialAttachment = child->template getShared<CollisionMaterialAttachment>();
+    auto physicsAttachment = child->template get<PhysicsAttachment>();
+
+    if(physicsAttachment.isDefined() && materialAttachment.isDefined()){
+      auto collisionData = new CollisionData(child->path(), materialAttachment.get());
+      physicsAttachment.get().body()->SetUserData(collisionData);
+    }
+
     child->_setUpdateFlag();
   }
 
@@ -84,6 +95,16 @@ public:
       return Some<AttachmentType>(std::dynamic_pointer_cast<AttachmentType>(attachment.get()));
     } else {
       return Option<AttachmentType>();
+    }
+  }
+
+  template <typename AttachmentType>
+  auto getShared() const -> Option<std::shared_ptr<AttachmentType>> {
+    auto attachment = _attachments.get<AttachmentType>();
+    if (attachment.isDefined()) {
+      return Some<std::shared_ptr<AttachmentType>>(std::dynamic_pointer_cast< AttachmentType >( attachment.get() ));
+    } else {
+      return Option<std::shared_ptr<AttachmentType>>();
     }
   }
 

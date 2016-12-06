@@ -57,6 +57,7 @@ public:
         auto physAttachment = std::make_shared<PhysicsAttachment>(physBody);
 
         bulletNode->addAttachment(physAttachment);
+        bulletNode->addAttachment(material_att);
 
         // bulletNode->setPhysics(physBody);
 
@@ -66,8 +67,8 @@ public:
         node.addChild(bulletNode);
 
         // Add path to physics body's user data for Collision Listener
-        auto collisionData = new CollisionData(bulletNode->path(), material_att);
-        physBody->SetUserData(collisionData);
+        // auto collisionData = new CollisionData(bulletNode->path(), material_att);
+        // physBody->SetUserData(collisionData);
 
       } else if (e.getAction() == DESTROY_BULLET) {
         Services::logger()->debug("destroy bullet");

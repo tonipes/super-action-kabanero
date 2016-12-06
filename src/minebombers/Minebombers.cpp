@@ -11,7 +11,10 @@
 #include "minebombers/behaviors/CameraBehavior.hpp"
 #include "minebombers/behaviors/BulletHandlerBehaviour.hpp"
 #include "minebombers/events/TestEvent.hpp"
+#include "minebombers/attachments/CollisionMaterialAttachment.hpp"
 #include "collection/Option.hpp"
+#include "physics/CollisionData.hpp"
+#include "minebombers/behaviors/EnemyOrbBehavior.hpp"
 
 #include "physics/ContactListener.hpp"
 
@@ -51,9 +54,10 @@ auto Minebombers::init() -> void {
   auto fogMap = std::make_shared<FogMap>();
   auto levelCompiler = LevelCompiler(random, _physWorld);
 
-  rootNode->addChild(levelCompiler.materializeLevel(tileMap));
-  rootNode->addChild(levelCompiler.materializePlayer(tileMap));
-  rootNode->addChild(levelCompiler.initFog(tileMap, fogMap));
+  levelCompiler.materializeLevel(tileMap, rootNode);
+  levelCompiler.materializePlayer(tileMap, rootNode);
+  levelCompiler.initFog(tileMap, fogMap, rootNode);
+
 
   Services::logger()->debug("num children: " + std::to_string(rootNode->children().values().length()));
 
@@ -61,6 +65,32 @@ auto Minebombers::init() -> void {
   cameraNode->setLocalPosition(glm::vec3(0, 0, 0));
   cameraNode->addBehavior<CameraBehavior>(0.2f);
   rootNode->addChild(cameraNode);
+
+  // Just for testing
+  auto enemyNode = std::make_shared<Node<Transform3D>>("test_enemy");
+  enemyNode->setLocalPosition(glm::vec3(30, 24, 5));
+
+  auto sprite_att = std::make_shared<SpriteAttachment>("test-effect/orb_of_destruction");
+  auto material_att = std::make_shared<CollisionMaterialAttachment>();
+
+  enemyNode->addBehavior<EnemyOrbBehavior>();
+  enemyNode->addAttachment(sprite_att);
+  enemyNode->addAttachment(material_att);
+
+  auto bodyDef = std::make_shared<b2BodyDef>();
+
+  bodyDef->type = b2_dynamicBody;
+  bodyDef->position.Set(24, 30);
+  bodyDef->allowSleep = false;
+  bodyDef->fixedRotation = true;
+  bodyDef->linearDamping = 0.5f;
+
+  auto shape = std::make_shared<b2CircleShape>();
+  shape->m_p.Set(0, 0);
+  shape->m_radius = 0.2f;
+  Services::messagePublisher()->sendMessage(Message("game", std::make_shared<CreateNodeEvent>(
+    "world/bulletHandler", bodyDef, shape, enemyNode
+  )));
 
   auto bulletHandler = std::make_shared<Node<Transform3D>>("bulletHandler");
   bulletHandler->setLocalPosition(glm::vec3(0, 0, 0));
@@ -129,12 +159,23 @@ auto Minebombers::init() -> void {
         b2Body* body = _physWorld.CreateBody(event.bodyDef().get());
         body->CreateFixture(event.shape().get(), 1.0f);
 
+
         // event.node()->setPhysics(body);
 
         auto physAttachment = std::make_shared<PhysicsAttachment>(body);
         event.node()->addAttachment(physAttachment);
 
         parent->addChild(event.node());
+        Services::logger()->debug("path: " + event.node()->path());
+
+        auto material_att = event.node()->getShared<CollisionMaterialAttachment>();
+        if(material_att.isDefined()){
+
+          Services::logger()->debug("Add collisionData");
+          auto collisionData = new CollisionData(event.node()->path(), material_att.get());
+          body->SetUserData(collisionData);
+        }
+
       }
     }
     Services::logger()->debug("CreateNode");
