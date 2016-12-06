@@ -9,6 +9,7 @@
 #include "minebombers/behaviors/FogBehaviour.hpp"
 #include "minebombers/behaviors/PlayerBehaviour.hpp"
 #include "minebombers/behaviors/WallBehavior.hpp"
+#include "minebombers/attachments/CollisionMaterialAttachment.hpp"
 #include <sstream>
 
 class LevelCompiler {
@@ -26,7 +27,8 @@ public:
         auto tileNode =  std::make_shared<Node<Transform3D>>(name("tile", x, y));
         auto floorNode = std::make_shared<Node<Transform3D>>(name("floor", x, y));
         floorNode->addAttachment(getSprite("tiles/dirt", 2));
-        floorNode->setLocalPosition(glm::vec3(x, y, 0));
+        floorNode->setSleep(true);
+        floorNode->setLocalPosition(glm::vec3(x, y, -2));
         switch ((*map)[x][y].getType()) {
           case CAVE_WALL :
             tileNode->addChild(getTerrain("tiles/pebble_brown", 8, 100.0f, x, y));
@@ -136,9 +138,12 @@ private:
     node->setLocalPosition(glm::vec3(x, y, 0));
     node->addAttachment(getSprite(sprites, spriteVar));
 
+    //node->addBehavior<WallBehavior>();
+    auto terrainBehaviour = node->addBehavior<TerrainBehaviour>(health);
     auto material_att = std::make_shared<CollisionMaterialAttachment>();
+    material_att->damageable = true;
+    material_att->terrainLink = terrainBehaviour;
     node->addAttachment(material_att);
-    node->addBehavior<WallBehavior>();
 
     auto physBody = createPhysSquare(x, y);
 
@@ -149,7 +154,6 @@ private:
     node->addAttachment(physAttachment);
 
     // node->setPhysics(physBody);
-    node->addBehavior<TerrainBehaviour>(health);
     return node;
   }
 };

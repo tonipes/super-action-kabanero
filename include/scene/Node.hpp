@@ -156,10 +156,22 @@ public:
     _isSleeping = true;
   }
 
+  auto isSleep() const -> bool {
+    return _isSleeping;
+  }
+
+  auto wakeRecursivelyUpwards() -> void {
+    _isSleeping = false;
+    if (_parent.isDefined()) {
+      _parent.gets().wakeRecursivelyUpwards();
+    }
+   }
+
   template <typename BehaviorType, typename... Args>
-  auto addBehavior(Args&&... args) -> void {
+  auto addBehavior(Args&&... args) -> std::shared_ptr<BehaviorType> {
     auto behavior = std::make_shared<BehaviorType>(this, std::forward<Args>(args)...);
     _behaviors += behavior;
+    return behavior;
   }
 
   auto update(float delta) -> void {

@@ -41,9 +41,13 @@ public:
    * Returns pointer to contained value.
    * @return pointer to contained value. Returns nullptr if no value is contained.
    */
-  auto get() const -> const T& {
-    return *_valueStore;
-  }
+   auto get() const -> const T& {
+     return *_valueStore;
+   }
+
+   auto gets() -> T& {
+     return *_valueStore;
+   }
 
   /**
    * Returns pointer to contained value or default value.
