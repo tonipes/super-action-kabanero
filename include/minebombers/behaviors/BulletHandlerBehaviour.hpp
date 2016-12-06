@@ -89,6 +89,15 @@ private:
   }
 
   auto createPhysCircle(float x, float y) -> b2Body* {
+    b2CircleShape shape;
+    shape.m_p.Set(0, 0); //position, relative to body position
+    shape.m_radius = 0.1f;
+
+    b2FixtureDef fixtureDef;
+    fixtureDef.shape = &shape;
+    fixtureDef.density = 1;
+    fixtureDef.restitution = 1;
+
     b2BodyDef bodyDef;
     bodyDef.type = b2_dynamicBody;
     bodyDef.position.Set(x, y);
@@ -98,10 +107,8 @@ private:
     bodyDef.bullet = true;
 
     b2Body* body = _physWorld.CreateBody(&bodyDef);
-    b2CircleShape circleShape;
-    circleShape.m_p.Set(0, 0); //position, relative to body position
-    circleShape.m_radius = 0.1f;
-    body->CreateFixture(&circleShape, 1.0f);
+    body->CreateFixture(&fixtureDef);
+
     return body;
   }
 };
