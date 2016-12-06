@@ -4,29 +4,48 @@
 #include "minebombers/level/FogMap.hpp"
 #include "scene/Node.hpp"
 #include "scene/3D/Transform3D.hpp"
+#include "physics/CollisionData.hpp"
 #include "scene/attachment/SpriteAttachment.hpp"
 #include "minebombers/behaviors/TerrainBehaviour.hpp"
 #include "minebombers/behaviors/FogBehaviour.hpp"
 #include "minebombers/behaviors/PlayerBehaviour.hpp"
 #include "minebombers/behaviors/WallBehavior.hpp"
+#include "minebombers/attachments/CollisionMaterialAttachment.hpp"
+
 #include <sstream>
 
 class LevelCompiler {
 public:
   LevelCompiler(Random& rand, b2World& w): _rand(rand), _world(w) {}
-  auto materializeLevel(std::shared_ptr<TileMap> map) -> std::shared_ptr<Node<Transform3D>> {
+
+  auto materializeLevel(
+    std::shared_ptr<TileMap> map,
+    std::shared_ptr<Node<Transform3D>> root
+  ) -> void {
+
     auto level = std::make_shared<Node<Transform3D>>("level");
     level->setSleep(true);
+    root->addChild(level);
+
     auto ground = std::make_shared<Node<Transform3D>>("ground");
     ground->setLocalPosition(glm::vec3(0,0,0));
+    level->addChild(ground);
+
     auto obj = std::make_shared<Node<Transform3D>>("obj");
     obj->setLocalPosition(glm::vec3(0,0,2));
+    level->addChild(obj);
+
     for (auto x = 0; x < map->getWidth(); x++) {
       for (auto y = 0; y < map->getHeight(); y++) {
         auto tileNode =  std::make_shared<Node<Transform3D>>(name("tile", x, y));
         auto floorNode = std::make_shared<Node<Transform3D>>(name("floor", x, y));
+
+        // ground->addChild(floorNode);
+        obj->addChild(tileNode);
+
         floorNode->addAttachment(getSprite("tiles/dirt", 2));
         floorNode->setLocalPosition(glm::vec3(x, y, 0));
+
         switch ((*map)[x][y].getType()) {
           case CAVE_WALL :
             tileNode->addChild(getTerrain("tiles/pebble_brown", 8, 100.0f, x, y));
@@ -41,18 +60,21 @@ public:
             tileNode->addChild(getTerrain("tiles/window", 0, 10.0f, x, y));
             break;
         }
-        ground->addChild(floorNode);
-        obj->addChild(tileNode);
+
       }
     }
-    //level->addChild(ground);
-    level->addChild(obj);
-    return level;
+
   }
 
-  auto initFog(std::shared_ptr<TileMap> map, std::shared_ptr<FogMap> fogMap) -> std::shared_ptr<Node<Transform3D>> {
+  auto initFog(
+    std::shared_ptr<TileMap> map, std::shared_ptr<FogMap> fogMap,
+    std::shared_ptr<Node<Transform3D>> root
+  ) -> void {
+
     fogMap->init(map->getWidth(), map->getHeight());
     auto fogNode = std::make_shared<Node<Transform3D>>("fog");
+    root->addChild(fogNode);
+
     fogNode->setLocalPosition(glm::vec3(0,0,100));
     for (auto x = 0; x < map->getWidth(); x++) {
       for (auto y = 0; y < map->getHeight(); y++) {
@@ -65,14 +87,19 @@ public:
       }
     }
     fogNode->addBehavior<FogBehaviour>(map, fogMap);
-    return fogNode;
   }
 
-  auto materializePlayer(std::shared_ptr<TileMap> map) -> std::shared_ptr<Node<Transform3D>> {
+  auto materializePlayer(
+    std::shared_ptr<TileMap> map,
+    std::shared_ptr<Node<Transform3D>> root
+  ) -> void{
+
     auto tile = map->getRandom(PLAYER_SPAWN_POINT, _rand);
+
     auto node = std::make_shared<Node<Transform3D>>("player");
     node->setLocalPosition(glm::vec3(tile.getX(), tile.getY(), 2));
     node->addAttachment(getSprite("tiles/spriggan_druid", -1));
+    root->addChild(node);
 
     auto material_att = std::make_shared<CollisionMaterialAttachment>();
     material_att->bulletRebound = true;
@@ -89,10 +116,8 @@ public:
 
     // node->setPhysics(physCircle);
     node->addBehavior<PlayerBehaviour>();
-    return node;
+    // return node;
   }
-
-
 
   auto createPhysSquare(float x, float y) -> b2Body* {
     b2BodyDef bodyDef;
@@ -137,13 +162,15 @@ private:
     node->addAttachment(getSprite(sprites, spriteVar));
 
     auto material_att = std::make_shared<CollisionMaterialAttachment>();
+    material_att->staticMaterial = true;
+
     node->addAttachment(material_att);
     node->addBehavior<WallBehavior>();
 
     auto physBody = createPhysSquare(x, y);
 
-    auto collisionData = new CollisionData("", material_att); // No path
-    physBody->SetUserData(collisionData);
+    // auto collisionData = new CollisionData("", material_att); // No path
+    // physBody->SetUserData(collisionData);
 
     auto physAttachment = std::make_shared<PhysicsAttachment>(physBody);
     node->addAttachment(physAttachment);

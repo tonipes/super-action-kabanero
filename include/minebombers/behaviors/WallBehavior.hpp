@@ -8,6 +8,10 @@ class WallBehavior : public Behavior<Transform3D> {
 public:
   WallBehavior(Node<Transform3D>* node) {
     node->setSleep(true);
+    node->addEventReactor([&](CollisionEvent event) {
+      // Services::logger()->debug("wall collided");
+
+    });
   }
 private:
 
