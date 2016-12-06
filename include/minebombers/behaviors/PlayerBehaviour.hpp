@@ -85,6 +85,7 @@ public:
     Services::messagePublisher()->sendMessage(Message("gameScene:world/camera", std::make_shared<PlayerLocationEvent>(pos2)));
 
     glm::vec2 fireDirection;
+    _fireDelay -= delta;
 
     if (fireUp) fireDirection.y += 1;
     if (fireDown) fireDirection.y -= 1;
@@ -96,8 +97,9 @@ public:
     }
     auto shoot = fireDirection.x != 0 || fireDirection.y != 0;
 
-    if (shoot) {
+    if (shoot && _fireDelay <= 0) {
       auto gun = node.get<GunAttachment>().get();
+      _fireDelay = 1.0f / gun.fireRate;
       auto random = StdLibRandom();
       for (auto i = 0; i < gun.bulletAmount; i++) {
         random.seed(_bulletsShot);
@@ -150,10 +152,6 @@ public:
 
     Services::messagePublisher()->sendMessage(Message("gameScene:world/fog", std::make_shared<PlayerLocationEvent>(pos2)));
 
-    fireUp = false;
-    fireRight = false;
-    fireDown = false;
-    fireLeft = false;
     throwBomb = false;
   }
 
@@ -170,6 +168,8 @@ private:
   bool fireLeft = false;
 
   int _bulletsShot = 0;
+
+  float _fireDelay = 0;
 
   bool throwBomb = false;
 
