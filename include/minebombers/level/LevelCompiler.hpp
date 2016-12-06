@@ -31,16 +31,16 @@ public:
         floorNode->setLocalPosition(glm::vec3(x, y, -2));
         switch ((*map)[x][y].getType()) {
           case CAVE_WALL :
-            tileNode->addChild(getTerrain("tiles/pebble_brown", 8, 100.0f, x, y));
+            tileNode->addChild(getTerrain("tiles/pebble_brown", 8, 100.0f, x, y, map));
             break;
           case INDESCTRUCTIBLE_WALL :
-            tileNode->addChild(getTerrain("tiles/stone_brick", 11, 10000000.0f, x, y));
+            tileNode->addChild(getTerrain("tiles/stone_brick", 11, 10000000000.0f, x, y, map));
             break;
           case CONSTRUCTED_WALL :
-            tileNode->addChild(getTerrain("tiles/rect_gray", 3, 40.0f, x, y));
+            tileNode->addChild(getTerrain("tiles/rect_gray", 3, 40.0f, x, y, map));
             break;
           case WINDOW :
-            tileNode->addChild(getTerrain("tiles/window", 0, 10.0f, x, y));
+            tileNode->addChild(getTerrain("tiles/window", 0, 10.0f, x, y, map));
             break;
         }
         ground->addChild(floorNode);
@@ -133,13 +133,13 @@ private:
     oss << base << x << "-" << y;
     return oss.str();
   }
-  auto getTerrain(std::string sprites, int spriteVar, float health, int x, int y) -> std::shared_ptr<Node<Transform3D>> {
+  auto getTerrain(std::string sprites, int spriteVar, float health, int x, int y, std::shared_ptr<TileMap> map) -> std::shared_ptr<Node<Transform3D>> {
     auto node = std::make_shared<Node<Transform3D>>(name("obj",x,y));
     node->setLocalPosition(glm::vec3(x, y, 0));
     node->addAttachment(getSprite(sprites, spriteVar));
 
     //node->addBehavior<WallBehavior>();
-    auto terrainBehaviour = node->addBehavior<TerrainBehaviour>(health);
+    auto terrainBehaviour = node->addBehavior<TerrainBehaviour>(health, map, x, y);
     auto material_att = std::make_shared<CollisionMaterialAttachment>();
     material_att->damageable = true;
     material_att->terrainLink = terrainBehaviour;

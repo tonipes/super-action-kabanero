@@ -21,7 +21,7 @@ public:
         destroy = true;
       }
 
-      event.collisionMaterialAttachment()->takeDamage(5.0f);
+      event.collisionMaterialAttachment()->takeDamage(10.0f);
 
     });
   }
