@@ -44,7 +44,7 @@ public:
         auto bulletNode = std::make_shared<Node<Transform3D>>(name);
         bulletNode->setLocalPosition(glm::vec3(real_x, real_y, 5));
 
-        auto sprite_att = std::make_shared<SpriteAttachment>("test-effect/bolt01");
+        auto sprite_att = std::make_shared<SpriteAttachment>("test-effect/sting0");
         auto material_att = std::make_shared<CollisionMaterialAttachment>();
 
         material_att->collisionDamage = 10.0f;

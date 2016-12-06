@@ -102,7 +102,7 @@ public:
       auto bombNode = std::make_shared<Node<Transform3D>>("bomb_"+std::to_string(counter));
       bombNode->setLocalPosition(glm::vec3(pos.x, pos.y, 5));
 
-      auto sprite_att = std::make_shared<SpriteAttachment>("test-effect/bolt01");
+      auto sprite_att = std::make_shared<SpriteAttachment>("test-effect/orb_of_destruction");
       auto material_att = std::make_shared<CollisionMaterialAttachment>();
 
       bombNode->addBehavior<BombBehaviour>(5.0f);
