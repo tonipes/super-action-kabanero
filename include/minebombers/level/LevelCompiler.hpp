@@ -92,7 +92,7 @@ public:
     auto material_att = std::make_shared<CollisionMaterialAttachment>();
     material_att->bulletRebound = true;
     node->addAttachment(material_att);
-    auto gun = std::make_shared<GunAttachment>(10.0f, 5.0f, 1, 0.2f, 10.0f, "tiles/sniper_normal");
+    auto gun = std::make_shared<GunAttachment>(5.0f, 1.0f, 1, 0.4f, 8.0f, "tiles/sniper_normal");
     node->addAttachment(gun);
 
     auto physCircle = createPhysCircle(tile.getX(), tile.getY());
@@ -115,7 +115,7 @@ public:
     auto pistol = std::make_shared<GunAttachment>(15.0f, 2.0f, 1, 0.1f, 15.0f, "tiles/pistol_normal");
     auto rifle = std::make_shared<GunAttachment>(8.0f, 6.0f, 1, 0.3f, 12.0f, "tiles/rifle_normal");
     auto shotgun = std::make_shared<GunAttachment>(10.0f, 1.5f, 3, 0.2f, 10.0f, "tiles/shotgun_normal");
-    auto sniper = std::make_shared<GunAttachment>(40.0f, 0.5f, 1, 0.0f, 25.0f, "tiles/sniper_normal");
+    auto sniper = std::make_shared<GunAttachment>(60.0f, 0.5f, 1, 0.0f, 25.0f, "tiles/sniper_normal");
     guns += rifle;
     guns += pistol;
     guns += shotgun;
@@ -129,7 +129,7 @@ public:
     auto megaPistol = std::make_shared<GunAttachment>(45.0f, 2.0f, 1, 0.05f, 20.0f, "tiles/pistol_artifact");
     auto killerRifle = std::make_shared<GunAttachment>(20.0f, 10.0f, 1, 0.25f, 20.0f, "tiles/rifle_artifact");
     auto superShotgun = std::make_shared<GunAttachment>(15.0f, 2.5f, 5, 0.15f, 15.0f, "tiles/shotgun_artifact");
-    auto uberSniper = std::make_shared<GunAttachment>(80.0f, 0.75f, 1, 0.0f, 45.0f, "tiles/sniper_artifact");
+    auto uberSniper = std::make_shared<GunAttachment>(140.0f, 0.75f, 1, 0.0f, 45.0f, "tiles/sniper_artifact");
     guns += killerRifle;
     guns += megaPistol;
     guns += superShotgun;
