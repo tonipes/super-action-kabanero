@@ -144,7 +144,7 @@ public:
 
       Services::messagePublisher()->sendMessage(
         Message(
-          "audioPlayer:clip/gunshot.ogg",
+          "audioPlayer:clip/" + gunParams->fireSound,
           std::make_shared<AudioClipEvent>(CLIP_PLAY)
         )
       );

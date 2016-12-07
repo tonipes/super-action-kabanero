@@ -22,6 +22,18 @@ namespace NodeFactory {
       std::shared_ptr<b2BodyDef>,
       std::shared_ptr<b2FixtureDef> >;
 
+  auto _createRegularBullet(std::shared_ptr<GunParameters> params) ->
+    std::tuple<
+      std::shared_ptr<Node<Transform3D>>,
+      std::shared_ptr<b2BodyDef>,
+      std::shared_ptr<b2FixtureDef> >;
+
+  auto _createRocketBullet(std::shared_ptr<GunParameters> params) ->
+    std::tuple<
+      std::shared_ptr<Node<Transform3D>>,
+      std::shared_ptr<b2BodyDef>,
+      std::shared_ptr<b2FixtureDef> >;
+
   auto createDamageCircle(float radius, float damage, float force) ->
     std::tuple<
       std::shared_ptr<Node<Transform3D>>,

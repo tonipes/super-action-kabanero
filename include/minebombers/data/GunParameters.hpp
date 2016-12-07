@@ -12,6 +12,7 @@ public:
     float sped,
     std::string sprite,
     std::string bltSprite,
+    std::string sound,
     bool rocket = false,
     bool expSize = 0,
     int shrapnel = 0,
@@ -24,6 +25,7 @@ public:
   sprite(sprite),
   bulletSprite(bltSprite),
   isRocketLauncher(rocket),
+  fireSound(sound),
   explosionSize(expSize),
   shrapnelCount(shrapnel),
   bulletSize(bltSize)
@@ -40,4 +42,5 @@ public:
   bool explosionSize;
   int shrapnelCount;
   float bulletSize;
+  std::string fireSound;
 };

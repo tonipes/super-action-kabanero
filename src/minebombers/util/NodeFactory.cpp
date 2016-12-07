@@ -3,6 +3,7 @@
 #include "minebombers/attachments/CollisionMaterialAttachment.hpp"
 #include "minebombers/behaviors/BombBehaviour.hpp"
 #include "minebombers/behaviors/BulletBehaviour.hpp"
+#include "minebombers/behaviors/RocketBehavior.hpp"
 #include "minebombers/behaviors/BulletOrientationBehavior.hpp"
 #include "minebombers/behaviors/DamageAreaBehavior.hpp"
 #include "scene/attachment/SpriteAttachment.hpp"
@@ -34,7 +35,7 @@ namespace NodeFactory {
 
     auto shape = new b2CircleShape;
     shape->m_p.Set(0, 0);
-    shape->m_radius = 0.1f;
+    shape->m_radius = 0.4f;
 
     auto fixtureDef = std::make_shared<b2FixtureDef>();
     fixtureDef->shape = shape;
@@ -50,6 +51,48 @@ namespace NodeFactory {
   }
 
   auto createBullet(std::shared_ptr<GunParameters> params) ->
+    std::tuple<
+      std::shared_ptr<Node<Transform3D>>,
+      std::shared_ptr<b2BodyDef>,
+      std::shared_ptr<b2FixtureDef> > {
+
+    if(params->isRocketLauncher) return _createRocketBullet(params);
+    else return _createRegularBullet(params);
+
+  }
+
+  auto createDamageCircle(float radius, float damage, float force = 0.0f) ->
+    std::tuple<
+      std::shared_ptr<Node<Transform3D>>,
+      std::shared_ptr<b2BodyDef>,
+      std::shared_ptr<b2FixtureDef> > {
+
+    auto node = std::make_shared<Node<Transform3D>>("damageCircle_" + std::to_string(getId()));
+
+    auto material_att = std::make_shared<CollisionMaterialAttachment>();
+
+    material_att->collisionDamage = damage;
+    material_att->force = force;
+
+    auto bodyDef = std::make_shared<b2BodyDef>();
+    bodyDef->type = b2_dynamicBody;
+
+    auto shape = new b2CircleShape;
+    shape->m_p.Set(0, 0);
+    shape->m_radius = radius;
+
+    auto fixtureDef = std::make_shared<b2FixtureDef>();
+    fixtureDef->shape = shape;
+    fixtureDef->isSensor = true;
+
+    node->addBehavior<DamageAreaBehavior>(0.1f);
+
+    node->addAttachment(material_att);
+
+    return std::make_tuple(node, bodyDef, fixtureDef);
+  }
+
+  auto _createRegularBullet(std::shared_ptr<GunParameters> params) ->
     std::tuple<
       std::shared_ptr<Node<Transform3D>>,
       std::shared_ptr<b2BodyDef>,
@@ -88,33 +131,40 @@ namespace NodeFactory {
     return std::make_tuple(node, bodyDef, fixtureDef);
   }
 
-  auto createDamageCircle(float radius, float damage, float force = 0.0f) ->
+  auto _createRocketBullet(std::shared_ptr<GunParameters> params) ->
     std::tuple<
       std::shared_ptr<Node<Transform3D>>,
       std::shared_ptr<b2BodyDef>,
       std::shared_ptr<b2FixtureDef> > {
 
-    auto node = std::make_shared<Node<Transform3D>>("damageCircle_" + std::to_string(getId()));
+    auto node = std::make_shared<Node<Transform3D>>("rocket_" + std::to_string(getId()));
 
+    auto sprite_att = std::make_shared<SpriteAttachment>(params->bulletSprite);
     auto material_att = std::make_shared<CollisionMaterialAttachment>();
 
-    material_att->collisionDamage = damage;
-    material_att->force = force;
+    material_att->collisionDamage = 0.0f; // Rockets don't hurt. Explosions do
 
     auto bodyDef = std::make_shared<b2BodyDef>();
     bodyDef->type = b2_dynamicBody;
+    bodyDef->allowSleep = false;
+    bodyDef->fixedRotation = true;
+    bodyDef->linearDamping = 0.0f;
+    bodyDef->bullet = true;
 
     auto shape = new b2CircleShape;
     shape->m_p.Set(0, 0);
-    shape->m_radius = radius;
+    shape->m_radius = params->bulletSize;
 
     auto fixtureDef = std::make_shared<b2FixtureDef>();
     fixtureDef->shape = shape;
-    fixtureDef->isSensor = true;
+    fixtureDef->density = 1;
+    fixtureDef->restitution = 1;
 
-    node->addBehavior<DamageAreaBehavior>(0.1f);
+    node->addBehavior<RocketBehavior>(params->explosionSize, params->damage);
+    node->addBehavior<BulletOrientationBehavior>();
 
     node->addAttachment(material_att);
+    node->addAttachment(sprite_att);
 
     return std::make_tuple(node, bodyDef, fixtureDef);
   }
