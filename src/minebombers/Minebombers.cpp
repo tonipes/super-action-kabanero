@@ -64,34 +64,6 @@ auto Minebombers::init() -> void {
   cameraNode->addBehavior<CameraBehavior>(0.2f);
   rootNode->addChild(cameraNode);
 
-  // Just for testing
-  // auto enemyNode = std::make_shared<Node<Transform3D>>("test_enemy");
-  // enemyNode->setLocalPosition(glm::vec3(30, 24, 5));
-  //
-  // auto sprite_att = std::make_shared<SpriteAttachment>("test-effect/orb_of_destruction");
-  // auto material_att = std::make_shared<CollisionMaterialAttachment>();
-  //
-  // material_att->collisionDamage = 1.0f;
-  //
-  // enemyNode->addBehavior<EnemyOrbBehavior>();
-  // enemyNode->addAttachment(sprite_att);
-  // enemyNode->addAttachment(material_att);
-  //
-  // auto bodyDef = std::make_shared<b2BodyDef>();
-  //
-  // bodyDef->type = b2_dynamicBody;
-  // bodyDef->position.Set(24, 30);
-  // bodyDef->allowSleep = false;
-  // bodyDef->fixedRotation = true;
-  // bodyDef->linearDamping = 0.5f;
-  //
-  // auto shape = std::make_shared<b2CircleShape>();
-  // shape->m_p.Set(0, 0);
-  // shape->m_radius = 0.2f;
-  // Services::messagePublisher()->sendMessage(Message("game", std::make_shared<CreateNodeEvent>(
-  //   "world/bulletBag", bodyDef, shape, enemyNode
-  // )));
-
   auto bulletBag = std::make_shared<Node<Transform3D>>("bullets");
   bulletBag->setLocalPosition(glm::vec3(0, 0, 0));
   rootNode->addChild(bulletBag);

@@ -55,7 +55,6 @@ namespace NodeFactory {
       std::shared_ptr<b2BodyDef>,
       std::shared_ptr<b2FixtureDef> > {
 
-
     auto node = std::make_shared<Node<Transform3D>>("bullet_" + std::to_string(getId()));
 
     auto sprite_att = std::make_shared<SpriteAttachment>("test-effect/sting0");

@@ -52,7 +52,6 @@ public:
       else if(event.collisionMaterialAttachment()->gunItem.isDefined()) {
         Services::logger()->debug("Player got new gun");
         _newGun = event.collisionMaterialAttachment()->gunItem;
-        // changeGun = true;
       }
     });
   }
@@ -183,7 +182,5 @@ private:
 
   bool throwBomb = false;
 
-  bool changeGun = false;
   Option<std::shared_ptr<GunAttachment>> _newGun = Option<std::shared_ptr<GunAttachment>>();
-  // std::shared_ptr<GunAttachment> _newGun;
 };

@@ -35,6 +35,4 @@ private:
   float _fuseTime = 0;
   bool exploded = false;
   bool destroy = false;
-
-  // b2Body *_physBody;
 };

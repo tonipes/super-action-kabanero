@@ -49,7 +49,6 @@ public:
         physAttachment.foreach([&](auto& phys) {
           phys.destroy();
         });
-        // n->physics()->GetWorld()->DestroyBody( n->physics() );
         parent.get().removeChild(n->name());
       }
     }

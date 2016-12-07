@@ -22,10 +22,10 @@ public:
   auto bodyDef() -> std::shared_ptr<b2BodyDef> {
     return _bodyDef;
   }
+
   auto fixtureDef() -> std::shared_ptr<b2FixtureDef> {
     return _fixtureDef;
   }
-
 
   auto node() const -> std::shared_ptr<Node<Transform3D>> {
     return _node;

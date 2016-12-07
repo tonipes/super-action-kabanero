@@ -22,10 +22,6 @@ class ContactListener : public b2ContactListener {
       b_data = (CollisionData*) b_userData;
     }
     if (a_data && b_data){
-
-      // Player and terrain doesn't have paths set in their collisiondata
-      // Don't send messages to them
-
       if(!a_data->path().empty()){
         Services::messagePublisher()->sendMessage(
           Message("gameScene:" + a_data->path(), std::make_shared<CollisionEvent>(
@@ -48,6 +44,7 @@ class ContactListener : public b2ContactListener {
   }
 
   void EndContact(b2Contact* contact) {
-    // Services::logger()->debug("EndContact");
+    
   }
+
 };
