@@ -148,6 +148,10 @@ public:
       Services::messagePublisher()->sendMessage(Message("game", std::make_shared<CreateNodeEvent>(
         "world/bullets", bombNode, bodyDef, fixtureDef
       )));
+      Services::messagePublisher()->sendMessage(Message(
+        "audioPlayer:clip/set_bomb.ogg",
+        std::make_shared<AudioClipEvent>(CLIP_PLAY)
+      ));
     }
 
     if(takeDamage) {
