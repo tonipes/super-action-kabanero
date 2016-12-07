@@ -60,6 +60,12 @@ public:
     if (_newGun.isDefined()) {
       node.addAttachment(_newGun.get());
       _newGun = Option<std::shared_ptr<GunAttachment>>();
+
+      Services::messagePublisher()->sendMessage(Message(
+        "audioPlayer:clip/reload.ogg",
+        std::make_shared<AudioClipEvent>(CLIP_PLAY)
+      ));
+      
     }
     glm::vec2 moveDirection;
     if (moveUp) moveDirection.y += 1;

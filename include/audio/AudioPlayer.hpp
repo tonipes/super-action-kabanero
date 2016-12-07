@@ -18,7 +18,7 @@
  */
 class AudioPlayer: public MessageSubscriber, public EventHandler {
 public:
-  AudioPlayer(std::string audioFolderPath, int maxClipCount = 4) :
+  AudioPlayer(std::string audioFolderPath, int maxClipCount = 16) :
       MessageSubscriber("audioPlayer"),
       _maxClipCount(maxClipCount),
       _audioFolderPath(audioFolderPath) { }
