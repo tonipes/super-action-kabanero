@@ -3,6 +3,7 @@
 #include "minebombers/attachments/CollisionMaterialAttachment.hpp"
 #include "minebombers/behaviors/BombBehaviour.hpp"
 #include "minebombers/behaviors/BulletBehaviour.hpp"
+#include "minebombers/behaviors/BulletOrientationBehavior.hpp"
 #include "minebombers/behaviors/DamageAreaBehavior.hpp"
 #include "scene/attachment/SpriteAttachment.hpp"
 
@@ -56,7 +57,7 @@ namespace NodeFactory {
 
     auto node = std::make_shared<Node<Transform3D>>("bullet_" + std::to_string(getId()));
 
-    auto sprite_att = std::make_shared<SpriteAttachment>("test-effect/sting0");
+    auto sprite_att = std::make_shared<SpriteAttachment>("test-effect/crystal_spear0");
     auto material_att = std::make_shared<CollisionMaterialAttachment>();
 
     material_att->collisionDamage = 10.0f;
@@ -79,6 +80,7 @@ namespace NodeFactory {
     fixtureDef->restitution = 1;
 
     node->addBehavior<BulletBehavior>(10.0f);
+    node->addBehavior<BulletOrientationBehavior>();
 
     node->addAttachment(material_att);
     node->addAttachment(sprite_att);
