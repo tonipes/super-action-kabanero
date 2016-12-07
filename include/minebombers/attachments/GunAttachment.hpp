@@ -1,22 +1,16 @@
 #pragma once
 
 #include <string>
+#include "minebombers/data/GunParameters.hpp"
 
 class GunAttachment : public NodeAttachment {
 public:
-  GunAttachment(float dmg, float fr, int ba, float acc, float sped, std::string spri):
-  damage(dmg),
-  fireRate(fr),
-  bulletAmount(ba),
-  accuracy(acc),
-  bulletSpeed(sped),
-  sprite(spri)
-   {}
+  GunAttachment(std::shared_ptr<GunParameters> param): _param(param){}
 
-  float damage;
-  float fireRate; // per second
-  int bulletAmount; // bullets per shoot
-  float accuracy; //smaller == better
-  float bulletSpeed;
-  std::string sprite;
+  auto parameters() const -> std::shared_ptr<GunParameters> {
+    return _param;
+  }
+
+private:
+  std::shared_ptr<GunParameters> _param;
 };

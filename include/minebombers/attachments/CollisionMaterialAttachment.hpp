@@ -3,6 +3,7 @@
 #include "scene/NodeAttachment.hpp"
 #include "collection/Option.hpp"
 #include "minebombers/attachments/GunAttachment.hpp"
+#include "minebombers/data/GunParameters.hpp"
 #include <string>
 #include <iostream>
 
@@ -17,6 +18,6 @@ public:
   bool staticMaterial = false;
   bool isPlayer = false;
 
-  Option<std::shared_ptr<GunAttachment>> gunItem = Option<std::shared_ptr<GunAttachment>>();
+  Option<std::shared_ptr<GunParameters>> gunParameters = Option<std::shared_ptr<GunParameters>>();
 
 };
