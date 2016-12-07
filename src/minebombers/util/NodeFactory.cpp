@@ -49,7 +49,7 @@ namespace NodeFactory {
     return std::make_tuple(node, bodyDef, fixtureDef);
   }
 
-  auto createBullet() ->
+  auto createBullet(std::shared_ptr<GunParameters> params) ->
     std::tuple<
       std::shared_ptr<Node<Transform3D>>,
       std::shared_ptr<b2BodyDef>,
@@ -57,10 +57,10 @@ namespace NodeFactory {
 
     auto node = std::make_shared<Node<Transform3D>>("bullet_" + std::to_string(getId()));
 
-    auto sprite_att = std::make_shared<SpriteAttachment>("test-effect/crystal_spear0");
+    auto sprite_att = std::make_shared<SpriteAttachment>(params->bulletSprite);
     auto material_att = std::make_shared<CollisionMaterialAttachment>();
 
-    material_att->collisionDamage = 10.0f;
+    material_att->collisionDamage = params->damage;
     material_att->bulletRebound = true;
 
     auto bodyDef = std::make_shared<b2BodyDef>();
@@ -72,7 +72,7 @@ namespace NodeFactory {
 
     auto shape = new b2CircleShape;
     shape->m_p.Set(0, 0);
-    shape->m_radius = 0.1f;
+    shape->m_radius = params->bulletSize;
 
     auto fixtureDef = std::make_shared<b2FixtureDef>();
     fixtureDef->shape = shape;
