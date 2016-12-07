@@ -94,7 +94,7 @@ public:
       for (auto y = 0; y < map->getHeight(); y++) {
         auto node = std::make_shared<Node<Transform3D>>(name("fog", x, y));
         node->addAttachment(getSprite("tiles/fog", -1));
-        node->setLocalPosition(glm::vec3(x-0.5f,y+0.5f,0));
+        node->setLocalPosition(glm::vec3(x,y,0));
         node->setSleep(true);
         fogNode->addChild(node);
         (*fogMap)[x][y] = node;
