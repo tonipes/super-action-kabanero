@@ -156,6 +156,8 @@ auto Minebombers::init() -> void {
         b2Body* body = _physWorld.CreateBody(event.bodyDef().get());
         body->CreateFixture(event.fixtureDef().get());
 
+        delete event.fixtureDef().get()->shape;
+
         auto physAttachment = std::make_shared<PhysicsAttachment>(body);
         event.node()->addAttachment(physAttachment);
 

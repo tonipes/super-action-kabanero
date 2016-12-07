@@ -32,6 +32,7 @@ template <typename T>
 class Node : public EventHandler, public std::enable_shared_from_this<Node<T>> {
 public:
   Node(std::string name) : _name(name), _render(true) {}
+  ~Node() {}
 
   auto isRenderOn() const -> bool { return _render; }
   auto setRenderOn(bool b) -> void { _render = b; }

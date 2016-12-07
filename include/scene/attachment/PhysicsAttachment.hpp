@@ -1,6 +1,7 @@
 #pragma once
 
 #include "scene/NodeAttachment.hpp"
+#include "physics/CollisionData.hpp"
 #include <Box2D/Box2D.h>
 #include <glm/vec2.hpp>
 
@@ -23,6 +24,9 @@ public:
   }
 
   auto destroy() -> void {
+    // Delete collision data.
+    delete (CollisionData*) _body->GetUserData();
+
     _body->GetWorld()->DestroyBody( _body );
   }
 

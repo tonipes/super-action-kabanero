@@ -8,10 +8,6 @@
 #include "minebombers/behaviors/BulletBehaviour.hpp"
 
 namespace NodeFactory {
-  // Shapes need to be allocated in dynamic memory
-  auto bombShape = new b2CircleShape;
-  auto bulletShape = new b2CircleShape;
-
   int counter = 0;
 
   auto getId() -> int {
@@ -25,9 +21,6 @@ namespace NodeFactory {
       std::shared_ptr<b2BodyDef>,
       std::shared_ptr<b2FixtureDef> > {
 
-    bombShape->m_p.Set(0, 0);
-    bombShape->m_radius = 0.1f;
-
     auto node = std::make_shared<Node<Transform3D>>("bomb_" + std::to_string(getId()));
 
     auto sprite_att = std::make_shared<SpriteAttachment>("test-effect/orb_of_destruction");
@@ -39,8 +32,12 @@ namespace NodeFactory {
     bodyDef->fixedRotation = true;
     bodyDef->linearDamping = 0.5f;
 
+    auto shape = new b2CircleShape;
+    shape->m_p.Set(0, 0);
+    shape->m_radius = 0.1f;
+
     auto fixtureDef = std::make_shared<b2FixtureDef>();
-    fixtureDef->shape = bombShape;
+    fixtureDef->shape = shape;
     fixtureDef->density = 5;
     fixtureDef->restitution = 0.3;
 
@@ -58,8 +55,6 @@ namespace NodeFactory {
       std::shared_ptr<b2BodyDef>,
       std::shared_ptr<b2FixtureDef> > {
 
-    bulletShape->m_p.Set(0, 0);
-    bulletShape->m_radius = 0.1f;
 
     auto node = std::make_shared<Node<Transform3D>>("bullet_" + std::to_string(getId()));
 
@@ -69,17 +64,21 @@ namespace NodeFactory {
     material_att->collisionDamage = 10.0f;
     material_att->bulletRebound = true;
 
-    auto fixtureDef = std::make_shared<b2FixtureDef>();
-    fixtureDef->shape = bulletShape;
-    fixtureDef->density = 1;
-    fixtureDef->restitution = 1;
-
     auto bodyDef = std::make_shared<b2BodyDef>();
     bodyDef->type = b2_dynamicBody;
     bodyDef->allowSleep = false;
     bodyDef->fixedRotation = true;
     bodyDef->linearDamping = 0.0f;
     bodyDef->bullet = true;
+
+    auto shape = new b2CircleShape;
+    shape->m_p.Set(0, 0);
+    shape->m_radius = 0.1f;
+
+    auto fixtureDef = std::make_shared<b2FixtureDef>();
+    fixtureDef->shape = shape;
+    fixtureDef->density = 1;
+    fixtureDef->restitution = 1;
 
     node->addBehavior<BulletBehavior>(10.0f);
 
