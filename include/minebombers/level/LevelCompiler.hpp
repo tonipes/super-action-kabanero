@@ -6,6 +6,8 @@
 #include "scene/3D/Transform3D.hpp"
 #include "physics/CollisionData.hpp"
 #include "scene/attachment/SpriteAttachment.hpp"
+#include "scene/attachment/EffectAttachment.hpp"
+#include "graphics/effects/CircleEffect.hpp"
 #include "minebombers/behaviors/TerrainBehaviour.hpp"
 #include "minebombers/behaviors/FogBehaviour.hpp"
 #include "minebombers/behaviors/PlayerBehaviour.hpp"
@@ -116,6 +118,9 @@ public:
     auto node = std::make_shared<Node<Transform3D>>("player");
     node->setLocalPosition(glm::vec3(tile.getX(), tile.getY(), 2));
     node->addAttachment(getSprite("tiles/spriggan_druid", -1));
+
+    // auto effect_att = std::make_shared<EffectAttachment>(std::make_shared<CircleEffect>(32.0f));
+    // node->addAttachment(effect_att);
 
     auto material_att = std::make_shared<CollisionMaterialAttachment>();
     material_att->bulletRebound = true;

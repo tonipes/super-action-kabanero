@@ -7,9 +7,11 @@
 #include "scene/Scene.hpp"
 #include "scene/SceneView.hpp"
 #include "scene/attachment/SpriteAttachment.hpp"
+#include "scene/attachment/EffectAttachment.hpp"
 #include "scene/3D/Transform3D.hpp"
 #include "scene/2D/Transform2D.hpp"
 #include "graphics/SpriteBatch.hpp"
+#include "graphics/Effect.hpp"
 #include "service/Services.hpp"
 
 /**
@@ -104,6 +106,8 @@ private:
 
     if (_isWithinWindow(nodePosition)) {
       const auto& spriteAttachment = node->get<SpriteAttachment>();
+      const auto& effectAttachment = node->get<EffectAttachment>();
+
       spriteAttachment.foreach([&](auto s) {
         auto id = s.spriteId();
         const auto& someSprite = atlas.get(id);
@@ -142,6 +146,18 @@ private:
         } else {
           throw ResourceException("Atlas does not contain sprite with id: " + id);
         }
+      });
+      effectAttachment.foreach([&](auto e) {
+        auto effect = e.effect();
+
+        auto relativePosition = (nodePosition - _cameraPosition) * (float)_tilesize;
+        effect->setPosition(relativePosition.x + _windowSize.x / 2, - relativePosition.y + _windowSize.y / 2);
+
+        // auto a = SimpleParticleEffect();
+        // Services::logger()->debug(std::to_string(e.effect().time()));
+
+        effect->setTileSize(_tilesize);
+        _window.draw(*effect.get());
       });
     }
 
