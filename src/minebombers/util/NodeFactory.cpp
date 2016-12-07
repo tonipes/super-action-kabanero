@@ -3,6 +3,8 @@
 #include "minebombers/attachments/CollisionMaterialAttachment.hpp"
 #include "minebombers/behaviors/BombBehaviour.hpp"
 #include "minebombers/behaviors/BulletBehaviour.hpp"
+#include "minebombers/behaviors/BulletOrientationBehavior.hpp"
+#include "minebombers/behaviors/DamageAreaBehavior.hpp"
 #include "scene/attachment/SpriteAttachment.hpp"
 
 namespace NodeFactory {
@@ -55,7 +57,7 @@ namespace NodeFactory {
 
     auto node = std::make_shared<Node<Transform3D>>("bullet_" + std::to_string(getId()));
 
-    auto sprite_att = std::make_shared<SpriteAttachment>("test-effect/sting0");
+    auto sprite_att = std::make_shared<SpriteAttachment>("test-effect/crystal_spear0");
     auto material_att = std::make_shared<CollisionMaterialAttachment>();
 
     material_att->collisionDamage = 10.0f;
@@ -78,9 +80,41 @@ namespace NodeFactory {
     fixtureDef->restitution = 1;
 
     node->addBehavior<BulletBehavior>(10.0f);
+    node->addBehavior<BulletOrientationBehavior>();
 
     node->addAttachment(material_att);
     node->addAttachment(sprite_att);
+
+    return std::make_tuple(node, bodyDef, fixtureDef);
+  }
+
+  auto createDamageCircle(float radius, float damage, float force = 0.0f) ->
+    std::tuple<
+      std::shared_ptr<Node<Transform3D>>,
+      std::shared_ptr<b2BodyDef>,
+      std::shared_ptr<b2FixtureDef> > {
+
+    auto node = std::make_shared<Node<Transform3D>>("damageCircle_" + std::to_string(getId()));
+
+    auto material_att = std::make_shared<CollisionMaterialAttachment>();
+
+    material_att->collisionDamage = damage;
+    material_att->force = force;
+
+    auto bodyDef = std::make_shared<b2BodyDef>();
+    bodyDef->type = b2_dynamicBody;
+
+    auto shape = new b2CircleShape;
+    shape->m_p.Set(0, 0);
+    shape->m_radius = radius;
+
+    auto fixtureDef = std::make_shared<b2FixtureDef>();
+    fixtureDef->shape = shape;
+    fixtureDef->isSensor = true;
+
+    node->addBehavior<DamageAreaBehavior>(0.1f);
+
+    node->addAttachment(material_att);
 
     return std::make_tuple(node, bodyDef, fixtureDef);
   }

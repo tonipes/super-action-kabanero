@@ -95,9 +95,12 @@ private:
       relativePosition.y > -halfHeight;
   }
 
+
+
   auto _renderNode(const std::shared_ptr<Node<Transform3D>> node, const std::shared_ptr<Node<Transform3D>> cameraNode, const Atlas& atlas) -> void {
     if (!node->isRenderOn()) return;
     const auto& nodePosition = node->position();
+    const auto& q = node->rotation();
 
     if (_isWithinWindow(nodePosition)) {
       const auto& spriteAttachment = node->get<SpriteAttachment>();
@@ -124,6 +127,14 @@ private:
           ));
 
           auto relativePosition = (nodePosition - _cameraPosition) * (float)_tilesize;
+
+          auto rot = glm::degrees(glm::atan(
+            2.0f * (q.x * q.y + q.z * q.w),
+            q.x * q.x - q.y * q.y - q.z * q.z + q.w * q.w)
+          );
+
+          sfSprite.setOrigin(spriteSize.x / 2.0f, spriteSize.y / 2.0f);
+          sfSprite.rotate(rot);
 
           sfSprite.move(relativePosition.x + _windowSize.x / 2, -relativePosition.y + _windowSize.y / 2);
 

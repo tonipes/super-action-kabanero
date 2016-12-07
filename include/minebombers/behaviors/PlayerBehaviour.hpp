@@ -57,9 +57,17 @@ public:
   }
 
   auto update(float delta, Node<Transform3D>& node) -> void override {
+    // node.setLocalRotation(glm::angleAxis(glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f)));
+
     if (_newGun.isDefined()) {
       node.addAttachment(_newGun.get());
       _newGun = Option<std::shared_ptr<GunAttachment>>();
+
+      Services::messagePublisher()->sendMessage(Message(
+        "audioPlayer:clip/reload.ogg",
+        std::make_shared<AudioClipEvent>(CLIP_PLAY)
+      ));
+
     }
     glm::vec2 moveDirection;
     if (moveUp) moveDirection.y += 1;
@@ -78,6 +86,7 @@ public:
     physAttachment.foreach([&](auto phys) {
       const auto& pos = phys.position();
       phys.setVelocity(moveDirection.x, moveDirection.y);
+
     });
 
     auto pos = node.position().xy();
@@ -148,6 +157,10 @@ public:
       Services::messagePublisher()->sendMessage(Message("game", std::make_shared<CreateNodeEvent>(
         "world/bullets", bombNode, bodyDef, fixtureDef
       )));
+      Services::messagePublisher()->sendMessage(Message(
+        "audioPlayer:clip/set_bomb.ogg",
+        std::make_shared<AudioClipEvent>(CLIP_PLAY)
+      ));
     }
 
     if(takeDamage) {
