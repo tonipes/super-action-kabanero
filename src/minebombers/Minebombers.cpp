@@ -13,7 +13,7 @@
 #include "minebombers/attachments/CollisionMaterialAttachment.hpp"
 #include "collection/Option.hpp"
 #include "physics/CollisionData.hpp"
-#include "minebombers/behaviors/EnemyOrbBehavior.hpp"
+// #include "minebombers/behaviors/EnemyOrbBehavior.hpp"
 
 #include "physics/ContactListener.hpp"
 
