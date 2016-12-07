@@ -110,11 +110,11 @@ public:
         // fireDirection.y += (yVar * 2 * spreadFactor) - spreadFactor;
         _bulletsShot++;
 
-        std::shared_ptr<Node<Transform3D>> node;
+        std::shared_ptr<Node<Transform3D>> bulletNode;
         std::shared_ptr<b2BodyDef> bodyDef;
         std::shared_ptr<b2FixtureDef> fixtureDef;
 
-        std::tie(node, bodyDef, fixtureDef) = NodeFactory::createBullet();
+        std::tie(bulletNode, bodyDef, fixtureDef) = NodeFactory::createBullet();
         bodyDef->position.Set(
           pos.x + fireDirection.x,
           pos.y + fireDirection.y
@@ -125,7 +125,7 @@ public:
         );
 
         Services::messagePublisher()->sendMessage(Message("game", std::make_shared<CreateNodeEvent>(
-          "world/bullets", node, bodyDef, fixtureDef
+          "world/bullets", bulletNode, bodyDef, fixtureDef
         )));
       }
 
@@ -138,15 +138,15 @@ public:
     }
 
     if (throwBomb) {
-      std::shared_ptr<Node<Transform3D>> node;
+      std::shared_ptr<Node<Transform3D>> bombNode;
       std::shared_ptr<b2BodyDef> bodyDef;
       std::shared_ptr<b2FixtureDef> fixtureDef;
 
-      std::tie(node, bodyDef, fixtureDef) = NodeFactory::createBomb();
+      std::tie(bombNode, bodyDef, fixtureDef) = NodeFactory::createBomb();
       bodyDef->position.Set(pos.x, pos.y);
 
       Services::messagePublisher()->sendMessage(Message("game", std::make_shared<CreateNodeEvent>(
-        "world/bullets", node, bodyDef, fixtureDef
+        "world/bullets", bombNode, bodyDef, fixtureDef
       )));
     }
 
