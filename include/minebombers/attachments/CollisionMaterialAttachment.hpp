@@ -11,6 +11,7 @@ public:
   CollisionMaterialAttachment() {}
 
   float collisionDamage = 0.0f;
+  float force = 0.0f;
   float bounciness = false;
   bool bulletRebound = false;
   bool staticMaterial = false;

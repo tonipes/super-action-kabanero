@@ -31,7 +31,7 @@ public:
         std::shared_ptr<b2BodyDef> bodyDef;
         std::shared_ptr<b2FixtureDef> fixtureDef;
 
-        std::tie(damageNode, bodyDef, fixtureDef) = NodeFactory::createDamageCircle(1.0f, 1000.0f);
+        std::tie(damageNode, bodyDef, fixtureDef) = NodeFactory::createDamageCircle(3.0f, 1000.0f, 20.0f);
         bodyDef->position.Set(
           pos.x,
           pos.y

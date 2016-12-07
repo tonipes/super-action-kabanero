@@ -86,7 +86,7 @@ namespace NodeFactory {
     return std::make_tuple(node, bodyDef, fixtureDef);
   }
 
-  auto createDamageCircle(float radius, float damage) ->
+  auto createDamageCircle(float radius, float damage, float force = 0.0f) ->
     std::tuple<
       std::shared_ptr<Node<Transform3D>>,
       std::shared_ptr<b2BodyDef>,
@@ -97,6 +97,7 @@ namespace NodeFactory {
     auto material_att = std::make_shared<CollisionMaterialAttachment>();
 
     material_att->collisionDamage = damage;
+    material_att->force = force;
 
     auto bodyDef = std::make_shared<b2BodyDef>();
     bodyDef->type = b2_dynamicBody;
