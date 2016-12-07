@@ -13,6 +13,11 @@ public:
     return glm::vec2(pos.x, pos.y);
   }
 
+  auto velocity() const -> glm::vec2 {
+    auto pos = _body->GetLinearVelocity();
+    return glm::vec2(pos.x, pos.y);
+  }
+
   auto setVelocity(float x, float y) -> void {
     _body->SetLinearVelocity(b2Vec2(x, y));
   }

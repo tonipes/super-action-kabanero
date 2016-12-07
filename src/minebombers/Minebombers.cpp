@@ -9,7 +9,6 @@
 #include "minebombers/level/LevelCompiler.hpp"
 #include "minebombers/level/CaveGenerator.hpp"
 #include "minebombers/behaviors/CameraBehavior.hpp"
-#include "minebombers/behaviors/BulletHandlerBehaviour.hpp"
 #include "minebombers/events/TestEvent.hpp"
 #include "minebombers/attachments/CollisionMaterialAttachment.hpp"
 #include "collection/Option.hpp"
@@ -90,13 +89,12 @@ auto Minebombers::init() -> void {
   // shape->m_p.Set(0, 0);
   // shape->m_radius = 0.2f;
   // Services::messagePublisher()->sendMessage(Message("game", std::make_shared<CreateNodeEvent>(
-  //   "world/bulletHandler", bodyDef, shape, enemyNode
+  //   "world/bulletBag", bodyDef, shape, enemyNode
   // )));
 
-  auto bulletHandler = std::make_shared<Node<Transform3D>>("bulletHandler");
-  bulletHandler->setLocalPosition(glm::vec3(0, 0, 0));
-  bulletHandler->addBehavior<BulletHandlerBehaviour>(_physWorld);
-  rootNode->addChild(bulletHandler);
+  auto bulletBag = std::make_shared<Node<Transform3D>>("bullets");
+  bulletBag->setLocalPosition(glm::vec3(0, 0, 0));
+  rootNode->addChild(bulletBag);
 
   auto scene = std::make_shared<GameScene<Transform3D>>("gameScene", rootNode);
 
@@ -146,8 +144,6 @@ auto Minebombers::init() -> void {
     auto rootNode = activeScenes[0]->rootNode(); // ???
     auto path = event.parentPath();
 
-    Services::logger()->debug(path);
-
     // Bit hacky. Can't directly under the rood node root
     // Needs to drop the first part from the path
     auto i = path.find('/');
@@ -158,28 +154,20 @@ auto Minebombers::init() -> void {
         auto parent = parentOption.get();
         // Shamelesly modifying tree and world directly.
         b2Body* body = _physWorld.CreateBody(event.bodyDef().get());
-        body->CreateFixture(event.shape().get(), 1.0f);
-
-
-        // event.node()->setPhysics(body);
+        body->CreateFixture(event.fixtureDef().get());
 
         auto physAttachment = std::make_shared<PhysicsAttachment>(body);
         event.node()->addAttachment(physAttachment);
 
         parent->addChild(event.node());
-        Services::logger()->debug("path: " + event.node()->path());
 
         auto material_att = event.node()->getShared<CollisionMaterialAttachment>();
         if(material_att.isDefined()){
-
-          Services::logger()->debug("Add collisionData");
           auto collisionData = new CollisionData(event.node()->path(), material_att.get());
           body->SetUserData(collisionData);
         }
 
       }
     }
-    Services::logger()->debug("CreateNode");
-
   });
 }

@@ -14,6 +14,7 @@
 #include <Box2D/Box2D.h>
 #include "random/StdLibRandom.hpp"
 #include "minebombers/attachments/GunAttachment.hpp"
+#include "minebombers/util/NodeFactory.hpp"
 
 #include <glm/vec2.hpp>
 
@@ -81,9 +82,9 @@ public:
     });
 
     auto pos = node.position().xy();
-    auto pos2 = node.position().xy();
+    auto vel = physAttachment.get().velocity();
 
-    Services::messagePublisher()->sendMessage(Message("gameScene:world/camera", std::make_shared<PlayerLocationEvent>(pos2)));
+    Services::messagePublisher()->sendMessage(Message("gameScene:world/camera", std::make_shared<PlayerLocationEvent>(pos)));
 
     glm::vec2 fireDirection;
     _fireDelay -= delta;
@@ -109,9 +110,26 @@ public:
         // fireDirection.x += (xVar * 2 * spreadFactor) - spreadFactor;
         // fireDirection.y += (yVar * 2 * spreadFactor) - spreadFactor;
         _bulletsShot++;
-        Services::messagePublisher()->sendMessage(Message("gameScene:world/bulletHandler",
-          std::make_shared<BulletEvent>(CREATE_BULLET, pos.x, pos.y, fireDirection.x, fireDirection.y, gun.bulletSpeed)));
+
+        std::shared_ptr<Node<Transform3D>> node;
+        std::shared_ptr<b2BodyDef> bodyDef;
+        std::shared_ptr<b2FixtureDef> fixtureDef;
+
+        std::tie(node, bodyDef, fixtureDef) = NodeFactory::createBullet();
+        bodyDef->position.Set(
+          pos.x + fireDirection.x,
+          pos.y + fireDirection.y
+        );
+        bodyDef->linearVelocity.Set(
+          fireDirection.x * gun.bulletSpeed,
+          fireDirection.y * gun.bulletSpeed
+        );
+
+        Services::messagePublisher()->sendMessage(Message("game", std::make_shared<CreateNodeEvent>(
+          "world/bullets", node, bodyDef, fixtureDef
+        )));
       }
+
       Services::messagePublisher()->sendMessage(
         Message(
           "audioPlayer:clip/gunshot.ogg",
@@ -121,34 +139,16 @@ public:
     }
 
     if (throwBomb) {
-      counter++;
+      std::shared_ptr<Node<Transform3D>> node;
+      std::shared_ptr<b2BodyDef> bodyDef;
+      std::shared_ptr<b2FixtureDef> fixtureDef;
 
-      auto bombNode = std::make_shared<Node<Transform3D>>("bomb_"+std::to_string(counter));
-      bombNode->setLocalPosition(glm::vec3(pos.x, pos.y, 5));
-
-      auto sprite_att = std::make_shared<SpriteAttachment>("test-effect/orb_of_destruction");
-      auto material_att = std::make_shared<CollisionMaterialAttachment>();
-
-      bombNode->addBehavior<BombBehaviour>(5.0f);
-      bombNode->addAttachment(sprite_att);
-      bombNode->addAttachment(material_att);
-
-      auto bodyDef = std::make_shared<b2BodyDef>();
-
-      bodyDef->type = b2_dynamicBody;
+      std::tie(node, bodyDef, fixtureDef) = NodeFactory::createBomb();
       bodyDef->position.Set(pos.x, pos.y);
-      bodyDef->allowSleep = false;
-      bodyDef->fixedRotation = true;
-      bodyDef->linearDamping = 0.5f;
-
-      auto shape = std::make_shared<b2CircleShape>();
-      shape->m_p.Set(0, 0);
-      shape->m_radius = 0.2f;
 
       Services::messagePublisher()->sendMessage(Message("game", std::make_shared<CreateNodeEvent>(
-        "world/bulletHandler", bodyDef, shape, bombNode
+        "world/bullets", node, bodyDef, fixtureDef
       )));
-
     }
 
     if(takeDamage) {
@@ -156,10 +156,10 @@ public:
         "audioPlayer:clip/pain.ogg",
         std::make_shared<AudioClipEvent>(CLIP_PLAY)
       ));
-      takeDamage=false;
+      takeDamage = false;
     }
 
-    Services::messagePublisher()->sendMessage(Message("gameScene:world/fog", std::make_shared<PlayerLocationEvent>(pos2)));
+    Services::messagePublisher()->sendMessage(Message("gameScene:world/fog", std::make_shared<PlayerLocationEvent>(pos)));
 
     throwBomb = false;
   }
