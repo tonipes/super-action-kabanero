@@ -118,8 +118,8 @@ public:
         random.seed(_bulletsShot);
         auto xVar = random.nextFloat(), yVar = random.nextFloat(); // Bad variation, we shoud calculate angle and vary that instead
         auto spreadFactor = gunParams->accuracy;
-        // fireDirection.x += (xVar * 2 * spreadFactor) - spreadFactor;
-        // fireDirection.y += (yVar * 2 * spreadFactor) - spreadFactor;
+        fireDirection.x += (xVar * 2 * spreadFactor) - spreadFactor;
+        fireDirection.y += (yVar * 2 * spreadFactor) - spreadFactor;
         _bulletsShot++;
 
         std::shared_ptr<Node<Transform3D>> bulletNode;
