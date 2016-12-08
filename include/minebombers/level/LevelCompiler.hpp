@@ -83,12 +83,26 @@ public:
                 });
                 break;
               }
-              case ITEM_LOCATION:
-                tileNode->addChild(getItem(item, totalX, totalY));
+              case ITEM_LOCATION: {
+                const auto itemNode = getItem(item, 0, 0);
+                tileNode->addChild(itemNode);
+                const auto pos = itemNode->position();
+                const auto& physAttachment = itemNode->get<PhysicsAttachment>();
+                physAttachment.foreach([&](auto phys) {
+                  phys.setPosition(pos.x, pos.y);
+                });
                 break;
-              case ARTIFACT_LOCATION:
-                tileNode->addChild(getItem(artifact, totalX, totalY));
+              }
+              case ARTIFACT_LOCATION:{
+                const auto itemNode = getItem(artifact, 0, 0);
+                tileNode->addChild(itemNode);
+                const auto pos = itemNode->position();
+                const auto& physAttachment = itemNode->get<PhysicsAttachment>();
+                physAttachment.foreach([&](auto phys) {
+                  phys.setPosition(pos.x, pos.y);
+                });
                 break;
+              }
             }
           }
         }
