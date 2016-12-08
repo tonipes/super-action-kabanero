@@ -133,7 +133,7 @@ auto App::run() -> void {
       ++updateCount;
     }
     last_update_time = current_time;
-    if (true) {
+    if (draw_delta > _draw_interval) {
       ++frameCount;
       secondCounter += draw_delta;
       _game->render(renderer);
