@@ -7,6 +7,8 @@
 #include "minebombers/behaviors/BulletOrientationBehavior.hpp"
 #include "minebombers/behaviors/DamageAreaBehavior.hpp"
 #include "scene/attachment/SpriteAttachment.hpp"
+#include "scene/attachment/EffectAttachment.hpp"
+#include "graphics/effects/CircleEffect.hpp"
 
 namespace NodeFactory {
   int counter = 0;
@@ -73,6 +75,9 @@ namespace NodeFactory {
 
     material_att->collisionDamage = damage;
     material_att->force = force;
+
+    auto effect_att = std::make_shared<EffectAttachment>(std::make_shared<CircleEffect>(radius));
+    node->addAttachment(effect_att);
 
     auto bodyDef = std::make_shared<b2BodyDef>();
     bodyDef->type = b2_dynamicBody;
