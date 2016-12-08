@@ -23,6 +23,10 @@ public:
     _body->SetLinearVelocity(b2Vec2(x, y));
   }
 
+  auto setPosition(float x, float y) -> void {
+    _body->SetTransform(b2Vec2(x, y), _body->GetAngle());
+  }
+
   auto destroy() -> void {
     // Delete collision data.
     delete (CollisionData*) _body->GetUserData();
