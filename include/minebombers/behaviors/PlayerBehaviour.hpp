@@ -182,10 +182,7 @@ public:
       pos.x, pos.y, hp, "Player 1"
     )));
 
-    Services::messagePublisher()->sendMessage(Message("gameScene:world/fog", std::make_shared<PlayerLocationEvent>(pos)));
-
-    // Services::logger()->debug("Send event with hp" + std::to_string(hp));
-
+    // Services::messagePublisher()->sendMessage(Message("gameScene:world/fog", std::make_shared<PlayerLocationEvent>(pos)));
 
     throwBomb = false;
   }

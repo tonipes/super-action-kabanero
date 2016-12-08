@@ -13,14 +13,14 @@ public:
   Node3D(std::string name) : Node(name) {}
 
   auto right() -> glm::vec3 {
-    return worldTransform()[0].xyz();
+    return glm::vec3(worldTransform()[0]);
   }
 
   auto up() -> glm::vec3 {
-    return worldTransform()[1].xyz();
+    return glm::vec3(worldTransform()[1]);
   }
 
   auto forward() -> glm::vec3 {
-    return worldTransform()[2].xyz();
+    return glm::vec3(worldTransform()[2]);
   }
 };

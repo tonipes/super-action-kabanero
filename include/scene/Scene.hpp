@@ -19,7 +19,7 @@ public:
     _graph(rootNode) {}
   virtual ~Scene() {}
 
-  auto getSceneViews() -> KBVector<SceneView<T>> {
+  auto getSceneViews() -> KBVector<SceneView> {
     return _graph.getSceneViews();
   }
 
@@ -27,7 +27,7 @@ public:
     return _graph.root();
   }
 
-  auto addSceneView(SceneView<T> sceneView) -> void {
+  auto addSceneView(SceneView sceneView) -> void {
     _graph.addSceneView(sceneView);
   }
 

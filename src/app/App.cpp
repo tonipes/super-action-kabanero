@@ -23,12 +23,12 @@ App::App(std::shared_ptr<Game> game) : _game(game) {
   auto logger = std::make_shared<DefaultLogger>();
   auto resourceManager = std::make_shared<SyncResourceManager>();
   auto messagePublisher = std::make_shared<DefaultMessagePublisher>();
-  //auto random = std::make_shared<StdLibRandom>();
+  auto random = std::make_shared<StdLibRandom>();
 
   Services::provideMessagePublisher(messagePublisher);
   Services::provideResourceManager(resourceManager);
   Services::provideLogger(logger);
-  //Services::provideRandom(random);
+  Services::provideRandom(random);
 
   logger->debug("Debug test");
   logger->info("Info test");
@@ -70,8 +70,7 @@ App::App(std::shared_ptr<Game> game) : _game(game) {
 
   // Intervals
   _update_interval = 1.0 / config["update_fps"].get_or(30);
-  // Add a little leniency for smoother fps
-  _draw_interval = 1.0 / config["draw_fps"].get_or(30) - 0.001;
+  _draw_interval = 1.0 / config["draw_fps"].get_or(30);
 
   // Get window parameters from config file and create window
   _window_w = config["window_width"].get_or(800);

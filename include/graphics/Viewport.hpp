@@ -8,10 +8,10 @@ public:
       float w,
       float h) : _x(x), _y(y), _w(w), _h(h) {}
 
-  auto x() -> float { return _x; }
-  auto y() -> float { return _y; }
-  auto w() -> float { return _w; }
-  auto h() -> float { return _h; }
+  auto x() const -> float { return _x; }
+  auto y() const -> float { return _y; }
+  auto w() const -> float { return _w; }
+  auto h() const -> float { return _h; }
 
 private:
   float _x;

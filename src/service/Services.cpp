@@ -9,3 +9,6 @@ std::shared_ptr<ResourceManager> Services::_resourceManager
 // Set logger default to NullLogger
 std::shared_ptr<Logger> Services::_logger
   = std::make_shared<NullLogger>();
+
+std::shared_ptr<Random> Services::_random
+  = std::make_shared<NullRandom>();

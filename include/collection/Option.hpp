@@ -45,7 +45,7 @@ public:
      return *_valueStore;
    }
 
-   auto gets() -> T& {
+   auto get() -> T& {
      return *_valueStore;
    }
 

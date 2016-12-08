@@ -1,35 +1,35 @@
 #pragma once
 
 #include "scene/Node.hpp"
+#include "scene/3D/Transform3D.hpp"
 #include "graphics/Viewport.hpp"
 
 #include <memory>
 
-template <typename T>
 class SceneView {
 public:
   SceneView(
-      std::shared_ptr<Node<T>> rootNode,
-      std::shared_ptr<Node<T>> cameraNode,
+      std::shared_ptr<Node<Transform3D>> rootNode,
+      std::shared_ptr<Node<Transform3D>> cameraNode,
       Viewport viewport) :
     _rootNode(rootNode),
     _cameraNode(cameraNode),
     _viewport(viewport) { }
 
-  auto cameraNode() -> std::shared_ptr<Node<T>> {
+  auto cameraNode() const -> std::shared_ptr<Node<Transform3D>> {
     return _cameraNode;
   }
 
-  auto rootNode() -> std::shared_ptr<Node<T>> {
+  auto rootNode() const -> std::shared_ptr<Node<Transform3D>> {
     return _rootNode;
   }
 
-  auto viewport() -> Viewport {
+  auto viewport() const -> Viewport {
     return _viewport;
   }
 
 private:
-  std::shared_ptr<Node<T>> _rootNode;
-  std::shared_ptr<Node<T>> _cameraNode;
+  std::shared_ptr<Node<Transform3D>> _rootNode;
+  std::shared_ptr<Node<Transform3D>> _cameraNode;
   Viewport _viewport;
 };
