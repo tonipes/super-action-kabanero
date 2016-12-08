@@ -108,7 +108,23 @@ public:
           Services::messagePublisher()->sendMessage(Message(path, std::make_shared<GameInputEvent>(FIRE_RIGHT, false)));
         }
         break;
+        case sf::Keyboard::Num1 : {
+          Services::messagePublisher()->sendMessage(Message("gameScene", std::make_shared<GameInputEvent>(NUM_1, false)));
+        }
         break;
+        case sf::Keyboard::Num2 : {
+          Services::messagePublisher()->sendMessage(Message("gameScene", std::make_shared<GameInputEvent>(NUM_2, false)));
+        }
+        break;
+        case sf::Keyboard::Num3 : {
+          Services::messagePublisher()->sendMessage(Message("gameScene", std::make_shared<GameInputEvent>(NUM_3, false)));
+        }
+        break;
+        case sf::Keyboard::Num4 : {
+          Services::messagePublisher()->sendMessage(Message("gameScene", std::make_shared<GameInputEvent>(NUM_4, false)));
+        }
+        break;
+
         default:
           break;
       }

@@ -15,6 +15,10 @@ enum GameInputAction {
   FIRE_DOWN,
   FIRE_LEFT,
   FIRE_RIGHT,
+  NUM_1,
+  NUM_2,
+  NUM_3,
+  NUM_4,
 };
 
 class GameInputEvent: public Event {

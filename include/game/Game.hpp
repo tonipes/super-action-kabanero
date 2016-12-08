@@ -33,35 +33,19 @@ public:
    * @param resourceManager to get resources from.
    */
   auto render(Renderer& renderer) -> void {
-    activeScenes.foreach([&](auto& scene){
+    activeScene.foreach([&](auto& scene){
       renderer.render(scene->getSceneViews());
     });
   }
 
   auto update(double delta) -> void override {
-    activeScenes.foreach([&](auto& scene){
+    activeScene.foreach([&](auto& scene){
       scene->update(delta);
     });
-    // for(auto n : _toBeDestryed) {
-    //   auto parent = n->parent();
-    //   if (parent.isDefined()) {
-    //     const auto& physAttachment = n->get<PhysicsAttachment>();
-    //     physAttachment.foreach([&](auto& phys) {
-    //       phys.destroy();
-    //     });
-    //     parent.get().removeChild(n->name());
-    //   }
-    // }
-    // for(auto n : _toBeAdded){
-    //   Services::logger()->debug("Parent name: " + std::get<0>(n)->name());
-    //   Services::logger()->debug("Node name: " + std::get<1>(n)->name());
-    //   std::get<0>(n)->addChild(std::get<1>(n));
-    // }
-    _toBeDestryed = KBVector<std::shared_ptr<Node<Transform3D>>>();
-    // _toBeAdded = KBVector<std::tuple<std::shared_ptr<Node<Transform3D>>, std::shared_ptr<Node<Transform3D>>>>();
   }
 
   auto getEventHandler(const std::string& address) -> EventHandler& override {
+    std::cout << "Got me!" << std::endl;
     return *this;
   }
 
@@ -71,17 +55,17 @@ public:
     return v;
   }
 
-  auto addScene(std::shared_ptr<Scene<Transform3D>> scene) {
-    std::cout << "Add scene" << std::endl;
-    activeScenes += scene;
-    std::cout << "Scene added" << std::endl;
+  auto addScene(std::shared_ptr<Scene<Transform3D>> scene) -> void {
+    auto name = scene->socket();
+    scenes[name] = scene;
     Services::messagePublisher()->addSubscriber(scene);
-    std::cout << "Added to message publisher" << std::endl;
+  }
+
+  auto activateScene(std::string name) {
+    activeScene = Option<std::shared_ptr<Scene<Transform3D>>>(scenes[name]);
   }
 
 protected:
-  KBVector<std::shared_ptr<Node<Transform3D>>> _toBeDestryed;
-  KBVector<std::tuple<std::shared_ptr<Node<Transform3D>>, std::shared_ptr<Node<Transform3D>>>> _toBeAdded;
-
-  KBVector<std::shared_ptr<Scene<Transform3D>>> activeScenes;
+  KBMap<std::string, std::shared_ptr<Scene<Transform3D>>> scenes;
+  Option<std::shared_ptr<Scene<Transform3D>>> activeScene;
 };

@@ -6,10 +6,11 @@
 #include "minebombers/level/LevelCompiler.hpp"
 #include "minebombers/level/LevelCompiler.hpp"
 #include "minebombers/behaviors/CameraBehavior.hpp"
+#include "minebombers/events/NewGameEvent.hpp"
 
 class MultiplayerScene {
 public:
-  static auto createScene(int seed) -> std::shared_ptr<GameScene> {
+  static auto createScene(int seed, int numPlayers = 1) -> std::shared_ptr<GameScene> {
     const auto& messagePublisher = Services::messagePublisher();
     auto rootNode = std::make_shared<Node<Transform3D>>("world");
 
@@ -33,17 +34,70 @@ public:
     bulletBag->setLocalPosition(glm::vec3(0, 0, 0));
     rootNode->addChild(bulletBag);
 
-    SceneView sceneView(rootNode, cameraNode, Viewport(0, 0, 0.5, 0.5));
-    scene->addSceneView(sceneView);
+    if (numPlayers == 1) {
+      SceneView sceneView(rootNode, cameraNode, Viewport(0, 0, 1.0, 1.0));
+      scene->addSceneView(sceneView);
+    } else if (numPlayers == 2) {
+      SceneView sceneView(rootNode, cameraNode, Viewport(0, 0, 0.5, 1.0));
+      scene->addSceneView(sceneView);
 
-    SceneView sceneView2(rootNode, cameraNode, Viewport(0.5, 0, 0.5, 0.5));
-    scene->addSceneView(sceneView2);
+      SceneView sceneView2(rootNode, cameraNode, Viewport(0.5, 0, 0.5, 1.0));
+      scene->addSceneView(sceneView2);
+    } else if (numPlayers == 3) {
+      SceneView sceneView(rootNode, cameraNode, Viewport(0, 0, 0.5, 0.5));
+      scene->addSceneView(sceneView);
 
-    SceneView sceneView3(rootNode, cameraNode, Viewport(0.0, 0.5, 0.5, 0.5));
-    scene->addSceneView(sceneView3);
+      SceneView sceneView2(rootNode, cameraNode, Viewport(0.5, 0, 0.5, 0.5));
+      scene->addSceneView(sceneView2);
 
-    SceneView sceneView4(rootNode, cameraNode, Viewport(0.5, 0.5, 0.5, 0.5));
-    scene->addSceneView(sceneView4);
+      SceneView sceneView3(rootNode, cameraNode, Viewport(0.0, 0.5, 0.5, 0.5));
+      scene->addSceneView(sceneView3);
+    } else {
+      SceneView sceneView(rootNode, cameraNode, Viewport(0, 0, 0.5, 0.5));
+      scene->addSceneView(sceneView);
+
+      SceneView sceneView2(rootNode, cameraNode, Viewport(0.5, 0, 0.5, 0.5));
+      scene->addSceneView(sceneView2);
+
+      SceneView sceneView3(rootNode, cameraNode, Viewport(0.0, 0.5, 0.5, 0.5));
+      scene->addSceneView(sceneView3);
+
+      SceneView sceneView4(rootNode, cameraNode, Viewport(0.5, 0.5, 0.5, 0.5));
+      scene->addSceneView(sceneView4);
+    }
+
+    scene->addEventReactor([messagePublisher](GameInputEvent event) {
+      auto action = event.action();
+      if (action == NUM_1) {
+        std::cout << "Send new game event 1" << std::endl;
+        messagePublisher->sendMessage(Message(
+          "game",
+          std::make_shared<NewGameEvent>(5, 1)
+          )
+        );
+      } else if (action == NUM_2) {
+        std::cout << "Send new game event 2" << std::endl;
+        messagePublisher->sendMessage(Message(
+          "game",
+          std::make_shared<NewGameEvent>(15, 2)
+          )
+        );
+      } else if (action == NUM_3) {
+        std::cout << "Send new game event 3" << std::endl;
+        messagePublisher->sendMessage(Message(
+          "game",
+          std::make_shared<NewGameEvent>(25, 3)
+          )
+        );
+      } else if (action == NUM_4) {
+        std::cout << "Send new game event 4" << std::endl;
+        messagePublisher->sendMessage(Message(
+          "game",
+          std::make_shared<NewGameEvent>(35, 4)
+          )
+        );
+      }
+    });
 
     return scene;
   }

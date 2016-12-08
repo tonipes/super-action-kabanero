@@ -22,14 +22,13 @@ public:
   }
 
   auto addSubscriber(const std::shared_ptr<MessageSubscriber>& subscriber) -> void override {
-    std::cout << "Adding subscriber" << std::endl;
-    _subscribers.insert(subscriber->socket(), subscriber);
-    std::cout << "Done adding" << std::endl;
-    // _subscribers[subscriber->socket()] = subscriber;
+    _subscribers[subscriber->socket()] = subscriber;
   }
 
   auto publishMessages() -> void override {
-    for (auto& message : _messages) {
+    auto messages = _messages;
+    _messages = KBVector<Message>();
+    for (auto& message : messages) {
       auto socketAndPath = split(message.address(), ':');
       if (socketAndPath.length() == 0) {
         throw EngineException("No message address provided");
@@ -60,7 +59,6 @@ public:
         }
       }
     }
-    _messages = KBVector<Message>();
   }
 
 private:

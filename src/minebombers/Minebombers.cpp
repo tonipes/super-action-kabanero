@@ -6,9 +6,11 @@
 #include "message/event/DestroyNodeEvent.hpp"
 #include "message/event/CreateNodeEvent.hpp"
 #include "message/event/AudioTrackEvent.hpp"
+#include "minebombers/events/NewGameEvent.hpp"
 #include "minebombers/level/LevelCompiler.hpp"
 #include "minebombers/level/CaveGenerator.hpp"
 #include "minebombers/behaviors/CameraBehavior.hpp"
+#include "minebombers/events/TestEvent.hpp"
 #include "minebombers/events/TestEvent.hpp"
 #include "minebombers/scenes/MultiplayerScene.hpp"
 #include "minebombers/attachments/CollisionMaterialAttachment.hpp"
@@ -21,12 +23,18 @@
 auto Minebombers::init() -> void {
 
   auto messagePublisher = Services::messagePublisher();
-  // messagePublisher->sendMessage(
-  //   Message(
-  //     "audioPlayer:clip/test_clip.ogg",
-  //     std::make_shared<AudioClipEvent>(CLIP_PLAY)
-  //   )
-  // );
+
+  this->addEventReactor([&](NewGameEvent event) {
+    std::cout << "Received event!" << std::endl;
+    auto seed = event.seed;
+    auto numPlayers = event.numPlayers;
+
+    auto scene = MultiplayerScene::createScene(seed, numPlayers);
+    addScene(scene);
+    activateScene("gameScene");
+  });
+
+
   messagePublisher->sendMessage(
     Message(
       "audioPlayer:track/jazz",
@@ -40,10 +48,9 @@ auto Minebombers::init() -> void {
   //   )
   // );
 
-  // auto rootNode = std::make_shared<Node<Transform3D>>("world");
-  //
   int seed = 5;
 
-  auto gameScene = MultiplayerScene::createScene(seed);
+  auto gameScene = MultiplayerScene::createScene(seed, 1);
   addScene(gameScene);
+  activateScene("gameScene");
 }
