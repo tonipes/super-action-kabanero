@@ -219,6 +219,17 @@ public:
     _toBeDestroyed = true;
   }
 
+  auto setIgnoreCamera(bool ignore) -> void {
+    _ignoreCamera = ignore;
+    for (auto i = 0; i < _children.values().length(); i++) {
+      _children.values()[i]->setIgnoreCamera(ignore);
+    }
+  }
+
+  auto ignoresCamera() -> bool {
+    return _ignoreCamera;
+  }
+
 protected:
   mutable bool _shouldUpdate = true;
 
@@ -249,6 +260,7 @@ private:
   b2Body* _physBody;
   mutable KBMap<std::string, std::shared_ptr<Node>> _children;
   bool _render;
+  bool _ignoreCamera = false;
   bool _toBeDestroyed = false;
   bool _isSleeping = false;
   Option<Node> _parent;

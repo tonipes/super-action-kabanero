@@ -104,7 +104,7 @@ private:
     const auto& nodePosition = node->position();
     const auto& q = node->rotation();
 
-    if (_isWithinWindow(nodePosition)) {
+    if (node->ignoresCamera() || _isWithinWindow(nodePosition)) {
       const auto& spriteAttachment = node->get<SpriteAttachment>();
       const auto& effectAttachment = node->get<EffectAttachment>();
 
@@ -131,6 +131,9 @@ private:
           ));
 
           auto relativePosition = (nodePosition - _cameraPosition) * (float)_tilesize;
+          if (node->ignoresCamera()) {
+            relativePosition = nodePosition;
+          }
 
           auto rot = glm::degrees(glm::atan(
             2.0f * (q.x * q.y + q.z * q.w),
