@@ -22,12 +22,12 @@ App::App(std::shared_ptr<Game> game) : _game(game) {
   auto logger = std::make_shared<DefaultLogger>();
   auto resourceManager = std::make_shared<SyncResourceManager>();
   auto messagePublisher = std::make_shared<DefaultMessagePublisher>();
-  //auto random = std::make_shared<StdLibRandom>();
+  auto random = std::make_shared<StdLibRandom>();
 
   Services::provideMessagePublisher(messagePublisher);
   Services::provideResourceManager(resourceManager);
   Services::provideLogger(logger);
-  //Services::provideRandom(random);
+  Services::provideRandom(random);
 
   logger->debug("Debug test");
   logger->info("Info test");
