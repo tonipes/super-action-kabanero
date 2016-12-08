@@ -40,4 +40,6 @@ namespace NodeFactory {
       std::shared_ptr<b2BodyDef>,
       std::shared_ptr<b2FixtureDef> >;
 
+  auto createHud(std::string name, std::string hudName) -> std::shared_ptr<Node<Transform3D>>;
+
 };

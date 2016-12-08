@@ -1,9 +1,12 @@
 #include "minebombers/util/NodeFactory.hpp"
 
 #include "minebombers/attachments/CollisionMaterialAttachment.hpp"
+#include "minebombers/attachments/HudAttachment.hpp"
 #include "minebombers/behaviors/BombBehaviour.hpp"
+#include "minebombers/hud/HudEffect.hpp"
 #include "minebombers/behaviors/BulletBehaviour.hpp"
 #include "minebombers/behaviors/RocketBehavior.hpp"
+#include "minebombers/behaviors/HudBehavior.hpp"
 #include "minebombers/behaviors/BulletOrientationBehavior.hpp"
 #include "minebombers/behaviors/DamageAreaBehavior.hpp"
 #include "scene/attachment/SpriteAttachment.hpp"
@@ -172,5 +175,17 @@ namespace NodeFactory {
     node->addAttachment(sprite_att);
 
     return std::make_tuple(node, bodyDef, fixtureDef);
+  }
+
+  auto createHud(std::string name, std::string hudName) -> std::shared_ptr<Node<Transform3D>> {
+    auto node = std::make_shared<Node<Transform3D>>(name);
+    node->setLocalPosition(glm::vec3(0.0f, 0.0f, 100.0f));
+
+    auto hud_att = std::make_shared<HudAttachment>(std::make_shared<HudEffect>(hudName));
+    node->addAttachment(hud_att);
+
+    node->addBehavior<HudBehavior>();
+
+    return node;
   }
 }

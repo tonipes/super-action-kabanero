@@ -13,6 +13,7 @@
 #include "minebombers/attachments/CollisionMaterialAttachment.hpp"
 #include "collection/Option.hpp"
 #include "physics/CollisionData.hpp"
+#include "minebombers/util/NodeFactory.hpp"
 // #include "minebombers/behaviors/EnemyOrbBehavior.hpp"
 
 #include "physics/ContactListener.hpp"
@@ -67,6 +68,13 @@ auto Minebombers::init() -> void {
   auto bulletBag = std::make_shared<Node<Transform3D>>("bullets");
   bulletBag->setLocalPosition(glm::vec3(0, 0, 0));
   rootNode->addChild(bulletBag);
+
+  auto hud = std::make_shared<Node<Transform3D>>("hud");
+  bulletBag->setLocalPosition(glm::vec3(0, 0, 0));
+  rootNode->addChild(hud);
+
+  auto player_1_hud = NodeFactory::createHud("player1hud", "Player 1");
+  hud->addChild(player_1_hud);
 
   auto scene = std::make_shared<GameScene<Transform3D>>("gameScene", rootNode);
 

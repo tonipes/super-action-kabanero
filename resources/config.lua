@@ -24,6 +24,7 @@ resources = {
   "resources/audio/rocket_launch.ogg",
   "resources/audio/set_bomb.ogg",
   "resources/test.txt",
+  "resources/font.ttf",
   "resources/atlases/pack.atlas",
   "resources/atlases/pack.png",
   "resources/atlases/pack2.png"
