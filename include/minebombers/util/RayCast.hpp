@@ -5,7 +5,7 @@
 #include <cmath>
 
 namespace RayCast {
-  auto doRay(std::shared_ptr<TileMap>& map, float startX, float startY, glm::vec2& dir, float stepSize, float maxLen) -> std::shared_ptr<Ray> {
+  auto doRay(const std::shared_ptr<TileMap>& map, float startX, float startY, glm::vec2& dir, float stepSize, float maxLen) -> std::shared_ptr<Ray> {
     auto ray = std::make_shared<Ray>();
     auto remaining = maxLen;
     auto currentX = startX;
@@ -22,7 +22,8 @@ namespace RayCast {
     }
     return ray;
   }
-  auto lineOfSight(std::shared_ptr<TileMap>& map, float startX, float startY, int accuracy, float rayStep, float rayLen) -> KBVector<std::shared_ptr<Ray>> {
+
+  auto lineOfSight(const std::shared_ptr<TileMap>& map, float startX, float startY, int accuracy, float rayStep, float rayLen) -> KBVector<std::shared_ptr<Ray>> {
     auto angle = 0.0f;
     auto angle_increment = (float) (M_PI * 2 / accuracy);
     auto rays = KBVector<std::shared_ptr<Ray>>();
@@ -34,4 +35,5 @@ namespace RayCast {
     }
     return rays;
   }
+
 };

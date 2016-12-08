@@ -9,6 +9,7 @@
 #include "minebombers/level/LevelCompiler.hpp"
 #include "minebombers/level/CaveGenerator.hpp"
 #include "minebombers/behaviors/CameraBehavior.hpp"
+#include "minebombers/attachments/VisibilityAttachment.hpp"
 #include "minebombers/events/TestEvent.hpp"
 #include "minebombers/attachments/CollisionMaterialAttachment.hpp"
 #include "collection/Option.hpp"
@@ -48,7 +49,10 @@ auto Minebombers::init() -> void {
   auto random = StdLibRandom();
   random.seed(seed);
 
-  auto caveGen = CaveGenerator(seed, 128, 128, 4, 3);
+  auto w = 128;
+  auto h = 128;
+
+  auto caveGen = CaveGenerator(seed, w, h, 4, 3);
   auto tileMap = caveGen.generate();
   // auto fogMap = std::make_shared<FogMap>();
   auto levelCompiler = LevelCompiler(random, _physWorld);
@@ -62,6 +66,10 @@ auto Minebombers::init() -> void {
   auto cameraNode = std::make_shared<Node<Transform3D>>("camera");
   cameraNode->setLocalPosition(glm::vec3(0, 0, 0));
   cameraNode->addBehavior<CameraBehavior>(0.2f);
+  
+  auto visibilityAttachment = std::make_shared<VisibilityAttachment>(w, h, tileMap);
+  cameraNode->addAttachment(visibilityAttachment);
+
   rootNode->addChild(cameraNode);
 
   auto bulletBag = std::make_shared<Node<Transform3D>>("bullets");
