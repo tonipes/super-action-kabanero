@@ -13,6 +13,8 @@
 #include "graphics/SpriteBatch.hpp"
 #include "graphics/Effect.hpp"
 #include "service/Services.hpp"
+#include "minebombers/attachments/VisibilityAttachment.hpp"
+
 
 /**
  * Renderer class.
@@ -92,54 +94,64 @@ private:
 
   auto _renderNode(const std::shared_ptr<Node<Transform3D>> node, const std::shared_ptr<Node<Transform3D>> cameraNode, const Atlas& atlas) -> void {
     if (!node->isRenderOn()) return;
+
+    bool isVisible = cameraNode->get<VisibilityAttachment>().get().isVisible(
+      round(node->position().x),
+      round(node->position().y)
+    );
+
     const auto relativePosition = node->position() - _cameraPosition;
     const auto& boundingBox = node->boundingBox();
 
     if (_isWithinWindow(relativePosition, boundingBox)) {
       const auto& spriteAttachment = node->get<SpriteAttachment>();
 
-      if (spriteAttachment.isDefined()) {
-        const auto& s = spriteAttachment.get();
-        const auto& id = s.spriteId();
+      if (isVisible) {
+        if (spriteAttachment.isDefined()) {
+          const auto& s = spriteAttachment.get();
+          const auto& id = s.spriteId();
 
-        const auto& someSprite = atlas.get(id);
-        if (someSprite.isDefined()) {
-          const auto& sprite = someSprite.get();
-          const auto& texPath = sprite.texturePath();
-          const auto& xy = sprite.xy();
-          const auto& spriteSize = sprite.size();
+          const auto& someSprite = atlas.get(id);
+          if (someSprite.isDefined()) {
+            const auto& sprite = someSprite.get();
+            const auto& texPath = sprite.texturePath();
+            const auto& xy = sprite.xy();
+            const auto& spriteSize = sprite.size();
 
-          if (!textures.contains(texPath)) {
-            const auto& resourceManager = Services::resourceManager();
-            textures.insert(texPath, resourceManager->getRequired<Texture>(texPath)->getTexture());
+            if (!textures.contains(texPath)) {
+              const auto& resourceManager = Services::resourceManager();
+              textures.insert(texPath, resourceManager->getRequired<Texture>(texPath)->getTexture());
+            }
+            const auto& tex =textures[texPath];
+            sf::Sprite sfSprite(tex);
+            sfSprite.setTextureRect(sf::IntRect(
+              xy.x,
+              xy.y,
+              spriteSize.x,
+              spriteSize.y
+            ));
+
+            const auto& q = node->rotation();
+            auto rot = glm::degrees(glm::atan(
+              2.0f * (q.x * q.y + q.z * q.w),
+              q.x * q.x - q.y * q.y - q.z * q.z + q.w * q.w)
+            );
+
+            sfSprite.setOrigin(spriteSize.x / 2.0f, spriteSize.y / 2.0f);
+            sfSprite.rotate(rot);
+
+            sfSprite.move(
+              (relativePosition.x + _viewportSize.x + _viewportOffset.x) * _tilesize,
+              (-relativePosition.y + _viewportSize.y + _viewportOffset.y) * _tilesize);
+
+            _window.draw(sfSprite);
+
+          } else {
+            throw ResourceException("Atlas does not contain sprite with id: " + id);
           }
-          const auto& tex =textures[texPath];
-          sf::Sprite sfSprite(tex);
-          sfSprite.setTextureRect(sf::IntRect(
-            xy.x,
-            xy.y,
-            spriteSize.x,
-            spriteSize.y
-          ));
-
-          const auto& q = node->rotation();
-          auto rot = glm::degrees(glm::atan(
-            2.0f * (q.x * q.y + q.z * q.w),
-            q.x * q.x - q.y * q.y - q.z * q.z + q.w * q.w)
-          );
-
-          sfSprite.setOrigin(spriteSize.x / 2.0f, spriteSize.y / 2.0f);
-          sfSprite.rotate(rot);
-
-          sfSprite.move(
-            (relativePosition.x + _viewportSize.x + _viewportOffset.x) * _tilesize,
-            (-relativePosition.y + _viewportSize.y + _viewportOffset.y) * _tilesize);
-
-          _window.draw(sfSprite);
-        } else {
-          throw ResourceException("Atlas does not contain sprite with id: " + id);
         }
-      };
+      }
+
 
       const auto& effectAttachment = node->get<EffectAttachment>();
 

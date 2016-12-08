@@ -11,12 +11,10 @@
 #include "scene/attachment/PhysicsAttachment.hpp"
 #include "graphics/effects/CircleEffect.hpp"
 #include "minebombers/behaviors/TerrainBehavior.hpp"
-#include "minebombers/behaviors/FogBehaviour.hpp"
 #include "minebombers/behaviors/PlayerBehaviour.hpp"
 #include "minebombers/behaviors/WallBehavior.hpp"
 #include "minebombers/attachments/CollisionMaterialAttachment.hpp"
 
-// #include "minebombers/attachments/GunAttachment.hpp"
 #include "minebombers/data/GunParameters.hpp"
 #include "minebombers/behaviors/ItemNodeBehaviour.hpp"
 #include <sstream>
@@ -112,29 +110,6 @@ public:
         }
       }
     }
-  }
-
-  auto initFog(
-    std::shared_ptr<TileMap> map, std::shared_ptr<FogMap> fogMap,
-    std::shared_ptr<Node<Transform3D>> root
-  ) -> void {
-
-    fogMap->init(map->getWidth(), map->getHeight());
-    auto fogNode = std::make_shared<Node<Transform3D>>("fog");
-    root->addChild(fogNode);
-
-    fogNode->setLocalPosition(glm::vec3(0,0,100));
-    for (auto x = 0; x < map->getWidth(); x++) {
-      for (auto y = 0; y < map->getHeight(); y++) {
-        auto node = std::make_shared<Node<Transform3D>>(name("fog", x, y));
-        node->addAttachment(getSprite("tiles/fog", -1));
-        node->setLocalPosition(glm::vec3(x,y,0));
-        node->setSleep(true);
-        fogNode->addChild(node);
-        (*fogMap)[x][y] = node;
-      }
-    }
-    fogNode->addBehavior<FogBehaviour>(map, fogMap);
   }
 
   auto materializePlayer(
