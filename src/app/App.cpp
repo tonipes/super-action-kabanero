@@ -65,8 +65,7 @@ App::App(std::shared_ptr<Game> game) : _game(game) {
 
   // Intervals
   _update_interval = 1.0 / config["update_fps"].get_or(30);
-  // Add a little leniency for smoother fps
-  _draw_interval = 1.0 / config["draw_fps"].get_or(30) - 0.001;
+  _draw_interval = 1.0 / config["draw_fps"].get_or(30);
 
   // Get window parameters from config file and create window
   _window_w = config["window_width"].get_or(800);
@@ -134,7 +133,7 @@ auto App::run() -> void {
       ++updateCount;
     }
     last_update_time = current_time;
-    if (draw_delta > _draw_interval) {
+    if (true) {
       ++frameCount;
       secondCounter += draw_delta;
       _game->render(renderer);

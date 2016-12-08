@@ -35,6 +35,8 @@ auto TerrainFactory::generateTerrain(
   material_att->staticMaterial = true;
   node->addAttachment(material_att);
 
+  node->setBoundingBox(BoundingBox(glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.5f, 0.5f, 0.5f)));
+
   return node;
 }
 

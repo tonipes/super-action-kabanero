@@ -10,9 +10,9 @@ public:
       _left(leftBottomNear.x),
       _bottom(leftBottomNear.y),
       _near(leftBottomNear.z),
-      _right(leftBottomNear.x),
-      _top(leftBottomNear.y),
-      _far(leftBottomNear.z) {}
+      _right(rightTopFar.x),
+      _top(rightTopFar.y),
+      _far(rightTopFar.z) {}
 
   auto left() const { return _left; }
   auto right() const { return _right; }

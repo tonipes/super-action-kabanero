@@ -48,7 +48,7 @@ auto Minebombers::init() -> void {
   auto random = StdLibRandom();
   random.seed(seed);
 
-  auto caveGen = CaveGenerator(seed, 64, 64, 4, 3);
+  auto caveGen = CaveGenerator(seed, 128, 128, 4, 3);
   auto tileMap = caveGen.generate();
   // auto fogMap = std::make_shared<FogMap>();
   auto levelCompiler = LevelCompiler(random, _physWorld);

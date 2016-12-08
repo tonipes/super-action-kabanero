@@ -233,7 +233,7 @@ public:
     _localBoundingBox = box;
     _boundingBox.setMax(box);
     if (_parent.isDefined()) {
-      _parent.get().setUpdateFlag();
+      _parent.get()._addChildBB(box, localPosition());
     }
   }
 

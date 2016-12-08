@@ -34,6 +34,7 @@ public:
       // std::cout << "x: " << sceneView.cameraNode()->position().x << std::endl;
       // _window.setView(_window.getDefaultView());
       render(sceneView);
+      _spriteBatch.flush(_window);
     }
     _window.display();
   }
@@ -51,10 +52,10 @@ public:
     const auto viewport = sceneView.viewport();
     const auto& windowSize = _window.getSize();
 
-    _viewportSize.x = windowSize.x * viewport.w();
-    _viewportSize.y = windowSize.y * viewport.h();
-    _viewportOffset.x = windowSize.x * viewport.x();
-    _viewportOffset.y = windowSize.y * viewport.y();
+    _viewportSize.x = windowSize.x * viewport.w() / _tilesize * 0.5f;
+    _viewportSize.y = windowSize.y * viewport.h() / _tilesize * 0.5f;
+    _viewportOffset.x = windowSize.x * viewport.x() / _tilesize;
+    _viewportOffset.y = windowSize.y * viewport.y() / _tilesize;
 
     // sf::View view;
     view.reset(
@@ -79,7 +80,7 @@ private:
   sf::RenderWindow& _window;
   glm::vec2 _viewportSize;
   glm::vec2 _viewportOffset;
-  int _tilesize;
+  float _tilesize;
   SpriteBatch _spriteBatch;
   KBMap<std::string, sf::Texture> textures;
   glm::vec3 _cameraPosition;
@@ -89,14 +90,14 @@ private:
 
   auto _renderNode(const std::shared_ptr<Node<Transform3D>> node, const std::shared_ptr<Node<Transform3D>> cameraNode, const Atlas& atlas) -> void {
     if (!node->isRenderOn()) return;
-    const auto& nodePosition = node->position();
+    const auto relativePosition = node->position() - _cameraPosition;
     const auto& boundingBox = node->boundingBox();
-    const auto& q = node->rotation();
 
-    if (_isWithinWindow(nodePosition, boundingBox)) {
+    if (_isWithinWindow(relativePosition, boundingBox)) {
       const auto& spriteAttachment = node->get<SpriteAttachment>();
-      spriteAttachment.foreach([&](auto s) {
-        auto id = s.spriteId();
+      if (spriteAttachment.isDefined()) {
+        const auto& s = spriteAttachment.get();
+        const auto& id = s.spriteId();
         const auto& someSprite = atlas.get(id);
         if (someSprite.isDefined()) {
           const auto& sprite = someSprite.get();
@@ -117,8 +118,7 @@ private:
             spriteSize.y
           ));
 
-          auto relativePosition = (nodePosition - _cameraPosition) * (float)_tilesize;
-
+          const auto& q = node->rotation();
           auto rot = glm::degrees(glm::atan(
             2.0f * (q.x * q.y + q.z * q.w),
             q.x * q.x - q.y * q.y - q.z * q.z + q.w * q.w)
@@ -128,14 +128,14 @@ private:
           sfSprite.rotate(rot);
 
           sfSprite.move(
-            relativePosition.x + _viewportSize.x / 2 + _viewportOffset.x,
-             -relativePosition.y + _viewportSize.y / 2 + _viewportOffset.y);
+            (relativePosition.x + _viewportSize.x + _viewportOffset.x) * _tilesize,
+            (-relativePosition.y + _viewportSize.y + _viewportOffset.y) * _tilesize);
 
           _window.draw(sfSprite);
         } else {
           throw ResourceException("Atlas does not contain sprite with id: " + id);
         }
-      });
+      };
       const auto& children = node->children();
 
       for (const auto& child : children) {
