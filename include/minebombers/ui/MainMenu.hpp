@@ -3,24 +3,11 @@
 #include <memory>
 #include <iostream>
 #include "scene/Node.hpp"
-// #include "minebombers/ui/MenuBehaviour.hpp"
-class MenuBehaviour;
+#include "minebombers/ui/MenuController.hpp"
 
 class MainMenu {
 public:
-  MainMenu(): selection(0) {}
-
-  auto refresh() -> void {
-    for (auto i = 0; i < buttons.length() / 2; i++) {
-      bool rend = true;
-      if (selection == i) {
-        rend = !rend;
-      }
-      buttons[i]->setRenderOn(rend);
-      buttons[i+1]->setRenderOn(!rend);
-      std::cout << rend << " is on for " << i << "\n";
-    }
-  }
+  MainMenu(MenuController& d): data(d) {}
 
   auto init() -> std::shared_ptr<Node<Transform3D>> {
     auto main = std::make_shared<Node<Transform3D>>("menu");
@@ -51,33 +38,17 @@ public:
     main->setIgnoreCamera(true);
     //main->addBehavior(std::make_shared<MenuBehaviour>(*this));
 
-    buttons = KBVector<std::shared_ptr<Node<Transform3D>>>();
+    data.buttons = KBVector<std::shared_ptr<Node<Transform3D>>>();
 
-    buttons += spUn;
-    buttons += spSel;
-    buttons += coopUn;
-    buttons += coopSel;
+    data.buttons += spUn;
+    data.buttons += spSel;
+    data.buttons += coopUn;
+    data.buttons += coopSel;
 
     refresh();
-
+    main->addBehavior<MenuBehaviour>(data);
     return main;
   }
-
-
-  auto changeSelection(int dir) {
-    selection += dir;
-    if (selection >= buttons.length() / 2) {
-      selection = 0;
-    } else if (selection < 0) {
-      selection = buttons.length() / 2 - 1;
-    }
-    refresh();
-  }
-
-  auto select() {
-
-  }
 private:
-  int selection;
-  KBVector<std::shared_ptr<Node<Transform3D>>> buttons;
+  MenuController& data;
 };

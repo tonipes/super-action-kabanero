@@ -77,7 +77,8 @@ auto Minebombers::init() -> void {
     )
   );
 
-  auto menu = MainMenu();
+  auto menuData = MenuController();
+  auto menu = MainMenu(menuData);
   auto ui = menu.init();
   rootNode->addChild(ui);
 
