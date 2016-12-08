@@ -7,9 +7,11 @@
 #include "scene/Scene.hpp"
 #include "scene/SceneView.hpp"
 #include "scene/attachment/SpriteAttachment.hpp"
+#include "scene/attachment/EffectAttachment.hpp"
 #include "scene/3D/Transform3D.hpp"
 #include "scene/2D/Transform2D.hpp"
 #include "graphics/SpriteBatch.hpp"
+#include "graphics/Effect.hpp"
 #include "service/Services.hpp"
 
 /**
@@ -95,9 +97,11 @@ private:
 
     if (_isWithinWindow(relativePosition, boundingBox)) {
       const auto& spriteAttachment = node->get<SpriteAttachment>();
+
       if (spriteAttachment.isDefined()) {
         const auto& s = spriteAttachment.get();
         const auto& id = s.spriteId();
+
         const auto& someSprite = atlas.get(id);
         if (someSprite.isDefined()) {
           const auto& sprite = someSprite.get();
@@ -136,6 +140,24 @@ private:
           throw ResourceException("Atlas does not contain sprite with id: " + id);
         }
       };
+
+      const auto& effectAttachment = node->get<EffectAttachment>();
+
+      effectAttachment.foreach([&](auto e) {
+        auto effect = e.effect();
+
+        effect->setPosition(
+          (relativePosition.x + _viewportSize.x + _viewportOffset.x) * _tilesize,
+          (-relativePosition.y + _viewportSize.y + _viewportOffset.y) * _tilesize
+        );
+
+        // auto a = SimpleParticleEffect();
+        // Services::logger()->debug(std::to_string(e.effect().time()));
+
+        effect->setTileSize(_tilesize);
+        _window.draw(*effect.get());
+      });
+
       const auto& children = node->children();
 
       for (const auto& child : children) {

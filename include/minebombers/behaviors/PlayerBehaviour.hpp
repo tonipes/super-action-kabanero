@@ -13,7 +13,7 @@
 #include "service/Services.hpp"
 #include <Box2D/Box2D.h>
 #include "random/StdLibRandom.hpp"
-#include "minebombers/attachments/GunAttachment.hpp"
+#include "minebombers/data/GunParameters.hpp"
 #include "minebombers/util/NodeFactory.hpp"
 
 #include <glm/vec2.hpp>
@@ -49,9 +49,9 @@ public:
       if(event.collisionMaterialAttachment()->collisionDamage > 0.0f){
         takeDamage = true;
       }
-      else if(event.collisionMaterialAttachment()->gunItem.isDefined()) {
+      else if(event.collisionMaterialAttachment()->gunParameters.isDefined()) {
         Services::logger()->debug("Player got new gun");
-        _newGun = event.collisionMaterialAttachment()->gunItem;
+        _newGun = event.collisionMaterialAttachment()->gunParameters;
       }
     });
   }
@@ -60,8 +60,8 @@ public:
     // node.setLocalRotation(glm::angleAxis(glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f)));
 
     if (_newGun.isDefined()) {
-      node.addAttachment(_newGun.get());
-      _newGun = Option<std::shared_ptr<GunAttachment>>();
+      node.addAttachment(std::make_shared<GunAttachment>(_newGun.get()));
+      _newGun = Option<std::shared_ptr<GunParameters>>();
 
       Services::messagePublisher()->sendMessage(Message(
         "audioPlayer:clip/reload.ogg",
@@ -108,29 +108,33 @@ public:
     auto shoot = fireDirection.x != 0 || fireDirection.y != 0;
 
     if (shoot && _fireDelay <= 0) {
-      auto gun = node.get<GunAttachment>().get();
-      _fireDelay = 1.0f / gun.fireRate;
+      // auto gun_att = node.get<GunAttachment>().get();
+      auto gunParams = node.get<GunAttachment>().get().parameters();
+      // auto gun = gun_att.parameters().get();
+
+      _fireDelay = 1.0f / gunParams->fireRate;
       auto random = StdLibRandom();
-      for (auto i = 0; i < gun.bulletAmount; i++) {
+      for (auto i = 0; i < gunParams->bulletAmount; i++) {
         random.seed(_bulletsShot);
         auto xVar = random.nextFloat(), yVar = random.nextFloat(); // Bad variation, we shoud calculate angle and vary that instead
-        auto spreadFactor = gun.accuracy;
-        // fireDirection.x += (xVar * 2 * spreadFactor) - spreadFactor;
-        // fireDirection.y += (yVar * 2 * spreadFactor) - spreadFactor;
+        auto spreadFactor = gunParams->accuracy;
+        fireDirection.x += (xVar * 2 * spreadFactor) - spreadFactor;
+        fireDirection.y += (yVar * 2 * spreadFactor) - spreadFactor;
         _bulletsShot++;
 
         std::shared_ptr<Node<Transform3D>> bulletNode;
         std::shared_ptr<b2BodyDef> bodyDef;
         std::shared_ptr<b2FixtureDef> fixtureDef;
 
-        std::tie(bulletNode, bodyDef, fixtureDef) = NodeFactory::createBullet();
+        std::tie(bulletNode, bodyDef, fixtureDef) = NodeFactory::createBullet(gunParams);
+
         bodyDef->position.Set(
           pos.x + fireDirection.x,
           pos.y + fireDirection.y
         );
         bodyDef->linearVelocity.Set(
-          fireDirection.x * gun.bulletSpeed,
-          fireDirection.y * gun.bulletSpeed
+          fireDirection.x * gunParams->bulletSpeed,
+          fireDirection.y * gunParams->bulletSpeed
         );
 
         Services::messagePublisher()->sendMessage(Message("game", std::make_shared<CreateNodeEvent>(
@@ -140,7 +144,7 @@ public:
 
       Services::messagePublisher()->sendMessage(
         Message(
-          "audioPlayer:clip/gunshot.ogg",
+          "audioPlayer:clip/" + gunParams->fireSound,
           std::make_shared<AudioClipEvent>(CLIP_PLAY)
         )
       );
@@ -195,5 +199,5 @@ private:
 
   bool throwBomb = false;
 
-  Option<std::shared_ptr<GunAttachment>> _newGun = Option<std::shared_ptr<GunAttachment>>();
+  Option<std::shared_ptr<GunParameters>> _newGun = Option<std::shared_ptr<GunParameters>>();
 };
