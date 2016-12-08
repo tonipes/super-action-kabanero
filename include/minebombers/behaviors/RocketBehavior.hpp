@@ -25,7 +25,7 @@ public:
   }
 
   auto update(float delta, Node<Transform3D>& node) -> void override {
-    if(explode) {
+    if(explode && !alreadyExploded) {
       auto pos = node.position().xy();
 
       std::shared_ptr<Node<Transform3D>> damageNode;
@@ -49,11 +49,13 @@ public:
       Services::messagePublisher()->sendMessage(Message("game",std::make_shared<DestroyNodeEvent>(node.path())));
 
       explode = false;
+      alreadyExploded = true;
     }
   }
 
 private:
   bool explode = false;
+  bool alreadyExploded = false;
 
   float _radius;
   float _damage;
