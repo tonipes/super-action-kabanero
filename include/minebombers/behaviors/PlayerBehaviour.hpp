@@ -171,7 +171,7 @@ public:
       takeDamage = false;
     }
 
-    Services::messagePublisher()->sendMessage(Message("gameScene:world/fog", std::make_shared<PlayerLocationEvent>(pos)));
+    // Services::messagePublisher()->sendMessage(Message("gameScene:world/fog", std::make_shared<PlayerLocationEvent>(pos)));
 
     throwBomb = false;
   }

@@ -18,7 +18,7 @@
 
 class LevelCompiler {
 public:
-  static constexpr float CHUNK_SIZE = 16.0f;
+  static constexpr float CHUNK_SIZE = 8.0f;
 
   LevelCompiler(Random& rand, b2World& w): _rand(rand), _world(w) {}
 

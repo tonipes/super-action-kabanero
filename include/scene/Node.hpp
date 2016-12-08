@@ -12,6 +12,7 @@
 #include "collection/Option.hpp"
 #include "scene/Transform.hpp"
 #include "scene/NodeAttachment.hpp"
+#include "scene/BoundingBox.hpp"
 #include "scene/attachment/PhysicsAttachment.hpp"
 #include "minebombers/attachments/CollisionMaterialAttachment.hpp"
 #include "message/EventHandler.hpp"
@@ -82,6 +83,8 @@ public:
       physicsAttachment.get().body()->SetUserData(collisionData);
     }
 
+    _addChildBB(child->boundingBox(), child->localPosition());
+
     child->_setUpdateFlag();
   }
 
@@ -131,6 +134,9 @@ public:
   auto setLocalPosition(typename T::vectorType v) -> void {
     _transform.setPosition(v);
     _setUpdateFlag();
+    if (_parent.isDefined()) {
+      _parent.get()._addChildBB(boundingBox(), localPosition());
+    }
   }
 
   auto localScale() const -> const typename T::vectorType {
@@ -223,6 +229,25 @@ public:
     _toBeDestroyed = true;
   }
 
+  auto setBoundingBox(BoundingBox box) -> void {
+    _localBoundingBox = box;
+    _boundingBox.setMax(box);
+    if (_parent.isDefined()) {
+      _parent.get().setUpdateFlag();
+    }
+  }
+
+  auto boundingBox() -> BoundingBox {
+    if (_shouldUpdate) {
+      _update();
+    }
+    return _boundingBox;
+  }
+
+  auto localBoundingBox() -> BoundingBox {
+    return _localBoundingBox;
+  }
+
 protected:
   mutable bool _shouldUpdate = true;
 
@@ -232,6 +257,29 @@ protected:
     }).getOrElse(_transform.matrix());
     _setUpdateFlag();
     _shouldUpdate = false;
+  }
+
+  auto _addChildBB(BoundingBox box, glm::vec3 localPosition) -> void {
+    auto bb = box;
+    auto pos = localPosition;
+
+    auto right = pos.x + bb.right();
+    auto left = pos.x + bb.left();
+    auto bottom = pos.y + bb.bottom();
+    auto top = pos.y + bb.top();
+    auto near = pos.y + bb.near();
+    auto far = pos.y + bb.far();
+
+    _boundingBox.setMaxRight(right);
+    _boundingBox.setMaxLeft(left);
+    _boundingBox.setMaxTop(top);
+    _boundingBox.setMaxBottom(bottom);
+    _boundingBox.setMaxNear(near);
+    _boundingBox.setMaxFar(far);
+
+    if (_parent.isDefined()) {
+      _parent.get()._addChildBB(_boundingBox, this->localPosition());
+    }
   }
 
   auto _setUpdateFlag() const -> void {
@@ -250,7 +298,6 @@ protected:
 
 private:
   std::string _name;
-  b2Body* _physBody;
   mutable KBMap<std::string, std::shared_ptr<Node>> _children;
   bool _render;
   bool _toBeDestroyed = false;
@@ -258,6 +305,8 @@ private:
   Option<Node> _parent;
   KBTypeMap<std::shared_ptr<NodeAttachment>> _attachments;
   T _transform;
+  BoundingBox _localBoundingBox;
+  mutable BoundingBox _boundingBox;
   KBVector<std::shared_ptr<Behavior<T>>> _behaviors;
   mutable typename T::matrixType _worldTransform;
 };

@@ -3,7 +3,7 @@
 #include "message/Event.hpp"
 #include "collection/mutable/KBTypeMap.hpp"
 #include "util/LambdaUtil.hpp"
-#include "scene/Node.hpp"
+// #include "scene/Node.hpp"
 
 #include <functional>
 #include <memory>

@@ -27,82 +27,73 @@ public:
 
   ~Renderer() {}
 
-  auto render(KBVector<SceneView<Transform3D>> sceneViews) -> void {
-    sceneViews.foreach([&](auto sceneView) {
+  auto render(const KBVector<SceneView>& sceneViews) -> void {
+    _window.setView(_window.getDefaultView());
+    _window.clear(sf::Color::Black);
+    for (const auto& sceneView : sceneViews) {
+      // std::cout << "x: " << sceneView.cameraNode()->position().x << std::endl;
+      // _window.setView(_window.getDefaultView());
       render(sceneView);
-    });
+    }
+    _window.display();
   }
 
+  sf::View view;
   /**
    * Render scene with resources.
    * @param scene to draw.
    * @param resourceManager to get resources from.
    */
-  auto render(SceneView<Transform3D>& sceneView) -> void {
+  auto render(const SceneView& sceneView) -> void {
     auto resourceManager = Services::resourceManager();
     const auto& atlas = *Services::resourceManager()->getRequired<Atlas>("resources/atlases/pack.atlas");
 
-    _window.clear(sf::Color::Black);
+    const auto viewport = sceneView.viewport();
+    const auto& windowSize = _window.getSize();
+
+    _viewportSize.x = windowSize.x * viewport.w();
+    _viewportSize.y = windowSize.y * viewport.h();
+    _viewportOffset.x = windowSize.x * viewport.x();
+    _viewportOffset.y = windowSize.y * viewport.y();
+
+    // sf::View view;
+    view.reset(
+      sf::FloatRect(
+        windowSize.x * viewport.x(),
+        windowSize.y * viewport.y(),
+        windowSize.x * viewport.w(),
+        windowSize.y * viewport.h()));
+    view.setViewport(sf::FloatRect(viewport.x(), viewport.y(), viewport.w(), viewport.h()));
+    _window.setView(view);
 
     auto cameraNode  = sceneView.cameraNode();
     auto rootNode = sceneView.rootNode();
-    auto viewport = sceneView.viewport();
 
-    _windowSize = _window.getSize();
-    _cameraPosition = cameraNode->position();
+    this->_windowSize = _window.getSize();
+    this->_cameraPosition = cameraNode->position();
 
-    // auto nodes = _getAllNodes(rootNode);
-
-    // for (auto& node : nodes) {
-      _renderNode(rootNode, cameraNode, atlas);
-    // }
-
-    // _renderNode(rootNode, cameraNode);
-    // _spriteBatch.flush(_window);
-    _window.display();
-  };
+    _renderNode(rootNode, cameraNode, atlas);
+  }
 
 private:
   sf::RenderWindow& _window;
+  glm::vec2 _viewportSize;
+  glm::vec2 _viewportOffset;
   int _tilesize;
   SpriteBatch _spriteBatch;
   KBMap<std::string, sf::Texture> textures;
   glm::vec3 _cameraPosition;
   sf::Vector2<uint> _windowSize;
 
-  auto _getAllNodes(std::shared_ptr<Node<Transform3D>> node) -> KBVector<std::shared_ptr<Node<Transform3D>>> {
-    auto v = KBVector<std::shared_ptr<Node<Transform3D>>>();
-    v += node;
-    auto children = node->children().values();
-    children.foreach([&](auto child) {
-      auto n = _getAllNodes(child);
-      for (auto c : n) {
-        v += c;
-      }
-    });
-    return v;
-  }
-
-  auto _isWithinWindow(const glm::vec3& nodePosition) -> bool {
-    const auto& relativePosition = (nodePosition - _cameraPosition) * (float)_tilesize;
-    auto halfWidth = _windowSize.x / 2.0f + _tilesize;
-    auto halfHeight = _windowSize.y / 2.0f + _tilesize;
-
-    return
-      relativePosition.x < halfWidth &&
-      relativePosition.x > -halfWidth &&
-      relativePosition.y < halfHeight &&
-      relativePosition.y > -halfHeight;
-  }
-
-
+  auto _isWithinWindow(const glm::vec3& nodePosition, const BoundingBox& boundingBox) -> bool;
 
   auto _renderNode(const std::shared_ptr<Node<Transform3D>> node, const std::shared_ptr<Node<Transform3D>> cameraNode, const Atlas& atlas) -> void {
     if (!node->isRenderOn()) return;
     const auto& nodePosition = node->position();
+    const auto& boundingBox = node->boundingBox();
     const auto& q = node->rotation();
 
-    if (_isWithinWindow(nodePosition)) {
+    if (_isWithinWindow(nodePosition, boundingBox)) {
       const auto& spriteAttachment = node->get<SpriteAttachment>();
       spriteAttachment.foreach([&](auto s) {
         auto id = s.spriteId();
@@ -136,24 +127,23 @@ private:
           sfSprite.setOrigin(spriteSize.x / 2.0f, spriteSize.y / 2.0f);
           sfSprite.rotate(rot);
 
-          sfSprite.move(relativePosition.x + _windowSize.x / 2, -relativePosition.y + _windowSize.y / 2);
+          sfSprite.move(
+            relativePosition.x + _viewportSize.x / 2 + _viewportOffset.x,
+             -relativePosition.y + _viewportSize.y / 2 + _viewportOffset.y);
 
           _window.draw(sfSprite);
         } else {
           throw ResourceException("Atlas does not contain sprite with id: " + id);
         }
       });
-    }
+      const auto& children = node->children();
 
-
-
-    auto children = node->children();
-
-    for (auto child : children) {
-      std::string name;
-      std::shared_ptr<Node<Transform3D>> node;
-      std::tie(name, node) = child;
-      _renderNode(node, cameraNode, atlas);
+      for (const auto& child : children) {
+        std::string name;
+        std::shared_ptr<Node<Transform3D>> node;
+        std::tie(name, node) = child;
+        _renderNode(node, cameraNode, atlas);
+      }
     }
   }
 
