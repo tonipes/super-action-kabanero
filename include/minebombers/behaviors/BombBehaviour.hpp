@@ -37,7 +37,7 @@ public:
           pos.y
         );
 
-        Services::messagePublisher()->sendMessage(Message("game", std::make_shared<CreateNodeEvent>(
+        Services::messagePublisher()->sendMessage(Message("gameScene", std::make_shared<CreateNodeEvent>(
           "world/bullets", damageNode, bodyDef, fixtureDef
         )));
 
@@ -48,7 +48,7 @@ public:
           )
         );
 
-        Services::messagePublisher()->sendMessage(Message("game",std::make_shared<DestroyNodeEvent>(node.path())));
+        Services::messagePublisher()->sendMessage(Message("gameScene",std::make_shared<DestroyNodeEvent>(node.path())));
         exploded = true;
       }
       _fuseTime += delta;

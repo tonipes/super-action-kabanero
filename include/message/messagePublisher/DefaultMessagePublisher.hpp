@@ -22,7 +22,10 @@ public:
   }
 
   auto addSubscriber(const std::shared_ptr<MessageSubscriber>& subscriber) -> void override {
-    _subscribers[subscriber->socket()] = subscriber;
+    std::cout << "Adding subscriber" << std::endl;
+    _subscribers.insert(subscriber->socket(), subscriber);
+    std::cout << "Done adding" << std::endl;
+    // _subscribers[subscriber->socket()] = subscriber;
   }
 
   auto publishMessages() -> void override {

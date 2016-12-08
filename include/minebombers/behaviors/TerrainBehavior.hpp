@@ -23,7 +23,6 @@ public:
    _map(map) {
 
     node->addEventReactor([&, node](CollisionEvent event) {
-      const auto& pos = node->position();
       if (event.collisionMaterialAttachment()->collisionDamage > 0.0f) {
         const auto damage = event.collisionMaterialAttachment()->collisionDamage;
         _dmgToTake += damage;
@@ -42,7 +41,7 @@ public:
       if (_health <= 0) {
         Services::messagePublisher()->sendMessage(
           Message(
-            "game",
+            "gameScene",
             std::make_shared<DestroyNodeEvent>(node.path())
           )
         );

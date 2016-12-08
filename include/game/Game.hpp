@@ -42,16 +42,16 @@ public:
     activeScenes.foreach([&](auto& scene){
       scene->update(delta);
     });
-    for(auto n : _toBeDestryed) {
-      auto parent = n->parent();
-      if (parent.isDefined()) {
-        const auto& physAttachment = n->get<PhysicsAttachment>();
-        physAttachment.foreach([&](auto& phys) {
-          phys.destroy();
-        });
-        parent.get().removeChild(n->name());
-      }
-    }
+    // for(auto n : _toBeDestryed) {
+    //   auto parent = n->parent();
+    //   if (parent.isDefined()) {
+    //     const auto& physAttachment = n->get<PhysicsAttachment>();
+    //     physAttachment.foreach([&](auto& phys) {
+    //       phys.destroy();
+    //     });
+    //     parent.get().removeChild(n->name());
+    //   }
+    // }
     // for(auto n : _toBeAdded){
     //   Services::logger()->debug("Parent name: " + std::get<0>(n)->name());
     //   Services::logger()->debug("Node name: " + std::get<1>(n)->name());
@@ -72,8 +72,11 @@ public:
   }
 
   auto addScene(std::shared_ptr<Scene<Transform3D>> scene) {
+    std::cout << "Add scene" << std::endl;
     activeScenes += scene;
+    std::cout << "Scene added" << std::endl;
     Services::messagePublisher()->addSubscriber(scene);
+    std::cout << "Added to message publisher" << std::endl;
   }
 
 protected:
