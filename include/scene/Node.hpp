@@ -16,7 +16,6 @@
 #include "minebombers/attachments/CollisionMaterialAttachment.hpp"
 #include "message/EventHandler.hpp"
 #include "service/Services.hpp"
-#include "game/Behavior.hpp"
 #include <typeinfo>
 #include <iostream>
 #include <string>
@@ -24,6 +23,7 @@
 #include "util/MatrixUtil.hpp"
 #include "util/StringUtil.hpp"
 #include "glm/gtx/string_cast.hpp"
+#include "game/Behavior.hpp"
 
 /**
  * Node interface.
@@ -121,7 +121,6 @@ public:
   }
 
   auto position() const -> typename T::vectorType {
-    // return glm::vec3(0, 0, 0);
     return MatrixUtil::getTransform(worldTransform());
   }
 
@@ -178,14 +177,14 @@ public:
     _isSleeping = true;
   }
 
-  auto isSleep() const -> bool {
+  auto isSleeping() const -> bool {
     return _isSleeping;
   }
 
-  auto wakeRecursivelyUpwards() -> void {
+  auto wakeUp() -> void {
     _isSleeping = false;
     if (_parent.isDefined()) {
-      _parent.gets().wakeRecursivelyUpwards();
+      _parent.get().wakeUp();
     }
    }
 
@@ -200,7 +199,12 @@ public:
     if (!_isSleeping) {
       const auto& physAttachment = this->get<PhysicsAttachment>();
       physAttachment.foreach([&](auto phys) {
-        const auto& pos = phys.position();
+        auto pos = phys.position();
+        if (_parent.isDefined()) {
+          const auto& parentPos = _parent.get().position();
+          pos.x -= parentPos.x;
+          pos.y -= parentPos.y;
+        }
         this->setLocalPosition(glm::vec3(pos.x, pos.y, this->localPosition().z));
       });
       _behaviors.foreach([&](auto& behavior) {
