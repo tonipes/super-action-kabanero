@@ -1,22 +1,39 @@
 #pragma once
 
 #include "minebombers/ui/MainMenu.hpp"
-#include "minebombers/ui/MenuController.hpp"
+#include "minebombers/ui/ButtonSelectedEvent.hpp"
 
 class MenuBehaviour : public Behavior<Transform3D> {
 public:
-  MenuBehaviour(Node<Transform3D>* node, MenuController& cont) {
+  int selDir = 0;
+  int index;
+  bool press = false;
+  MenuBehaviour(Node<Transform3D>* node) : index(0) {
     node->addEventReactor([&](GameInputEvent event) {
       auto action = event.action();
       auto isPressed = event.isPressed();
 
       if (action == UP && isPressed) {
-        cont.changeSelection(-1);
+        selDir = -1;
       } else if (action == DOWN && isPressed) {
-        cont.changeSelection(1);
+        selDir = 1;
       } else if (action == FIRE && isPressed) {
-        cont.select();
+        press = true;
       }
     });
+  }
+
+  auto update(float delta, Node<Transform3D>& node) -> void override {
+   if (selDir != 0 || press) {
+     index += selDir;
+     if (index >= 3) index = 0;
+     if (index < 0) index = 2;
+     selDir = 0;
+     Services::messagePublisher()->sendMessage(Message(
+       "all",
+       std::make_shared<ButtonSelectedEvent>(index, press)
+     ));
+     press = false;
+   }
   }
 };

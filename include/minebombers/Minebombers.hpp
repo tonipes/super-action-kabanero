@@ -4,6 +4,7 @@
 #include "game/Game.hpp"
 #include "physics/ContactListener.hpp"
 #include "message/event/DestroyNodeEvent.hpp"
+#include "minebombers/ui/GameTypeSelectedEvent.hpp"
 
 class Minebombers : public Game {
 public:
@@ -14,6 +15,7 @@ public:
     Game::update(delta);
     _physWorld.Step(_phys_step, 8, 3);
   }
+  auto startGame(GameType gameType) -> void;
 private:
   b2World _physWorld;
   ContactListener _contactListener;

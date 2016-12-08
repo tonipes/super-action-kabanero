@@ -32,20 +32,6 @@ auto Minebombers::init() -> void {
 
   auto rootNode = std::make_shared<Node<Transform3D>>("world");
 
-  int seed = 5;
-
-  auto random = StdLibRandom();
-  random.seed(seed);
-
-  auto caveGen = CaveGenerator(seed, 32, 32, 4, 3);
-  auto tileMap = caveGen.generate();
-  auto fogMap = std::make_shared<FogMap>();
-  auto levelCompiler = LevelCompiler(random, _physWorld);
-
-  levelCompiler.materializeLevel(tileMap, rootNode);
-  levelCompiler.materializePlayer(tileMap, rootNode);
-  levelCompiler.initFog(tileMap, fogMap, rootNode);
-
   Services::logger()->debug("num children: " + std::to_string(rootNode->children().values().length()));
 
   auto cameraNode = std::make_shared<Node<Transform3D>>("camera");
@@ -77,8 +63,7 @@ auto Minebombers::init() -> void {
     )
   );
 
-  auto menuData = MenuController();
-  auto menu = MainMenu(menuData);
+  auto menu = MainMenu();
   auto ui = menu.init();
   rootNode->addChild(ui);
 
@@ -103,6 +88,10 @@ auto Minebombers::init() -> void {
       }
     }
 
+  });
+
+  addEventReactor([&](GameTypeSelectedEvent event) {
+    Minebombers::startGame(event.getType());
   });
 
   // Can't add directly under the rood node
@@ -138,4 +127,24 @@ auto Minebombers::init() -> void {
       }
     }
   });
+  Services::messagePublisher()->sendMessage(Message(
+    "all",
+    std::make_shared<ButtonSelectedEvent>(0, false)
+  ));
+}
+auto Minebombers::startGame(GameType gameType) -> void {
+    auto rootNode = activeScenes[0]->rootNode();
+    int seed = 5;
+
+    auto random = StdLibRandom();
+    random.seed(seed);
+
+    auto caveGen = CaveGenerator(seed, 32, 32, 4, 3);
+    auto tileMap = caveGen.generate();
+    auto fogMap = std::make_shared<FogMap>();
+    auto levelCompiler = LevelCompiler(random, _physWorld);
+
+    levelCompiler.materializeLevel(tileMap, rootNode);
+    levelCompiler.materializePlayer(tileMap, rootNode);
+    levelCompiler.initFog(tileMap, fogMap, rootNode);
 }
