@@ -16,9 +16,10 @@
 class ItemNodeBehaviour : public Behavior<Transform3D> {
 public:
   ItemNodeBehaviour(Node<Transform3D>* node) {
-    node->addEventReactor([&](CollisionEvent event) {
+    node->addEventReactor([&, node](CollisionEvent event) {
       if(event.collisionMaterialAttachment()->isPlayer){
         destroy = true;
+        node->wakeUp();
       }
     });
   }

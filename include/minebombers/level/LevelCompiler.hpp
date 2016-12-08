@@ -88,7 +88,7 @@ public:
                 break;
               }
               case ITEM_LOCATION: {
-                const auto itemNode = getItem(item, 0, 0);
+                const auto itemNode = getItem(item, totalX, totalY);
                 tileNode->addChild(itemNode);
                 const auto pos = itemNode->position();
                 const auto& physAttachment = itemNode->get<PhysicsAttachment>();
@@ -98,7 +98,7 @@ public:
                 break;
               }
               case ARTIFACT_LOCATION:{
-                const auto itemNode = getItem(artifact, 0, 0);
+                const auto itemNode = getItem(artifact, totalX, totalY);
                 tileNode->addChild(itemNode);
                 const auto pos = itemNode->position();
                 const auto& physAttachment = itemNode->get<PhysicsAttachment>();
@@ -210,7 +210,6 @@ private:
 
   auto getItem(std::shared_ptr<GunParameters> gun, int x, int y) -> std::shared_ptr<Node<Transform3D>> {
     auto node = std::make_shared<Node<Transform3D>>(name("item",x,y));
-    node->setLocalPosition(glm::vec3(x,y,0));
     node->addAttachment(getSprite(gun->sprite, -1));
 
     auto itBeh = node->addBehavior<ItemNodeBehaviour>();
@@ -219,7 +218,7 @@ private:
     // material_att->itemLink = itBeh;
     node->addAttachment(material_att);
 
-    auto physBody = createPhysSquare(x, y);
+    auto physBody = createPhysSquare(0, 0);
 
     auto collisionData = new CollisionData("", material_att);
     physBody->SetUserData(collisionData);
