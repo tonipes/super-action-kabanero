@@ -134,7 +134,8 @@ auto Minebombers::init() -> void {
 }
 auto Minebombers::startGame(GameType gameType) -> void {
     auto rootNode = activeScenes[0]->rootNode();
-    int seed = 5;
+    rootNode->removeChild("menu");
+    int seed = static_cast<unsigned int>( time(NULL) );
 
     auto random = StdLibRandom();
     random.seed(seed);
