@@ -2,13 +2,15 @@
 
 #include "minebombers/level/TileMap.hpp"
 #include "minebombers/level/FogMap.hpp"
+#include "minebombers/level/TerrainFactory.hpp"
 #include "scene/Node.hpp"
 #include "scene/3D/Transform3D.hpp"
 #include "physics/CollisionData.hpp"
 #include "scene/attachment/SpriteAttachment.hpp"
 #include "scene/attachment/EffectAttachment.hpp"
+#include "scene/attachment/PhysicsAttachment.hpp"
 #include "graphics/effects/CircleEffect.hpp"
-#include "minebombers/behaviors/TerrainBehaviour.hpp"
+#include "minebombers/behaviors/TerrainBehavior.hpp"
 #include "minebombers/behaviors/FogBehaviour.hpp"
 #include "minebombers/behaviors/PlayerBehaviour.hpp"
 #include "minebombers/behaviors/WallBehavior.hpp"
@@ -21,6 +23,8 @@
 
 class LevelCompiler {
 public:
+  static constexpr float CHUNK_SIZE = 8.0f;
+
   LevelCompiler(Random& rand, b2World& w): _rand(rand), _world(w) {}
 
   static KBVector<std::shared_ptr<GunParameters>> normalGuns;
@@ -43,44 +47,68 @@ public:
     obj->setLocalPosition(glm::vec3(0,0,2));
     level->addChild(obj);
 
+    const auto mapWidth = map->getWidth();
+    const auto mapHeight = map->getHeight();
 
-    auto items = normalGuns;
-    auto artifacts = artifactGuns;
-    for (auto x = 0; x < map->getWidth(); x++) {
-      for (auto y = 0; y < map->getHeight(); y++) {
-        auto tileNode =  std::make_shared<Node<Transform3D>>(name("tile", x, y));
-        auto floorNode = std::make_shared<Node<Transform3D>>(name("floor", x, y));
+    const auto xChunks = ceil(mapWidth / CHUNK_SIZE);
+    const auto yChunks = ceil(mapHeight / CHUNK_SIZE);
 
-        // ground->addChild(floorNode);
-        obj->addChild(tileNode);
+    for (auto xChunk = 0; xChunk < xChunks; xChunk++) {
+      for (auto yChunk = 0; yChunk < yChunks; yChunk++) {
+        auto chunkNode = std::make_shared<Node<Transform3D>>(name("chunk", xChunk, yChunk));
+        chunkNode->setLocalPosition(glm::vec3(xChunk * CHUNK_SIZE, yChunk * CHUNK_SIZE, 0));
+        chunkNode->setSleep(true);
+        obj->addChild(chunkNode);
+        for (auto x = 0; x < CHUNK_SIZE; x++) {
+          for (auto y = 0; y < CHUNK_SIZE; y++) {
+            auto totalX = (int)(xChunk * CHUNK_SIZE + x);
+            auto totalY = (int)(yChunk * CHUNK_SIZE + y);
+            auto tileNode =  std::make_shared<Node<Transform3D>>(name("tile", totalX, totalY));
+            tileNode->setLocalPosition(glm::vec3(x, y, 0));
+            chunkNode->addChild(tileNode);
 
-        // floorNode->addAttachment(getSprite("tiles/dirt", 2));
-        // floorNode->setLocalPosition(glm::vec3(x, y, 0));
-        //
-        // floorNode->setSleep(true);
-        // floorNode->setLocalPosition(glm::vec3(x, y, -2));
-        auto item = items[(x+y)%items.length()];
-        auto art = artifacts[(x+y)%artifacts.length()];
+            auto item = normalGuns[(totalX+totalY)%normalGuns.length()];
+            auto artifact = artifactGuns[(totalX+totalY)%artifactGuns.length()];
 
-        switch ((*map)[x][y].getType()) {
-          case CAVE_WALL:
-            tileNode->addChild(getTerrain("tiles/pebble_brown", 8, 100.0f, x, y, map));
-            break;
-          case INDESCTRUCTIBLE_WALL:
-            tileNode->addChild(getTerrain("tiles/stone_brick", 11, 10000000000.0f, x, y, map));
-            break;
-          case CONSTRUCTED_WALL:
-            tileNode->addChild(getTerrain("tiles/rect_gray", 3, 70.0f, x, y, map));
-            break;
-          case WINDOW:
-            tileNode->addChild(getTerrain("tiles/window", 0, 10.0f, x, y, map));
-            break;
-          case ITEM_LOCATION:
-            tileNode->addChild(getItem(item, x, y));
-            break;
-          case ARTIFACT_LOCATION:
-            tileNode->addChild(getItem(art, x, y));
-            break;
+            auto terrainType = (*map)[totalX][totalY].getType();
+
+            switch (terrainType) {
+              case CAVE_WALL:
+              case INDESCTRUCTIBLE_WALL:
+              case CONSTRUCTED_WALL:
+              case WINDOW: {
+                const auto terrain = TerrainFactory::generateTerrain(
+                  terrainType, "terrain", _world, map);
+                tileNode->addChild(terrain);
+                const auto pos = terrain->position();
+                const auto& physAttachment = terrain->get<PhysicsAttachment>();
+                physAttachment.foreach([&](auto phys) {
+                  phys.setPosition(pos.x, pos.y);
+                });
+                break;
+              }
+              case ITEM_LOCATION: {
+                const auto itemNode = getItem(item, totalX, totalY);
+                tileNode->addChild(itemNode);
+                const auto pos = itemNode->position();
+                const auto& physAttachment = itemNode->get<PhysicsAttachment>();
+                physAttachment.foreach([&](auto phys) {
+                  phys.setPosition(pos.x, pos.y);
+                });
+                break;
+              }
+              case ARTIFACT_LOCATION:{
+                const auto itemNode = getItem(artifact, totalX, totalY);
+                tileNode->addChild(itemNode);
+                const auto pos = itemNode->position();
+                const auto& physAttachment = itemNode->get<PhysicsAttachment>();
+                physAttachment.foreach([&](auto phys) {
+                  phys.setPosition(pos.x, pos.y);
+                });
+                break;
+              }
+            }
+          }
         }
       }
     }
@@ -166,43 +194,22 @@ public:
 private:
   Random& _rand;
   b2World& _world;
-  auto getSprite(std::string baseName, int variations) -> std::shared_ptr<SpriteAttachment> {
-      if (variations == -1) {
-        return std::make_shared<SpriteAttachment>(baseName);
-      }
-      std::ostringstream oss;
-      oss << baseName << _rand.nextInt(variations);
-      return std::make_shared<SpriteAttachment>(oss.str());
+  auto getSprite(std::string baseName, int numVariations) -> std::shared_ptr<SpriteAttachment> {
+    if (numVariations == -1) {
+      return std::make_shared<SpriteAttachment>(baseName);
+    }
+    std::ostringstream oss;
+    oss << baseName << _rand.nextInt(numVariations);
+    return std::make_shared<SpriteAttachment>(oss.str());
   }
   auto name(std::string base, int x, int y) -> std::string {
     std::ostringstream oss;
     oss << base << x << "-" << y;
     return oss.str();
   }
-  auto getTerrain(std::string sprites, int spriteVar, float health, int x, int y, std::shared_ptr<TileMap> map) -> std::shared_ptr<Node<Transform3D>> {
-    auto node = std::make_shared<Node<Transform3D>>(name("obj",x,y));
-    node->setLocalPosition(glm::vec3(x, y, 0));
-    node->addAttachment(getSprite(sprites, spriteVar));
-
-    //node->addBehavior<WallBehavior>();
-    auto terrainBehaviour = node->addBehavior<TerrainBehaviour>(health, map, x, y);
-    auto material_att = std::make_shared<CollisionMaterialAttachment>();
-
-    material_att->staticMaterial = true;
-
-    node->addAttachment(material_att);
-
-    auto physBody = createPhysSquare(x, y);
-
-    auto physAttachment = std::make_shared<PhysicsAttachment>(physBody);
-    node->addAttachment(physAttachment);
-
-    return node;
-  }
 
   auto getItem(std::shared_ptr<GunParameters> gun, int x, int y) -> std::shared_ptr<Node<Transform3D>> {
     auto node = std::make_shared<Node<Transform3D>>(name("item",x,y));
-    node->setLocalPosition(glm::vec3(x,y,0));
     node->addAttachment(getSprite(gun->sprite, -1));
 
     auto itBeh = node->addBehavior<ItemNodeBehaviour>();
@@ -211,7 +218,7 @@ private:
     // material_att->itemLink = itBeh;
     node->addAttachment(material_att);
 
-    auto physBody = createPhysSquare(x, y);
+    auto physBody = createPhysSquare(0, 0);
 
     auto collisionData = new CollisionData("", material_att);
     physBody->SetUserData(collisionData);

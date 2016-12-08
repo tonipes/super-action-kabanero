@@ -48,14 +48,14 @@ auto Minebombers::init() -> void {
   auto random = StdLibRandom();
   random.seed(seed);
 
-  auto caveGen = CaveGenerator(seed, 32, 32, 4, 3);
+  auto caveGen = CaveGenerator(seed, 128, 128, 4, 3);
   auto tileMap = caveGen.generate();
-  auto fogMap = std::make_shared<FogMap>();
+  // auto fogMap = std::make_shared<FogMap>();
   auto levelCompiler = LevelCompiler(random, _physWorld);
 
   levelCompiler.materializeLevel(tileMap, rootNode);
   levelCompiler.materializePlayer(tileMap, rootNode);
-  levelCompiler.initFog(tileMap, fogMap, rootNode);
+  // levelCompiler.initFog(tileMap, fogMap, rootNode);
 
   Services::logger()->debug("num children: " + std::to_string(rootNode->children().values().length()));
 
@@ -70,8 +70,17 @@ auto Minebombers::init() -> void {
 
   auto scene = std::make_shared<GameScene<Transform3D>>("gameScene", rootNode);
 
-  SceneView<Transform3D> sceneView(rootNode, cameraNode, Viewport(0, 0, 1, 1));
+  SceneView sceneView(rootNode, cameraNode, Viewport(0, 0, 0.5, 0.5));
   scene->addSceneView(sceneView);
+
+  SceneView sceneView2(rootNode, cameraNode, Viewport(0.5, 0, 0.5, 0.5));
+  scene->addSceneView(sceneView2);
+
+  SceneView sceneView3(rootNode, cameraNode, Viewport(0.0, 0.5, 0.5, 0.5));
+  scene->addSceneView(sceneView3);
+
+  SceneView sceneView4(rootNode, cameraNode, Viewport(0.5, 0.5, 0.5, 0.5));
+  scene->addSceneView(sceneView4);
 
   addScene(scene);
 

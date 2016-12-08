@@ -7,7 +7,7 @@ class SpriteAttachment : public NodeAttachment {
 public:
   SpriteAttachment(std::string spriteId) : _spriteId(spriteId) {}
 
-  auto spriteId() -> std::string {
+  auto spriteId() const -> std::string {
     return _spriteId;
   }
 private:

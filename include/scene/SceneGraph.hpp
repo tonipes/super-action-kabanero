@@ -18,7 +18,7 @@ public:
 
   auto update(double delta) -> void override {}
 
-  auto getSceneViews() -> KBVector<SceneView<T>> {
+  auto getSceneViews() -> KBVector<SceneView> {
     return _sceneViews;
   }
 
@@ -26,11 +26,11 @@ public:
     return _root;
   }
 
-  auto addSceneView(SceneView<T> sceneView) -> void {
+  auto addSceneView(SceneView sceneView) -> void {
     _sceneViews += sceneView;
   }
 
 private:
   std::shared_ptr<Node<T>> _root;
-  KBVector<SceneView<T>> _sceneViews;
+  KBVector<SceneView> _sceneViews;
 };
