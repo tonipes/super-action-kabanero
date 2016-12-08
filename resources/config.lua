@@ -26,6 +26,7 @@ resources = {
   "resources/test.txt",
   "resources/atlases/pack.atlas",
   "resources/atlases/pack.png",
-  "resources/atlases/pack2.png"
+  "resources/atlases/pack2.png",
+  "resources/atlases/pack3.png"
 }
 audio_folder = "resources/audio/"
