@@ -13,6 +13,7 @@
 #include "minebombers/attachments/CollisionMaterialAttachment.hpp"
 #include "collection/Option.hpp"
 #include "physics/CollisionData.hpp"
+#include "minebombers/ui/MainMenu.hpp"
 // #include "minebombers/behaviors/EnemyOrbBehavior.hpp"
 
 #include "physics/ContactListener.hpp"
@@ -20,24 +21,12 @@
 auto Minebombers::init() -> void {
 
   auto messagePublisher = Services::messagePublisher();
-  // messagePublisher->sendMessage(
-  //   Message(
-  //     "audioPlayer:clip/test_clip.ogg",
-  //     std::make_shared<AudioClipEvent>(CLIP_PLAY)
-  //   )
-  // );
   messagePublisher->sendMessage(
     Message(
       "audioPlayer:track/jazz",
       std::make_shared<AudioTrackEvent>(TRACK_CHANGE, "resources/audio/local_forecast.ogg")
     )
   );
-  // messagePublisher->sendMessage(
-  //   Message(
-  //     "audioPlayer:track/jazz",
-  //     std::make_shared<AudioTrackEvent>(TRACK_PLAY)
-  //   )
-  // );
 
   _physWorld.SetContactListener(&_contactListener);
 
@@ -87,6 +76,10 @@ auto Minebombers::init() -> void {
       std::make_shared<TestEvent>(B)
     )
   );
+
+  auto menu = MainMenu();
+  auto ui = menu.init();
+  rootNode->addChild(ui);
 
   // These reactors should probably be somewhere further down in the tree.
   // Uses only the first scene in activeScenes
