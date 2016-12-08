@@ -13,6 +13,11 @@ public:
     return _effect;
   }
 
+  auto setEffect(std::shared_ptr<Effect> effect) -> void {
+    _effect = std::move(effect);
+  }
+
+
 private:
   std::shared_ptr<Effect> _effect;
 };

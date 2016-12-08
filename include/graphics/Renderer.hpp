@@ -14,8 +14,6 @@
 #include "graphics/Effect.hpp"
 #include "service/Services.hpp"
 
-#include "minebombers/attachments/HudAttachment.hpp"
-
 /**
  * Renderer class.
  * Used to render scenes.
@@ -109,7 +107,6 @@ private:
     if (_isWithinWindow(nodePosition)) {
       const auto& spriteAttachment = node->get<SpriteAttachment>();
       const auto& effectAttachment = node->get<EffectAttachment>();
-      const auto& hudAttachment = node->get<HudAttachment>();
 
       spriteAttachment.foreach([&](auto s) {
         auto id = s.spriteId();
@@ -160,16 +157,7 @@ private:
         // Services::logger()->debug(std::to_string(e.effect().time()));
 
         effect->setTileSize(_tilesize);
-        _window.draw(*effect.get());
-      });
-
-      hudAttachment.foreach([&](auto e) {
-        auto hud = e.hud();
-
-        auto relativePosition = (nodePosition - _cameraPosition) * (float)_tilesize;
-        hud->setPosition(relativePosition.x + _windowSize.x / 2, - relativePosition.y + _windowSize.y / 2);
-        
-        _window.draw(*hud.get());
+        _window.draw(*effect);
       });
 
     }

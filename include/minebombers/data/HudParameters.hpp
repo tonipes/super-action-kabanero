@@ -1,12 +1,10 @@
 #pragma once
 
-#include "message/Event.hpp"
-#include <glm/vec2.hpp>
-#include "minebombers/data/HudParameters.hpp"
+#include <string>
 
-class UpdateHudEvent : public Event {
+class HudParameters {
 public:
-  UpdateHudEvent(float x, float y, int hp, std::string name):
+  HudParameters(float x, float y, int hp, std::string name):
     _x(x), _y(y), _hp(hp), _name(name) {}
 
   auto getX() const -> float { return _x; }

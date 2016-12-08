@@ -16,6 +16,7 @@
 #include "random/StdLibRandom.hpp"
 #include "minebombers/data/GunParameters.hpp"
 #include "minebombers/util/NodeFactory.hpp"
+// #include "minebombers/data/HudParameters.hpp"
 
 #include <glm/vec2.hpp>
 
@@ -177,11 +178,14 @@ public:
       damageToTake = 0.0f;
     }
 
+    Services::messagePublisher()->sendMessage(Message("gameScene:world/hud/player1hud", std::make_shared<UpdateHudEvent>(
+      pos.x, pos.y, hp, "Player 1"
+    )));
+
     Services::messagePublisher()->sendMessage(Message("gameScene:world/fog", std::make_shared<PlayerLocationEvent>(pos)));
 
-    Services::messagePublisher()->sendMessage(Message("gameScene:world/hud/player1hud", std::make_shared<UpdateHudEvent>(
-      pos.x, pos.y, hp
-    )));
+    // Services::logger()->debug("Send event with hp" + std::to_string(hp));
+
 
     throwBomb = false;
   }
