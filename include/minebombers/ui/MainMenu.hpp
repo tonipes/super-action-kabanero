@@ -3,12 +3,11 @@
 #include <memory>
 #include <iostream>
 #include "scene/Node.hpp"
-#include "minebombers/ui/MainMenuData.hpp"
-#include "minebombers/ui/MenuBehaviour.hpp"
+#include "minebombers/ui/MenuController.hpp"
 
 class MainMenu {
 public:
-  MainMenu(MainMenuData& data): _data(data) {}
+  MainMenu(MenuController& d): data(d) {}
 
   auto init() -> std::shared_ptr<Node<Transform3D>> {
     auto main = std::make_shared<Node<Transform3D>>("menu");
@@ -37,19 +36,17 @@ public:
     main->addChild(coop);
     main->setIgnoreCamera(true);
 
-    _data.buttons = KBVector<std::shared_ptr<Node<Transform3D>>>();
+    data.buttons = KBVector<std::shared_ptr<Node<Transform3D>>>();
 
-    _data.buttons += spUn;
-    _data.buttons += spSel;
-    _data.buttons += coopUn;
-    _data.buttons += coopSel;
+    data.buttons += spUn;
+    data.buttons += spSel;
+    data.buttons += coopUn;
+    data.buttons += coopSel;
 
     refresh();
-    main->addBehavior<MenuBehaviour>(_data);
-
+    main->addBehavior<MenuBehaviour>(data);
     return main;
   }
-
 private:
-  MainMenuData _data;
+  MenuController& data;
 };

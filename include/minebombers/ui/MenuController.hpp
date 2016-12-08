@@ -1,14 +1,14 @@
 #pragma once
 
-#include "collection/mutable/KBVector.hpp"
+#include <memory>
+#include <iostream>
+#include "scene/Node.hpp"
 
-class MainMenuData {
+class MenuController {
 public:
-  MainMenuData() : selection(0) {
-
-  }
-  int selection;
+  MenuController(): selection(0) {}
   KBVector<std::shared_ptr<Node<Transform3D>>> buttons;
+  int selection;
 
   auto refresh() -> void {
     for (auto i = 0; i < buttons.length() / 2; i++) {
@@ -18,10 +18,8 @@ public:
       }
       buttons[i]->setRenderOn(rend);
       buttons[i+1]->setRenderOn(!rend);
-      std::cout << rend << " is on for " << i << "\n";
     }
   }
-
 
   auto changeSelection(int dir) -> void {
     selection += dir;
@@ -32,7 +30,6 @@ public:
     }
     refresh();
   }
-
 
   auto select() {
 
