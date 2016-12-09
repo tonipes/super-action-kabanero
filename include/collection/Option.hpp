@@ -67,7 +67,7 @@ public:
    * @param func function to apply to the contained value.
    */
   template <typename F>
-  auto foreach(F func) const -> void {
+  auto foreach(F&& func) const -> void {
     if (isDefined()) {
       func(*_valueStore);
     }

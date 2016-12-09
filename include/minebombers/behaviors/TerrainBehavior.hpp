@@ -35,10 +35,10 @@ public:
     auto parentName = node.parent().get().name();
     parentName.erase(0, 4);
     auto coords = split(parentName, '-');
-    if (_dmgToTake != 0) {
+    if (_dmgToTake > 0.0f) {
       _health -= _dmgToTake;
       _dmgToTake = 0;
-      if (_health <= 0) {
+      if (_health <= 0.0f) {
         Services::messagePublisher()->sendMessage(
           Message(
             "gameScene",
@@ -54,6 +54,7 @@ public:
   }
 
 private:
-  float _health, _dmgToTake;
+  float _health = 0.0f;
+  float _dmgToTake = 0.0f;
   std::shared_ptr<TileMap> _map;
 };

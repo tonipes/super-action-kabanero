@@ -48,8 +48,6 @@ auto TerrainFactory::createPhysSquare(b2World& world) -> b2Body* {
   return body;
 }
 
-
-
 auto TerrainFactory::getRandomSprite(
     std::string baseName,
     int numVariations) -> std::shared_ptr<SpriteAttachment> {

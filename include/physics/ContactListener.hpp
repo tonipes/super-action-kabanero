@@ -56,7 +56,6 @@ class ContactListener : public b2ContactListener {
       }
     }
 
-    // Apply forces if needed
     if(a_data->collisionMaterialAttachment()->force > 0.0f) {
       ApplyCollisionForce(a_body, b_body, a_data->collisionMaterialAttachment()->force);
 

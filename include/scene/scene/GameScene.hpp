@@ -34,12 +34,6 @@ public:
       auto physAttachment = std::make_shared<PhysicsAttachment>(body);
       node->addAttachment(physAttachment);
 
-      auto material_att = node->getShared<CollisionMaterialAttachment>();
-      if (material_att.isDefined()) {
-        auto collisionData = new CollisionData(node->path(), material_att.get());
-        body->SetUserData(collisionData);
-      }
-
       _toBeAdded += { path, node };
     });
   }

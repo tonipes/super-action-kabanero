@@ -21,7 +21,6 @@ public:
 
     auto caveGen = CaveGenerator(seed, w, h, 4, 3);
     auto tileMap = caveGen.generate();
-
     auto random = Services::random();
 
     auto levelCompiler = LevelCompiler(*random, scene->physWorld());

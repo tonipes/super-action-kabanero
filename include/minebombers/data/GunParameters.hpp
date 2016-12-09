@@ -14,7 +14,7 @@ public:
     std::string bltSprite,
     std::string sound,
     bool rocket = false,
-    bool expSize = 0,
+    float expSize = 0,
     int shrapnel = 0,
     int bltSize = 0):
   damage(dmg),
@@ -39,7 +39,7 @@ public:
   std::string sprite;
   std::string bulletSprite;
   bool isRocketLauncher;
-  bool explosionSize;
+  float explosionSize;
   int shrapnelCount;
   float bulletSize;
   std::string fireSound;
