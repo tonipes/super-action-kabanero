@@ -16,8 +16,8 @@ public:
 
     auto scene = std::make_shared<GameScene>("gameScene", rootNode);
 
-    auto w = 32;
-    auto h = 32;
+    auto w = 64;
+    auto h = 64;
 
     auto caveGen = CaveGenerator(seed, w, h, 4, 3);
     auto tileMap = caveGen.generate();

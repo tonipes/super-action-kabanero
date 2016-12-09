@@ -12,7 +12,7 @@
 class InputTranslator {
 
 public:
-  std::string path = "gameScene:world/player";
+  std::string path = "gameScene:world/player1";
   InputTranslator() {
     Services::logger()->debug("Create Input Translator");
   }
