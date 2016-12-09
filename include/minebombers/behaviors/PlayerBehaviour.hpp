@@ -127,7 +127,7 @@ public:
         std::shared_ptr<b2FixtureDef> fixtureDef;
 
         std::tie(bulletNode, bodyDef, fixtureDef) = NodeFactory::createBullet(gunParams);
-
+        fixtureDef->filter.groupIndex = -1;
         bodyDef->position.Set(
           pos.x + fireDirection.x,
           pos.y + fireDirection.y
