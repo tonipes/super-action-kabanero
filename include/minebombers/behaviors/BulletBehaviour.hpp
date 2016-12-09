@@ -14,21 +14,24 @@
 class BulletBehavior : public Behavior<Transform3D> {
 public:
   BulletBehavior(Node<Transform3D>* node, float maxTime) :_maxTime(maxTime){
-    node->addEventReactor([&](CollisionEvent event) {
-      if(!event.collisionMaterialAttachment()->bulletRebound){
-        destroy = true;
+    node->addEventReactor([&, node](CollisionEvent event) {
+      if(!event.collisionMaterialAttachment()->bulletRebound) {
+        if (!destroyed) {
+          destroyed = true;
+          Services::messagePublisher()->sendMessage(Message("gameScene",std::make_shared<DestroyNodeEvent>(node->path())));
+        }
       }
     });
   }
 
   auto update(float delta, Node<Transform3D>& node) -> void override {
-    if(destroy) {
-      Services::messagePublisher()->sendMessage(Message("gameScene",std::make_shared<DestroyNodeEvent>(node.path())));
-      destroy = false;
-    }
+    // if(destroy) {
+    //   Services::messagePublisher()->sendMessage(Message("gameScene",std::make_shared<DestroyNodeEvent>(node.path())));
+    //   destroyed = false;
+    // }
   }
 
 private:
-  bool destroy = false;
+  bool destroyed = false;
   float _maxTime;
 };

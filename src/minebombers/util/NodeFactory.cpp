@@ -126,7 +126,7 @@ namespace NodeFactory {
     auto fixtureDef = std::make_shared<b2FixtureDef>();
     fixtureDef->shape = shape;
     fixtureDef->density = 1;
-    fixtureDef->restitution = 1;
+    fixtureDef->restitution = 0;
 
     node->addBehavior<BulletBehavior>(10.0f);
     node->addBehavior<BulletOrientationBehavior>();
