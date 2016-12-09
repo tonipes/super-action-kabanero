@@ -35,7 +35,7 @@ public:
       std::tie(damageNode, bodyDef, fixtureDef) = NodeFactory::createDamageCircle(_radius, _damage, 20.0f);
       bodyDef->position.Set(pos.x,pos.y);
 
-      Services::messagePublisher()->sendMessage(Message("game", std::make_shared<CreateNodeEvent>(
+      Services::messagePublisher()->sendMessage(Message("gameScene", std::make_shared<CreateNodeEvent>(
         "world/bullets", damageNode, bodyDef, fixtureDef
       )));
 
@@ -46,7 +46,7 @@ public:
         )
       );
 
-      Services::messagePublisher()->sendMessage(Message("game",std::make_shared<DestroyNodeEvent>(node.path())));
+      Services::messagePublisher()->sendMessage(Message("gameScene",std::make_shared<DestroyNodeEvent>(node.path())));
 
       explode = false;
       alreadyExploded = true;

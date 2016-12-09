@@ -12,7 +12,7 @@ class Option {
 public:
   Option(std::shared_ptr<T> valuePtr) : _isDefined(true), _valueStore(valuePtr) {}
 
-  Option(T value) : _isDefined(true) {
+  Option(const T& value) : _isDefined(true) {
     _valueStore = std::make_shared<T>(value);
   }
 

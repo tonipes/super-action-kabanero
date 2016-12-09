@@ -137,7 +137,7 @@ public:
           fireDirection.y * gunParams->bulletSpeed
         );
 
-        Services::messagePublisher()->sendMessage(Message("game", std::make_shared<CreateNodeEvent>(
+        Services::messagePublisher()->sendMessage(Message("gameScene", std::make_shared<CreateNodeEvent>(
           "world/bullets", bulletNode, bodyDef, fixtureDef
         )));
       }
@@ -158,7 +158,7 @@ public:
       std::tie(bombNode, bodyDef, fixtureDef) = NodeFactory::createBomb();
       bodyDef->position.Set(pos.x, pos.y);
 
-      Services::messagePublisher()->sendMessage(Message("game", std::make_shared<CreateNodeEvent>(
+      Services::messagePublisher()->sendMessage(Message("gameScene", std::make_shared<CreateNodeEvent>(
         "world/bullets", bombNode, bodyDef, fixtureDef
       )));
       Services::messagePublisher()->sendMessage(Message(

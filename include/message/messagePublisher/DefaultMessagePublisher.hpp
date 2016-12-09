@@ -26,7 +26,9 @@ public:
   }
 
   auto publishMessages() -> void override {
-    for (auto& message : _messages) {
+    auto messages = _messages;
+    _messages = KBVector<Message>();
+    for (auto& message : messages) {
       auto socketAndPath = split(message.address(), ':');
       if (socketAndPath.length() == 0) {
         throw EngineException("No message address provided");
@@ -57,7 +59,6 @@ public:
         }
       }
     }
-    _messages = KBVector<Message>();
   }
 
 private:

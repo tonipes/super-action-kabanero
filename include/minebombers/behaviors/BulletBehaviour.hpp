@@ -23,7 +23,7 @@ public:
 
   auto update(float delta, Node<Transform3D>& node) -> void override {
     if(destroy) {
-      Services::messagePublisher()->sendMessage(Message("game",std::make_shared<DestroyNodeEvent>(node.path())));
+      Services::messagePublisher()->sendMessage(Message("gameScene",std::make_shared<DestroyNodeEvent>(node.path())));
       destroy = false;
     }
   }

@@ -6,11 +6,14 @@
 #include "message/event/DestroyNodeEvent.hpp"
 #include "message/event/CreateNodeEvent.hpp"
 #include "message/event/AudioTrackEvent.hpp"
+#include "minebombers/events/NewGameEvent.hpp"
 #include "minebombers/level/LevelCompiler.hpp"
 #include "minebombers/level/CaveGenerator.hpp"
 #include "minebombers/behaviors/CameraBehavior.hpp"
 #include "minebombers/attachments/VisibilityAttachment.hpp"
 #include "minebombers/events/TestEvent.hpp"
+#include "minebombers/events/TestEvent.hpp"
+#include "minebombers/scenes/MultiplayerScene.hpp"
 #include "minebombers/attachments/CollisionMaterialAttachment.hpp"
 #include "collection/Option.hpp"
 #include "physics/CollisionData.hpp"
@@ -21,12 +24,18 @@
 auto Minebombers::init() -> void {
 
   auto messagePublisher = Services::messagePublisher();
-  // messagePublisher->sendMessage(
-  //   Message(
-  //     "audioPlayer:clip/test_clip.ogg",
-  //     std::make_shared<AudioClipEvent>(CLIP_PLAY)
-  //   )
-  // );
+
+  this->addEventReactor([&](NewGameEvent event) {
+    std::cout << "Received event!" << std::endl;
+    auto seed = event.seed;
+    auto numPlayers = event.numPlayers;
+
+    auto scene = MultiplayerScene::createScene(seed, numPlayers);
+    addScene(scene);
+    activateScene("gameScene");
+  });
+
+
   messagePublisher->sendMessage(
     Message(
       "audioPlayer:track/jazz",
@@ -40,125 +49,9 @@ auto Minebombers::init() -> void {
   //   )
   // );
 
-  _physWorld.SetContactListener(&_contactListener);
-
-  auto rootNode = std::make_shared<Node<Transform3D>>("world");
-
   int seed = 5;
 
-  auto random = StdLibRandom();
-  random.seed(seed);
-
-  auto w = 128;
-  auto h = 128;
-
-  auto caveGen = CaveGenerator(seed, w, h, 4, 3);
-  auto tileMap = caveGen.generate();
-  // auto fogMap = std::make_shared<FogMap>();
-  auto levelCompiler = LevelCompiler(random, _physWorld);
-
-  levelCompiler.materializeLevel(tileMap, rootNode);
-  levelCompiler.materializePlayer(tileMap, rootNode);
-  // levelCompiler.initFog(tileMap, fogMap, rootNode);
-
-  Services::logger()->debug("num children: " + std::to_string(rootNode->children().values().length()));
-
-  auto cameraNode = std::make_shared<Node<Transform3D>>("camera");
-  cameraNode->setLocalPosition(glm::vec3(0, 0, 0));
-  cameraNode->addBehavior<CameraBehavior>(0.2f);
-  
-  auto visibilityAttachment = std::make_shared<VisibilityAttachment>(w, h, tileMap);
-  cameraNode->addAttachment(visibilityAttachment);
-
-  rootNode->addChild(cameraNode);
-
-  auto bulletBag = std::make_shared<Node<Transform3D>>("bullets");
-  bulletBag->setLocalPosition(glm::vec3(0, 0, 0));
-  rootNode->addChild(bulletBag);
-
-  auto scene = std::make_shared<GameScene<Transform3D>>("gameScene", rootNode);
-
-  SceneView sceneView(rootNode, cameraNode, Viewport(0, 0, 0.5, 0.5));
-  scene->addSceneView(sceneView);
-
-  SceneView sceneView2(rootNode, cameraNode, Viewport(0.5, 0, 0.5, 0.5));
-  scene->addSceneView(sceneView2);
-
-  SceneView sceneView3(rootNode, cameraNode, Viewport(0.0, 0.5, 0.5, 0.5));
-  scene->addSceneView(sceneView3);
-
-  SceneView sceneView4(rootNode, cameraNode, Viewport(0.5, 0.5, 0.5, 0.5));
-  scene->addSceneView(sceneView4);
-
-  addScene(scene);
-
-  messagePublisher->sendMessage(
-    Message(
-      "gameScene:world/camera",
-      std::make_shared<TestEvent>(A)
-    )
-  );
-  messagePublisher->sendMessage(
-    Message(
-      "gameScene:world/camera",
-      std::make_shared<TestEvent>(B)
-    )
-  );
-
-  // These reactors should probably be somewhere further down in the tree.
-  // Uses only the first scene in activeScenes
-  addEventReactor([&](DestroyNodeEvent event) {
-    auto rootNode = activeScenes[0]->rootNode(); // ???
-
-    auto path = event.path();
-
-    // Bit hacky. Can't destroy root
-    // Needs to drop the first part from the path
-    auto i = path.find('/');
-    if (i != std::string::npos) {
-      auto p = path.substr(i+1, path.length());
-      auto node = rootNode->getNode(p);
-      if(node.isDefined()){
-        if(!node.get()->toBeDestroyed()){
-          node.get()->markToBeDestroyed();
-          _toBeDestryed += node.get();
-        }
-      }
-    }
-
-  });
-
-  // Can't add directly under the rood node
-  addEventReactor([&](CreateNodeEvent event) {
-    auto rootNode = activeScenes[0]->rootNode(); // ???
-    auto path = event.parentPath();
-
-    // Bit hacky. Can't directly under the rood node root
-    // Needs to drop the first part from the path
-    auto i = path.find('/');
-    if (i != std::string::npos) {
-      auto p = path.substr(i+1, path.length());
-      auto parentOption = rootNode->getNode(p);
-      if(parentOption.isDefined()){
-        auto parent = parentOption.get();
-        // Shamelesly modifying tree and world directly.
-        b2Body* body = _physWorld.CreateBody(event.bodyDef().get());
-        body->CreateFixture(event.fixtureDef().get());
-
-        delete event.fixtureDef().get()->shape;
-
-        auto physAttachment = std::make_shared<PhysicsAttachment>(body);
-        event.node()->addAttachment(physAttachment);
-
-        parent->addChild(event.node());
-
-        auto material_att = event.node()->getShared<CollisionMaterialAttachment>();
-        if(material_att.isDefined()){
-          auto collisionData = new CollisionData(event.node()->path(), material_att.get());
-          body->SetUserData(collisionData);
-        }
-
-      }
-    }
-  });
+  auto gameScene = MultiplayerScene::createScene(seed, 1);
+  addScene(gameScene);
+  activateScene("gameScene");
 }
