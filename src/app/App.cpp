@@ -69,7 +69,7 @@ App::App(std::shared_ptr<Game> game) : _game(game) {
 
   // Get window parameters from config file and create window
   _window_w = config["window_width"].get_or(800);
-  _window_h = config["window_height"].get_or(800);
+  _window_h = config["window_height"].get_or(600);
   _window_name = config["window_name"].get_or<std::string>("window");
 
 
@@ -152,7 +152,7 @@ auto App::run() -> void {
       if (event.type == sf::Event::Closed) {
         window.close();
       } else if (event.type == sf::Event::Resized) {
-        // window.setView(sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height)));
+        window.setView(sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height)));
       }
     }
   }

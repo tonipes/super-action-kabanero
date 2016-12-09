@@ -67,14 +67,16 @@ public:
     topEdge = _viewportSize.y;
     bottomEdge = -_viewportSize.y;
 
-    // sf::View view;
+    auto ratio = (windowSize.x / (float)WINDOW_WIDTH) / (windowSize.y / (float)WINDOW_HEIGHT);
+    auto shift = (viewport.w() - (viewport.w() / ratio)) / 2;
+
     view.reset(
       sf::FloatRect(
         WINDOW_WIDTH * viewport.x(),
         WINDOW_HEIGHT * viewport.y(),
         WINDOW_WIDTH * viewport.w(),
         WINDOW_HEIGHT * viewport.h()));
-    view.setViewport(sf::FloatRect(viewport.x(), viewport.y(), viewport.w(), viewport.h()));
+    view.setViewport(sf::FloatRect(viewport.x() + shift, viewport.y(), viewport.w() / ratio, viewport.h()));
     _window.setView(view);
 
     auto cameraNode  = sceneView.cameraNode();
