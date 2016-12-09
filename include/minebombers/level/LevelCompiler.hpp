@@ -38,11 +38,13 @@ public:
     root->addChild(level);
 
     auto ground = std::make_shared<Node<Transform3D>>("ground");
-    ground->setLocalPosition(glm::vec3(0,0,0));
+    ground->setLocalPosition(glm::vec3(0,0,-200));
+    ground->setSleep(true);
     level->addChild(ground);
 
     auto obj = std::make_shared<Node<Transform3D>>("obj");
-    obj->setLocalPosition(glm::vec3(0,0,2));
+    obj->setLocalPosition(glm::vec3(0,0,-100));
+    obj->setSleep(true);
     level->addChild(obj);
 
     const auto mapWidth = map->getWidth();
@@ -51,19 +53,34 @@ public:
     const auto xChunks = ceil(mapWidth / CHUNK_SIZE);
     const auto yChunks = ceil(mapHeight / CHUNK_SIZE);
 
+    const auto groundSprite = std::make_shared<SpriteAttachment>("tiles/dirt0");
+
     for (auto xChunk = 0; xChunk < xChunks; xChunk++) {
       for (auto yChunk = 0; yChunk < yChunks; yChunk++) {
         auto chunkNode = std::make_shared<Node<Transform3D>>(name("chunk", xChunk, yChunk));
         chunkNode->setLocalPosition(glm::vec3(xChunk * CHUNK_SIZE, yChunk * CHUNK_SIZE, 0));
         chunkNode->setSleep(true);
         obj->addChild(chunkNode);
+
+        auto groundChunk = std::make_shared<Node<Transform3D>>(name("ground-chunk", xChunk, yChunk));
+        groundChunk->setLocalPosition(glm::vec3(xChunk * CHUNK_SIZE, yChunk * CHUNK_SIZE, 0));
+        groundChunk->setSleep(true);
+        ground->addChild(groundChunk);
         for (auto x = 0; x < CHUNK_SIZE; x++) {
           for (auto y = 0; y < CHUNK_SIZE; y++) {
             auto totalX = (int)(xChunk * CHUNK_SIZE + x);
             auto totalY = (int)(yChunk * CHUNK_SIZE + y);
-            auto tileNode =  std::make_shared<Node<Transform3D>>(name("tile", totalX, totalY));
-            tileNode->setLocalPosition(glm::vec3(x, y, 0));
+            auto tileNode = std::make_shared<Node<Transform3D>>(name("tile", totalX, totalY));
+            tileNode->setLocalPosition(glm::vec3(x, y, -10));
             chunkNode->addChild(tileNode);
+
+            auto groundNode = std::make_shared<Node<Transform3D>>(name("ground", totalX, totalY));
+            groundNode->setLocalPosition(glm::vec3(x, y, 0));
+            groundNode->addAttachment(groundSprite);
+            groundNode->setSleep(true);
+            groundNode->setBoundingBox(BoundingBox(glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.5f, 0.5f, 0.5f)));
+
+            groundChunk->addChild(groundNode);
 
             auto item = normalGuns[(totalX+totalY)%normalGuns.length()];
             auto artifact = artifactGuns[(totalX+totalY)%artifactGuns.length()];
@@ -78,6 +95,8 @@ public:
                 const auto terrain = TerrainFactory::generateTerrain(
                   terrainType, "terrain", _world, map);
                 tileNode->addChild(terrain);
+                const auto& tilepos = terrain->localPosition();
+                terrain->setLocalPosition(glm::vec3(tilepos.x, tilepos.y, 1));
                 const auto pos = terrain->position();
                 const auto& physAttachment = terrain->get<PhysicsAttachment>();
                 physAttachment.foreach([&](auto phys) {

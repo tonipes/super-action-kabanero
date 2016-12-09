@@ -104,6 +104,7 @@ namespace NodeFactory {
       std::shared_ptr<b2FixtureDef> > {
 
     auto node = std::make_shared<Node<Transform3D>>("bullet_" + std::to_string(getId()));
+    node->setLocalPosition(glm::vec3(0, 0, 100));
 
     auto sprite_att = std::make_shared<SpriteAttachment>(params->bulletSprite);
     auto material_att = std::make_shared<CollisionMaterialAttachment>();

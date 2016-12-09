@@ -29,6 +29,9 @@ public:
     _tilesize(tilesize),
     _spriteBatch(SpriteBatch(tilesize)) {}
 
+  const int WINDOW_WIDTH = 32 * 32;
+  const int WINDOW_HEIGHT = 32 * 24;
+
   ~Renderer() {}
 
   auto render(const KBVector<SceneView>& sceneViews) -> void {
@@ -38,7 +41,6 @@ public:
       // std::cout << "x: " << sceneView.cameraNode()->position().x << std::endl;
       // _window.setView(_window.getDefaultView());
       render(sceneView);
-      _spriteBatch.flush(_window);
     }
     _window.display();
   }
@@ -56,18 +58,22 @@ public:
     const auto viewport = sceneView.viewport();
     const auto& windowSize = _window.getSize();
 
-    _viewportSize.x = windowSize.x * viewport.w() / _tilesize * 0.5f;
-    _viewportSize.y = windowSize.y * viewport.h() / _tilesize * 0.5f;
-    _viewportOffset.x = windowSize.x * viewport.x() / _tilesize;
-    _viewportOffset.y = windowSize.y * viewport.y() / _tilesize;
+    _viewportSize.x = WINDOW_WIDTH * viewport.w() / _tilesize * 0.5f;
+    _viewportSize.y = WINDOW_HEIGHT * viewport.h() / _tilesize * 0.5f;
+    _viewportOffset.x = WINDOW_WIDTH * viewport.x() / _tilesize;
+    _viewportOffset.y = WINDOW_HEIGHT * viewport.y() / _tilesize;
+    leftEdge = -_viewportSize.x;
+    rightEdge = _viewportSize.x;
+    topEdge = _viewportSize.y;
+    bottomEdge = -_viewportSize.y;
 
     // sf::View view;
     view.reset(
       sf::FloatRect(
-        windowSize.x * viewport.x(),
-        windowSize.y * viewport.y(),
-        windowSize.x * viewport.w(),
-        windowSize.y * viewport.h()));
+        WINDOW_WIDTH * viewport.x(),
+        WINDOW_HEIGHT * viewport.y(),
+        WINDOW_WIDTH * viewport.w(),
+        WINDOW_HEIGHT * viewport.h()));
     view.setViewport(sf::FloatRect(viewport.x(), viewport.y(), viewport.w(), viewport.h()));
     _window.setView(view);
 
@@ -78,6 +84,17 @@ public:
     this->_cameraPosition = cameraNode->position();
 
     _renderNode(rootNode, cameraNode, atlas);
+
+    for (auto& kv : sprites) {
+      for (auto& sprite : kv.second) {
+        _window.draw(sprite);
+      }
+    }
+    sprites = std::map<int, std::vector<sf::Sprite>>();
+    for (auto& effect : effects) {
+      _window.draw(*effect.get());
+    }
+    effects = std::vector<std::shared_ptr<Effect>>();
   }
 
 private:
@@ -89,6 +106,13 @@ private:
   KBMap<std::string, sf::Texture> textures;
   glm::vec3 _cameraPosition;
   sf::Vector2<uint> _windowSize;
+  float leftEdge;
+  float rightEdge;
+  float topEdge;
+  float bottomEdge;
+
+  std::map<int, std::vector<sf::Sprite>> sprites;
+  std::vector<std::shared_ptr<Effect>> effects;
 
   auto _isWithinWindow(const glm::vec3& nodePosition, const BoundingBox& boundingBox) -> bool;
 
@@ -144,8 +168,8 @@ private:
               (relativePosition.x + _viewportSize.x + _viewportOffset.x) * _tilesize,
               (-relativePosition.y + _viewportSize.y + _viewportOffset.y) * _tilesize);
 
-            _window.draw(sfSprite);
 
+            sprites[relativePosition.z].push_back(std::move(sfSprite));
           } else {
             throw ResourceException("Atlas does not contain sprite with id: " + id);
           }
@@ -167,7 +191,10 @@ private:
         // Services::logger()->debug(std::to_string(e.effect().time()));
 
         effect->setTileSize(_tilesize);
-        _window.draw(*effect.get());
+
+        effects.push_back(effect);
+
+        // _window.draw(*effect.get());
       });
 
       const auto& children = node->children();
