@@ -6,7 +6,7 @@ test_string = "This is only a test"
 
 -- Timing [ms]
 update_fps = 60;
-draw_fps = 60;
+draw_fps = 444;
 
 -- Graphics
 tilesize = 32

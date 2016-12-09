@@ -8,7 +8,9 @@
 class PhysicsAttachment : public NodeAttachment {
 public:
   PhysicsAttachment(b2Body* body) : _body(body) { }
-
+  // PhysicsAttachment(const PhysicsAttachment &obj) {
+  //   std::cout << "PhysicsAttachment copy" << '\n';
+  // }
   auto position() -> glm::vec2 {
     auto pos = _body->GetPosition();
     return glm::vec2(pos.x, pos.y);
