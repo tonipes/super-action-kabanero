@@ -23,7 +23,14 @@ public:
   }
 
   auto isVisible(int x, int y) -> bool {
-    return _visible[x][y];
+    if(
+      (x > -1 && x < _visible.size() ) &&
+      (y > -1 && y < _visible[0].size() )
+    ){
+      return _visible[x][y];
+    } else {
+      return true;
+    }
   }
 
   auto markVisited(int x, int y) const -> void;

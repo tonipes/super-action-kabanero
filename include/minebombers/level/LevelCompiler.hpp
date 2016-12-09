@@ -206,7 +206,7 @@ private:
 };
 
 KBVector<std::shared_ptr<GunParameters>> LevelCompiler::normalGuns {
-  std::make_shared<GunParameters>(150.0f,  0.3f, 1, 0.1f, 10.0f, "tiles/pistol_normal",   "test-effect/crystal_spear0", "rocket_launch.ogg", true, 3.0f, 0),
+  std::make_shared<GunParameters>(150.0f,  2.0f, 1, 0.1f, 10.0f, "tiles/pistol_normal",   "test-effect/crystal_spear0", "rocket_launch.ogg", true, 3.0f, 0),
   std::make_shared<GunParameters>(  8.0f,  6.0f, 1, 0.3f, 12.0f, "tiles/rifle_normal",    "test-effect/crystal_spear0", "gunshot.ogg"),
   std::make_shared<GunParameters>( 10.0f,  1.5f, 3, 0.2f, 10.0f, "tiles/shotgun_normal",  "test-effect/crystal_spear0", "gunshot.ogg"),
   std::make_shared<GunParameters>( 60.0f,  0.5f, 1, 0.0f, 25.0f, "tiles/sniper_normal",   "test-effect/crystal_spear0", "gunshot.ogg"),

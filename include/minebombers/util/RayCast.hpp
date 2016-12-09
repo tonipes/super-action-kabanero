@@ -13,6 +13,7 @@ namespace RayCast {
     auto xStep = dir.x * stepSize;
     auto yStep = dir.y * stepSize;
     while (remaining >= 0) {
+      if(currentX < 0 || currentY < 0) break;
       auto currentTile = (*map)[floor(currentX)][floor(currentY)];
       if (!ray->containsTile(currentTile)) ray->registerTile(currentTile);
       if (!currentTile.isSeeThrough()) break;
