@@ -10,9 +10,36 @@
 #include "service/Services.hpp"
 
 class InputTranslator {
+private:
+
+  std::map< sf::Keyboard::Key, std::tuple<GameInputAction, std::string>> keymap {
+    {sf::Keyboard::W,       std::make_tuple(UP,           "gameScene:world/player1")},
+    {sf::Keyboard::A,       std::make_tuple(LEFT,         "gameScene:world/player1")},
+    {sf::Keyboard::S,       std::make_tuple(DOWN,         "gameScene:world/player1")},
+    {sf::Keyboard::D,       std::make_tuple(RIGHT,        "gameScene:world/player1")},
+
+    {sf::Keyboard::Y,       std::make_tuple(FIRE_UP,      "gameScene:world/player1")},
+    {sf::Keyboard::G,       std::make_tuple(FIRE_LEFT,    "gameScene:world/player1")},
+    {sf::Keyboard::H,       std::make_tuple(FIRE_DOWN,    "gameScene:world/player1")},
+    {sf::Keyboard::J,       std::make_tuple(FIRE_RIGHT,   "gameScene:world/player1")},
+
+    {sf::Keyboard::Up,      std::make_tuple(UP,           "gameScene:world/player2")},
+    {sf::Keyboard::Left,    std::make_tuple(LEFT,         "gameScene:world/player2")},
+    {sf::Keyboard::Down,    std::make_tuple(DOWN,         "gameScene:world/player2")},
+    {sf::Keyboard::Right,   std::make_tuple(RIGHT,        "gameScene:world/player2")},
+
+    {sf::Keyboard::Numpad8, std::make_tuple(FIRE_UP,      "gameScene:world/player2")},
+    {sf::Keyboard::Numpad4, std::make_tuple(FIRE_LEFT,    "gameScene:world/player2")},
+    {sf::Keyboard::Numpad5, std::make_tuple(FIRE_DOWN,    "gameScene:world/player2")},
+    {sf::Keyboard::Numpad6, std::make_tuple(FIRE_RIGHT,   "gameScene:world/player2")},
+
+    {sf::Keyboard::Num1,    std::make_tuple(NUM_1,        "gameScene")},
+    {sf::Keyboard::Num2,    std::make_tuple(NUM_2,        "gameScene")},
+    {sf::Keyboard::Num3,    std::make_tuple(NUM_3,        "gameScene")},
+    {sf::Keyboard::Num4,    std::make_tuple(NUM_4,        "gameScene")}
+  };
 
 public:
-  std::string path = "gameScene:world/player1";
   InputTranslator() {
     Services::logger()->debug("Create Input Translator");
   }
@@ -22,138 +49,12 @@ public:
   * the same message must be sent when pressing button and releasing the same button.
   */
   auto processMessage(sf::Event event) -> void {
-    if(event.type == sf::Event::KeyPressed) {
-      switch(event.key.code) {
-        case sf::Keyboard::F : {
-          Services::messagePublisher()->sendMessage(Message(path, std::make_shared<GameInputEvent>(USE, true)));
-        }
-        break;
-        case sf::Keyboard::W : {
-          Services::messagePublisher()->sendMessage(Message(path, std::make_shared<GameInputEvent>(UP, true)));
-        }
-        break;
-        case sf::Keyboard::A : {
-          Services::messagePublisher()->sendMessage(Message(path, std::make_shared<GameInputEvent>(LEFT, true)));
-        }
-        break;
-        case sf::Keyboard::S : {
-          Services::messagePublisher()->sendMessage(Message(path, std::make_shared<GameInputEvent>(DOWN, true)));
-        }
-        break;
-        case sf::Keyboard::D : {
-          Services::messagePublisher()->sendMessage(Message(path, std::make_shared<GameInputEvent>(RIGHT, true)));
-        }
-        break;
-        case sf::Keyboard::Space : {
-          Services::messagePublisher()->sendMessage(Message(path, std::make_shared<GameInputEvent>(FIRE, true)));
-        }
-        break;
-        case sf::Keyboard::Up : {
-          Services::messagePublisher()->sendMessage(Message(path, std::make_shared<GameInputEvent>(FIRE_UP, true)));
-        }
-        break;
-        case sf::Keyboard::Down : {
-          Services::messagePublisher()->sendMessage(Message(path, std::make_shared<GameInputEvent>(FIRE_DOWN, true)));
-        }
-        break;
-        case sf::Keyboard::Left : {
-          Services::messagePublisher()->sendMessage(Message(path, std::make_shared<GameInputEvent>(FIRE_LEFT, true)));
-        }
-        break;
-        case sf::Keyboard::Right : {
-          Services::messagePublisher()->sendMessage(Message(path, std::make_shared<GameInputEvent>(FIRE_RIGHT, true)));
-        }
-        break;
-        default:
-          break;
-      }
-    } else if(event.type == sf::Event::KeyReleased) {
-      switch(event.key.code) {
-        case sf::Keyboard::F : {
-          Services::messagePublisher()->sendMessage(Message(path, std::make_shared<GameInputEvent>(USE, false)));
-        }
-        break;
-        case sf::Keyboard::W : {
-          Services::messagePublisher()->sendMessage(Message(path, std::make_shared<GameInputEvent>(UP, false)));
-        }
-        break;
-        case sf::Keyboard::A : {
-          Services::messagePublisher()->sendMessage(Message(path, std::make_shared<GameInputEvent>(LEFT, false)));
-        }
-        break;
-        case sf::Keyboard::S : {
-          Services::messagePublisher()->sendMessage(Message(path, std::make_shared<GameInputEvent>(DOWN, false)));
-        }
-        break;
-        case sf::Keyboard::D : {
-          Services::messagePublisher()->sendMessage(Message(path, std::make_shared<GameInputEvent>(RIGHT, false)));
-        }
-        break;
-        case sf::Keyboard::Space : {
-          Services::messagePublisher()->sendMessage(Message(path, std::make_shared<GameInputEvent>(FIRE, false)));
-        }
-        case sf::Keyboard::Up : {
-          Services::messagePublisher()->sendMessage(Message(path, std::make_shared<GameInputEvent>(FIRE_UP, false)));
-        }
-        break;
-        case sf::Keyboard::Down : {
-          Services::messagePublisher()->sendMessage(Message(path, std::make_shared<GameInputEvent>(FIRE_DOWN, false)));
-        }
-        break;
-        case sf::Keyboard::Left : {
-          Services::messagePublisher()->sendMessage(Message(path, std::make_shared<GameInputEvent>(FIRE_LEFT, false)));
-        }
-        break;
-        case sf::Keyboard::Right : {
-          Services::messagePublisher()->sendMessage(Message(path, std::make_shared<GameInputEvent>(FIRE_RIGHT, false)));
-        }
-        break;
-        case sf::Keyboard::Num1 : {
-          Services::messagePublisher()->sendMessage(Message("gameScene", std::make_shared<GameInputEvent>(NUM_1, false)));
-        }
-        break;
-        case sf::Keyboard::Num2 : {
-          Services::messagePublisher()->sendMessage(Message("gameScene", std::make_shared<GameInputEvent>(NUM_2, false)));
-        }
-        break;
-        case sf::Keyboard::Num3 : {
-          Services::messagePublisher()->sendMessage(Message("gameScene", std::make_shared<GameInputEvent>(NUM_3, false)));
-        }
-        break;
-        case sf::Keyboard::Num4 : {
-          Services::messagePublisher()->sendMessage(Message("gameScene", std::make_shared<GameInputEvent>(NUM_4, false)));
-        }
-        break;
-
-        default:
-          break;
-      }
-    } else if(event.type == sf::Event::MouseButtonPressed) {
-      switch(event.key.code) {
-        case sf::Mouse::Left : {
-          Services::messagePublisher()->sendMessage(Message(path, std::make_shared<GameInputEvent>(FIRE, true)));
-        }
-        break;
-        case sf::Mouse::Right : {
-          Services::messagePublisher()->sendMessage(Message(path, std::make_shared<GameInputEvent>(FIRE1, true)));
-        }
-        break;
-        default:
-        break;
-      }
-    } else if(event.type == sf::Event::MouseButtonReleased) {
-      switch(event.key.code) {
-        case sf::Mouse::Left : {
-          Services::messagePublisher()->sendMessage(Message(path, std::make_shared<GameInputEvent>(FIRE, false)));
-        }
-        break;
-        case sf::Mouse::Right : {
-          Services::messagePublisher()->sendMessage(Message(path, std::make_shared<GameInputEvent>(FIRE1, false)));
-        }
-        break;
-        default:
-        break;
-      }
+    if(keymap.find(event.key.code) != keymap.end()){
+      auto a = keymap[event.key.code];
+      auto pressed = event.type == sf::Event::KeyPressed;
+      Services::messagePublisher()->sendMessage(
+        Message(std::get<1>(a), std::make_shared<GameInputEvent>(std::get<0>(a), pressed)
+      ));
     }
   }
 };
