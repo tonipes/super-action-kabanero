@@ -20,7 +20,8 @@
 
 class PlayerBehaviour : public Behavior<Transform3D> {
 public:
-  PlayerBehaviour(Node<Transform3D>* node) {
+  PlayerBehaviour(Node<Transform3D>* node, const std::string& cameraAddress) :
+      _cameraAddress(cameraAddress) {
     node->addEventReactor([&](GameInputEvent event) {
       auto action = event.action();
       auto isPressed = event.isPressed();
@@ -92,7 +93,7 @@ public:
     auto pos = node.position().xy();
     auto vel = physAttachment.get().velocity();
 
-    Services::messagePublisher()->sendMessage(Message("gameScene:world/camera", std::make_shared<PlayerLocationEvent>(pos)));
+    Services::messagePublisher()->sendMessage(Message("gameScene:" + _cameraAddress, std::make_shared<PlayerLocationEvent>(pos)));
 
     glm::vec2 fireDirection;
     _fireDelay -= delta;
@@ -127,7 +128,7 @@ public:
         std::shared_ptr<b2FixtureDef> fixtureDef;
 
         std::tie(bulletNode, bodyDef, fixtureDef) = NodeFactory::createBullet(gunParams);
-        fixtureDef->filter.groupIndex = -1;
+        // fixtureDef->filter.groupIndex = -1;
         bodyDef->position.Set(
           pos.x + fireDirection.x,
           pos.y + fireDirection.y
@@ -198,6 +199,8 @@ private:
   float _fireDelay = 0;
 
   bool throwBomb = false;
+
+  std::string _cameraAddress;
 
   Option<std::shared_ptr<GunParameters>> _newGun = Option<std::shared_ptr<GunParameters>>();
 };

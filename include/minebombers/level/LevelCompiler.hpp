@@ -132,11 +132,13 @@ public:
 
   auto materializePlayer(
     std::shared_ptr<TileMap> map,
-    std::shared_ptr<Node<Transform3D>> root
+    std::shared_ptr<Node<Transform3D>> root,
+    std::string playerId,
+    std::string cameraAddress
   ) -> void{
     auto tile = map->getRandom(PLAYER_SPAWN_POINT, _rand);
 
-    auto node = std::make_shared<Node<Transform3D>>("player");
+    auto node = std::make_shared<Node<Transform3D>>(playerId);
     node->setLocalPosition(glm::vec3(tile.getX(), tile.getY(), 2));
     node->addAttachment(getSprite("tiles/spriggan_druid", -1));
 
@@ -144,7 +146,7 @@ public:
     // node->addAttachment(effect_att);
 
     auto material_att = std::make_shared<CollisionMaterialAttachment>();
-    material_att->bulletRebound = true;
+    // material_att->bulletRebound = true;
     material_att->isPlayer = true;
 
     node->addAttachment(material_att);
@@ -159,7 +161,7 @@ public:
 
     node->addAttachment(physAttachment);
 
-    node->addBehavior<PlayerBehaviour>();
+    node->addBehavior<PlayerBehaviour>(cameraAddress);
     root->addChild(node);
   }
 
@@ -183,7 +185,7 @@ public:
     circleShape.m_radius = 0.35f;
     b2FixtureDef fixtureDef;
     fixtureDef.shape = &circleShape;
-    fixtureDef.filter.groupIndex = -1;
+    // fixtureDef.filter.groupIndex = -1;
     fixtureDef.density = 1.0f;
     body->CreateFixture(&fixtureDef);
     return body;

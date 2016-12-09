@@ -26,7 +26,6 @@ auto Minebombers::init() -> void {
   auto messagePublisher = Services::messagePublisher();
 
   this->addEventReactor([&](NewGameEvent event) {
-    std::cout << "Received event!" << std::endl;
     auto seed = event.seed;
     auto numPlayers = event.numPlayers;
 

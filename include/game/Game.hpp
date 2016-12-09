@@ -45,7 +45,6 @@ public:
   }
 
   auto getEventHandler(const std::string& address) -> EventHandler& override {
-    std::cout << "Got me!" << std::endl;
     return *this;
   }
 

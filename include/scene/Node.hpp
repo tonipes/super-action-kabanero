@@ -222,6 +222,14 @@ public:
     }
   }
 
+  auto getRoot() -> std::shared_ptr<Node> {
+    if (_parent.isDefined()) {
+      return _parent.get().getRoot();
+    } else {
+      return this->shared_from_this();
+    }
+  }
+
   auto toBeDestroyed() -> bool {
     return _toBeDestroyed;
   }
