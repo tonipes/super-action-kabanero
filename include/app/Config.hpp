@@ -50,9 +50,6 @@ namespace cfg {
 
   auto loadResourceList(std::string path) -> std::vector<std::string> {
     auto res = _loadFile(path);
-    for(auto line : res) {
-      std::cout << "RES: " << line << '\n';
-    }
     return res;
   }
 }

@@ -9,8 +9,6 @@ project("${EXECUTABLE_NAME}" C CXX)
 
 set(IMGUI_SFML_BUILD_EXAMPLES 0)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -std=c++14")
-set(IMGUI_ROOT "${CMAKE_SOURCE_DIR}/lib/imgui")
-# set(BOX2D_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/lib/box2d/Box2D")
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -21,21 +19,13 @@ file(GLOB_RECURSE RESOURCE_FILES resources/*)
 
 include_directories(/usr/bin/include)
 include_directories(include)
-include_directories(lib/sol2/single/sol)
 include_directories(lib/glm)
 include_directories(lib/box2d/Box2D)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
 
-add_subdirectory("${CMAKE_SOURCE_DIR}/lib/imgui-sfml")
-
 add_subdirectory(test)
 
-# set(BOX2D_INSTALL_DOC OFF)
-# set(BOX2D_BUILD_EXAMPLES OFF)
-# set(BOX2D_INSTALL OFF CACHE BOOL "Install Box2D libs, includes, and CMake scripts")
-# set(BOX2D_INSTALL_DOC OFF CACHE BOOL "Install Box2D documentation")
-# set(BOX2D_BUILD_SHARED OFF CACHE BOOL "Build Box2D shared libraries")
 set(BOX2D_BUILD_EXAMPLES OFF CACHE BOOL "Build Box2D examples")
 add_subdirectory("lib/box2d/Box2D")
 
@@ -55,7 +45,7 @@ if(BUILD_DOCUMENTATION)
 endif()
 
 # Add executable
-add_executable(${EXECUTABLE_NAME} ${IMGUI_SOURCES} ${IMGUI_SFML_SOURCES} ${SOURCE_FILES})
+add_executable(${EXECUTABLE_NAME} ${SOURCE_FILES})
 
 # Resources
 set(RES_SOURCE "${CMAKE_SOURCE_DIR}/resources")
@@ -67,13 +57,6 @@ add_custom_command(
  DEPENDS ${RES_DEST}
  COMMENT "symbolic link resources folder from ${RES_SOURCE} => ${RES_DEST}"
 )
-
-# Lua
-find_package(Lua REQUIRED)
-if (LUA_FOUND)
-  include_directories(${LUA_INCLUDE_DIR})
-  target_link_libraries(${EXECUTABLE_NAME} ${LUA_LIBRARIES})
-endif()
 
 # SFML
 find_package(SFML REQUIRED system window graphics network audio)
@@ -93,13 +76,3 @@ endif()
 
 # include_directories(${EXECUTABLE_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/lib/Box2D/Box2D )
 target_link_libraries(${EXECUTABLE_NAME} Box2D)
-
-
-# find_package(Box2D REQUIRED)
-# if (SFML_FOUND)
-#   include_directories(${SFML_INCLUDE_DIR} ${IMGUI_SFML_INCLUDE_DIRS})
-#   target_link_libraries(${EXECUTABLE_NAME} ${SFML_LIBRARIES} ${IMGUI_SFML_DEPENDENCIES})
-# endif()
-#
-# # Box2d
-# target_link_libraries(${EXECUTABLE_NAME} Box2D)
