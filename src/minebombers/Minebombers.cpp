@@ -30,10 +30,17 @@ auto Minebombers::init() -> void {
   this->addEventReactor([&](NewGameEvent event) {
     auto seed = event.seed;
     auto numPlayers = event.numPlayers;
-
-    auto scene = MultiplayerScene::createScene(seed, numPlayers);
-    addScene(scene);
-    activateScene("gameScene");
+    if(numPlayers >= 1){
+      Services::logger()->info("Create new MultiplayerScene");
+      auto scene = MultiplayerScene::createScene(seed, numPlayers);
+      addScene(scene);
+      activateScene("gameScene");
+    } else {
+      Services::logger()->info("Create new MenuScene");
+      auto scene = MenuScene::createScene(seed);
+      addScene(scene);
+      activateScene("gameScene");
+    }
   });
 
   messagePublisher->sendMessage(

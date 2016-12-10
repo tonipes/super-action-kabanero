@@ -183,11 +183,20 @@ namespace NodeFactory {
   }
 
   auto createMainMenu() -> std::shared_ptr<Node<Transform3D>> {
+    std::vector<std::string> c {
+      "1 Player Survival",
+      "2 player Deathmatch",
+      "3 player Deathmatch",
+      "4 player Deathmatch"
+    };
 
     auto node = std::make_shared<Node<Transform3D>>("player1");
-    node->addBehavior<MainMenuBehavior>();
+    node->addBehavior<MainMenuBehavior>(c);
 
-    auto effect_att = std::make_shared<EffectAttachment>(std::make_shared<MainMenuEffect>());
+    auto effect_att = std::make_shared<EffectAttachment>(
+      std::make_shared<MainMenuEffect>(c)
+    );
+
     node->addAttachment(effect_att);
 
     node->setAllowSleep(false);

@@ -195,11 +195,10 @@ private:
 
     }
 
-      const auto& children = node->children();
+    const auto& children = node->children();
 
-      for (const auto& child : children) {
-        _renderNode(std::get<1>(child), cameraNode, atlas);
-      }
+    for (const auto& child : children) {
+      _renderNode(std::get<1>(child), cameraNode, atlas);
     }
   }
 

@@ -178,9 +178,9 @@ public:
       damageToTake = 0.0f;
     }
 
-    Services::messagePublisher()->sendMessage(Message("gameScene:world/hud/player1hud", std::make_shared<UpdateHudEvent>(
-      pos.x, pos.y, hp, "Player 1"
-    )));
+    // Services::messagePublisher()->sendMessage(Message("gameScene:world/hud/player1hud", std::make_shared<UpdateHudEvent>(
+    //   pos.x, pos.y, hp, "Player 1"
+    // )));
 
     // Services::messagePublisher()->sendMessage(Message("gameScene:world/fog", std::make_shared<PlayerLocationEvent>(pos)));
 
