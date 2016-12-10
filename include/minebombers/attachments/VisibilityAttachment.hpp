@@ -16,8 +16,8 @@ public:
       _visited.push_back(std::vector<bool>());
       _visible.push_back(std::vector<bool>());
       for (auto y = 0; y < height; y++) {
-        _visited[x].push_back(false);
-        _visible[x].push_back(false);
+        _visited[x].push_back(true);
+        _visible[x].push_back(true);
       }
     }
   }

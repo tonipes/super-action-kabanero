@@ -69,17 +69,15 @@ public:
           for (auto y = 0; y < CHUNK_SIZE; y++) {
             auto totalX = (int)(xChunk * CHUNK_SIZE + x);
             auto totalY = (int)(yChunk * CHUNK_SIZE + y);
-            auto tileNode = std::make_shared<Node<Transform3D>>(name("tile", totalX, totalY));
-            tileNode->setLocalPosition(glm::vec3(x, y, -10));
-            chunkNode->addChild(tileNode);
 
             auto groundNode = std::make_shared<Node<Transform3D>>(name("ground", totalX, totalY));
-            groundNode->setLocalPosition(glm::vec3(x, y, 0));
+            // groundNode->setBoundingBox(BousndingBox(glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.5f, 0.5f, 0.5f)));
+            chunkNode->addChild(groundNode);
+            groundNode->setLocalPosition(glm::vec3(x, y, -100));
             groundNode->addAttachment(groundSprite);
             groundNode->setSleep(true);
-            groundNode->setBoundingBox(BoundingBox(glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.5f, 0.5f, 0.5f)));
 
-            groundChunk->addChild(groundNode);
+            // groundChunk->addChild(groundNode);
 
             auto item = normalGuns[(totalX+totalY)%normalGuns.length()];
             auto artifact = artifactGuns[(totalX+totalY)%artifactGuns.length()];
@@ -92,10 +90,9 @@ public:
               case CONSTRUCTED_WALL:
               case WINDOW: {
                 const auto terrain = TerrainFactory::generateTerrain(
-                  terrainType, "terrain", _world, map);
-                tileNode->addChild(terrain);
-                const auto& tilepos = terrain->localPosition();
-                terrain->setLocalPosition(glm::vec3(tilepos.x, tilepos.y, 1));
+                  terrainType, name("terrain", totalX, totalY), _world, map);
+                chunkNode->addChild(terrain);
+                terrain->setLocalPosition(glm::vec3(x, y, -10));
                 const auto pos = terrain->position();
                 const auto& physAttachment = terrain->get<PhysicsAttachment>();
                 physAttachment.foreach([&](auto phys) {
@@ -105,7 +102,8 @@ public:
               }
               case ITEM_LOCATION: {
                 const auto itemNode = getItem(item, totalX, totalY);
-                tileNode->addChild(itemNode);
+                itemNode->setLocalPosition(glm::vec3(x, y, -10));
+                chunkNode->addChild(itemNode);
                 const auto pos = itemNode->position();
                 const auto& physAttachment = itemNode->get<PhysicsAttachment>();
                 physAttachment.foreach([&](auto phys) {
@@ -115,7 +113,8 @@ public:
               }
               case ARTIFACT_LOCATION:{
                 const auto itemNode = getItem(artifact, totalX, totalY);
-                tileNode->addChild(itemNode);
+                itemNode->setLocalPosition(glm::vec3(x, y, -10));
+                chunkNode->addChild(itemNode);
                 const auto pos = itemNode->position();
                 const auto& physAttachment = itemNode->get<PhysicsAttachment>();
                 physAttachment.foreach([&](auto phys) {
@@ -139,6 +138,7 @@ public:
     auto tile = map->getRandom(PLAYER_SPAWN_POINT, _rand);
 
     auto node = std::make_shared<Node<Transform3D>>(playerId);
+    node->setAllowSleep(false);
     node->setLocalPosition(glm::vec3(tile.getX(), tile.getY(), 2));
     node->addAttachment(getSprite("tiles/spriggan_druid", -1));
 

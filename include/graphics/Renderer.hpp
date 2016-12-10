@@ -58,14 +58,18 @@ public:
     const auto viewport = sceneView.viewport();
     const auto& windowSize = _window.getSize();
 
+    auto cameraNode  = sceneView.cameraNode();
+    auto rootNode = sceneView.rootNode();
+    this->_cameraPosition = cameraNode->position();
+
     _viewportSize.x = WINDOW_WIDTH * viewport.w() / _tilesize * 0.5f;
     _viewportSize.y = WINDOW_HEIGHT * viewport.h() / _tilesize * 0.5f;
     _viewportOffset.x = WINDOW_WIDTH * viewport.x() / _tilesize;
     _viewportOffset.y = WINDOW_HEIGHT * viewport.y() / _tilesize;
-    leftEdge = -_viewportSize.x;
-    rightEdge = _viewportSize.x;
-    topEdge = _viewportSize.y;
-    bottomEdge = -_viewportSize.y;
+    leftEdge = -_viewportSize.x + _cameraPosition.x - 1;
+    rightEdge = _viewportSize.x + _cameraPosition.x + 1;
+    topEdge = _viewportSize.y + _cameraPosition.y + 1;
+    bottomEdge = -_viewportSize.y + _cameraPosition.y - 1;
 
     auto ratio = (windowSize.x / (float)WINDOW_WIDTH) / (windowSize.y / (float)WINDOW_HEIGHT);
     auto shift = (viewport.w() - (viewport.w() / ratio)) / 2;
@@ -79,11 +83,7 @@ public:
     view.setViewport(sf::FloatRect(viewport.x() + shift, viewport.y(), viewport.w() / ratio, viewport.h()));
     _window.setView(view);
 
-    auto cameraNode  = sceneView.cameraNode();
-    auto rootNode = sceneView.rootNode();
-
     this->_windowSize = _window.getSize();
-    this->_cameraPosition = cameraNode->position();
 
     _renderNode(rootNode, cameraNode, atlas);
 
@@ -119,20 +119,20 @@ private:
   auto _isWithinWindow(const glm::vec3& nodePosition, const BoundingBox& boundingBox) -> bool;
 
   auto _renderNode(const std::shared_ptr<Node<Transform3D>> node, const std::shared_ptr<Node<Transform3D>> cameraNode, const Atlas& atlas) -> void {
-    if (!node->isRenderOn()) return;
-
-    bool isVisible = cameraNode->get<VisibilityAttachment>().get().isVisible(
-      round(node->position().x),
-      round(node->position().y)
-    );
-
-    const auto relativePosition = node->position() - _cameraPosition;
     const auto& boundingBox = node->boundingBox();
 
-    if (_isWithinWindow(relativePosition, boundingBox)) {
-      const auto& spriteAttachment = node->get<SpriteAttachment>();
+    const auto& nodePosition = node->position();
+
+    if (_isWithinWindow(nodePosition, boundingBox)) {
+      bool isVisible = cameraNode->get<VisibilityAttachment>().get().isVisible(
+        round(nodePosition.x),
+        round(nodePosition.y)
+      );
+
+      const auto relativePosition = nodePosition - _cameraPosition;
 
       if (isVisible) {
+        const auto& spriteAttachment = node->get<SpriteAttachment>();
         if (spriteAttachment.isDefined()) {
           const auto& s = spriteAttachment.get();
           const auto& id = s.spriteId();
@@ -178,7 +178,6 @@ private:
         }
       }
 
-
       const auto& effectAttachment = node->get<EffectAttachment>();
 
       effectAttachment.foreach([&](auto e) {
@@ -188,24 +187,16 @@ private:
           (relativePosition.x + _viewportSize.x + _viewportOffset.x) * _tilesize,
           (-relativePosition.y + _viewportSize.y + _viewportOffset.y) * _tilesize
         );
-
-        // auto a = SimpleParticleEffect();
-        // Services::logger()->debug(std::to_string(e.effect().time()));
-
+        
         effect->setTileSize(_tilesize);
 
         effects.push_back(effect);
-
-        // _window.draw(*effect.get());
       });
 
       const auto& children = node->children();
 
       for (const auto& child : children) {
-        std::string name;
-        std::shared_ptr<Node<Transform3D>> node;
-        std::tie(name, node) = child;
-        _renderNode(node, cameraNode, atlas);
+        _renderNode(std::get<1>(child), cameraNode, atlas);
       }
     }
   }

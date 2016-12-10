@@ -32,9 +32,8 @@ public:
   }
 
   auto update(float delta, Node<Transform3D>& node) -> void override {
-    auto parentName = node.parent().get().name();
-    parentName.erase(0, 4);
-    auto coords = split(parentName, '-');
+    const auto& name = node.name().erase(0, 7);
+    const auto& coords = split(name, '-');
     if (_dmgToTake > 0.0f) {
       _health -= _dmgToTake;
       _dmgToTake = 0;

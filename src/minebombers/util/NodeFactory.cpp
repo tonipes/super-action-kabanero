@@ -93,6 +93,7 @@ namespace NodeFactory {
     node->addBehavior<DamageAreaBehavior>(0.1f);
 
     node->addAttachment(material_att);
+    node->setAllowSleep(false);
 
     return std::make_tuple(node, bodyDef, fixtureDef);
   }
@@ -133,6 +134,7 @@ namespace NodeFactory {
 
     node->addAttachment(material_att);
     node->addAttachment(sprite_att);
+    node->setAllowSleep(false);
 
     return std::make_tuple(node, bodyDef, fixtureDef);
   }
@@ -171,6 +173,7 @@ namespace NodeFactory {
 
     node->addAttachment(material_att);
     node->addAttachment(sprite_att);
+    node->setAllowSleep(false);
 
     return std::make_tuple(node, bodyDef, fixtureDef);
   }

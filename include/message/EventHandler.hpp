@@ -9,7 +9,7 @@
 
 class EventHandler {
 public:
-  auto handleEvent(std::shared_ptr<Event> event) -> void {
+  virtual auto handleEvent(std::shared_ptr<Event> event) -> void {
     if (reactors.contains(typeid(*event))) {
       reactors[typeid(*event)](event);
     }
@@ -26,6 +26,6 @@ public:
     };
   }
 
-private:
+protected:
   KBTypeMap<std::function<void(const std::shared_ptr<Event>&)>> reactors;
 };
