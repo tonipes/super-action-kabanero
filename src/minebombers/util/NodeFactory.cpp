@@ -184,10 +184,10 @@ namespace NodeFactory {
 
   auto createMainMenu() -> std::shared_ptr<Node<Transform3D>> {
     std::vector<std::string> c {
-      "1 Player Survival",
-      "2 player Deathmatch",
-      "3 player Deathmatch",
-      "4 player Deathmatch"
+      "1 Player Survival     >>",
+      "2 player Deathmatch  >>",
+      "3 player Deathmatch  >>",
+      "4 player Deathmatch  >>"
     };
 
     auto node = std::make_shared<Node<Transform3D>>("player1");

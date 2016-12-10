@@ -46,7 +46,7 @@ public:
     messagePublisher->sendMessage(
       Message(
         "audioPlayer:track/track",
-        std::make_shared<AudioTrackEvent>(TRACK_CHANGE, "resources/audio/music_highway.ogg")
+        std::make_shared<AudioTrackEvent>(TRACK_CHANGE, "resources/audio/music_ride.ogg")
       )
     );
     messagePublisher->sendMessage(

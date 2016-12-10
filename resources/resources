@@ -10,6 +10,7 @@ resources/audio/rocket_launch.ogg
 resources/audio/set_bomb.ogg
 resources/audio/music_catnip.ogg
 resources/audio/music_highway.ogg
+resources/audio/music_ride.ogg
 resources/test.txt
 resources/atlases/pack.atlas
 resources/atlases/pack.png
