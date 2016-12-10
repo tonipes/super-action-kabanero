@@ -10,7 +10,6 @@ public:
     circle.setFillColor(sf::Color::Transparent);
     circle.setOutlineColor(sf::Color::Red);
     circle.setOutlineThickness(5.0f);
-
   }
 
   auto draw(sf::RenderTarget &target, sf::RenderStates states) const -> void override {

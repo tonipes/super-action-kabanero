@@ -14,6 +14,7 @@
 #include "minebombers/events/TestEvent.hpp"
 #include "minebombers/events/TestEvent.hpp"
 #include "minebombers/scenes/MultiplayerScene.hpp"
+#include "minebombers/scenes/MenuScene.hpp"
 #include "minebombers/attachments/CollisionMaterialAttachment.hpp"
 #include "collection/Option.hpp"
 #include "physics/CollisionData.hpp"
@@ -34,7 +35,6 @@ auto Minebombers::init() -> void {
     activateScene("gameScene");
   });
 
-
   messagePublisher->sendMessage(
     Message(
       "audioPlayer:track/jazz",
@@ -50,7 +50,8 @@ auto Minebombers::init() -> void {
 
   int seed = 5;
 
-  auto gameScene = MultiplayerScene::createScene(seed, 1);
-  addScene(gameScene);
+  // auto gameScene = MultiplayerScene::createScene(seed, 1);
+  auto menuScene = MenuScene::createScene(seed);
+  addScene(menuScene);
   activateScene("gameScene");
 }

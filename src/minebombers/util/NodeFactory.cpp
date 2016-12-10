@@ -6,9 +6,11 @@
 #include "minebombers/behaviors/RocketBehavior.hpp"
 #include "minebombers/behaviors/BulletOrientationBehavior.hpp"
 #include "minebombers/behaviors/DamageAreaBehavior.hpp"
+#include "minebombers/behaviors/MainMenuBehavior.hpp"
 #include "scene/attachment/SpriteAttachment.hpp"
 #include "scene/attachment/EffectAttachment.hpp"
 #include "graphics/effects/CircleEffect.hpp"
+#include "graphics/effects/MainMenuEffect.hpp"
 
 namespace NodeFactory {
   int counter = 0;
@@ -176,5 +178,17 @@ namespace NodeFactory {
     node->setAllowSleep(false);
 
     return std::make_tuple(node, bodyDef, fixtureDef);
+  }
+
+  auto createMainMenu() -> std::shared_ptr<Node<Transform3D>> {
+
+    auto node = std::make_shared<Node<Transform3D>>("player1");
+    node->addBehavior<MainMenuBehavior>();
+
+    auto effect_att = std::make_shared<EffectAttachment>(std::make_shared<MainMenuEffect>());
+    node->addAttachment(effect_att);
+
+    node->setAllowSleep(false);
+    return node;
   }
 }
