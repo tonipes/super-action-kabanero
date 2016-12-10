@@ -70,7 +70,7 @@ class ContactListener : public b2ContactListener {
     b2Vec2 body_pos = otherBody->GetPosition();
     b2Vec2 d = center_pos - body_pos;
 
-    float f = force / d.LengthSquared();
+    float f = force * 100.0f / (d.LengthSquared() + 1.0f);
     d.Normalize();
     b2Vec2 F = f * -d;
 

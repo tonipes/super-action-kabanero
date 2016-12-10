@@ -16,8 +16,8 @@ public:
 
     auto scene = std::make_shared<GameScene>("gameScene", rootNode);
 
-    auto w = 128;
-    auto h = 128;
+    auto w = 64;
+    auto h = 64;
 
     auto caveGen = CaveGenerator(seed, w, h, 4, 3);
     auto tileMap = caveGen.generate();
@@ -25,49 +25,56 @@ public:
 
     auto levelCompiler = LevelCompiler(*random, scene->physWorld());
     levelCompiler.materializeLevel(tileMap, rootNode);
-    levelCompiler.materializePlayer(tileMap, rootNode);
-
-    auto cameraNode = std::make_shared<Node<Transform3D>>("camera");
-    cameraNode->setLocalPosition(glm::vec3(0, 0, 0));
-    cameraNode->addBehavior<CameraBehavior>(0.2f);
-    auto visibilityAttachment = std::make_shared<VisibilityAttachment>(w, h, tileMap);
-    cameraNode->addAttachment(visibilityAttachment);
-
-    rootNode->addChild(cameraNode);
 
     auto bulletBag = std::make_shared<Node<Transform3D>>("bullets");
     bulletBag->setLocalPosition(glm::vec3(0, 0, 0));
     rootNode->addChild(bulletBag);
 
+    std::vector<std::shared_ptr<Node<Transform3D>>> cameras;
+
+    for (auto i = 1; i <= numPlayers; i++) {
+      auto id = std::to_string(i);
+      levelCompiler.materializePlayer(tileMap, rootNode, "player" + id, "world/camera" + id);
+
+      auto cameraNode = std::make_shared<Node<Transform3D>>("camera" + id);
+      cameraNode->addBehavior<CameraBehavior>(0.2f);
+      auto visibilityAttachment = std::make_shared<VisibilityAttachment>(w, h, tileMap);
+      cameraNode->addAttachment(visibilityAttachment);
+      rootNode->addChild(cameraNode);
+
+      cameras.push_back(cameraNode);
+    }
+
+
     if (numPlayers == 1) {
-      SceneView sceneView(rootNode, cameraNode, Viewport(0, 0, 1.0, 1.0));
+      SceneView sceneView(rootNode, cameras[0], Viewport(0, 0, 1.0, 1.0));
       scene->addSceneView(sceneView);
     } else if (numPlayers == 2) {
-      SceneView sceneView(rootNode, cameraNode, Viewport(0, 0, 0.5, 1.0));
+      SceneView sceneView(rootNode, cameras[0], Viewport(0, 0, 0.5, 1.0));
       scene->addSceneView(sceneView);
 
-      SceneView sceneView2(rootNode, cameraNode, Viewport(0.5, 0, 0.5, 1.0));
+      SceneView sceneView2(rootNode, cameras[1], Viewport(0.5, 0, 0.5, 1.0));
       scene->addSceneView(sceneView2);
     } else if (numPlayers == 3) {
-      SceneView sceneView(rootNode, cameraNode, Viewport(0, 0, 0.5, 0.5));
+      SceneView sceneView(rootNode, cameras[0], Viewport(0, 0, 0.5, 0.5));
       scene->addSceneView(sceneView);
 
-      SceneView sceneView2(rootNode, cameraNode, Viewport(0.5, 0, 0.5, 0.5));
+      SceneView sceneView2(rootNode, cameras[1], Viewport(0.5, 0, 0.5, 0.5));
       scene->addSceneView(sceneView2);
 
-      SceneView sceneView3(rootNode, cameraNode, Viewport(0.0, 0.5, 0.5, 0.5));
+      SceneView sceneView3(rootNode, cameras[2], Viewport(0.0, 0.5, 0.5, 0.5));
       scene->addSceneView(sceneView3);
     } else {
-      SceneView sceneView(rootNode, cameraNode, Viewport(0, 0, 0.5, 0.5));
+      SceneView sceneView(rootNode, cameras[0], Viewport(0, 0, 0.5, 0.5));
       scene->addSceneView(sceneView);
 
-      SceneView sceneView2(rootNode, cameraNode, Viewport(0.5, 0, 0.5, 0.5));
+      SceneView sceneView2(rootNode, cameras[1], Viewport(0.5, 0, 0.5, 0.5));
       scene->addSceneView(sceneView2);
 
-      SceneView sceneView3(rootNode, cameraNode, Viewport(0.0, 0.5, 0.5, 0.5));
+      SceneView sceneView3(rootNode, cameras[2], Viewport(0.0, 0.5, 0.5, 0.5));
       scene->addSceneView(sceneView3);
 
-      SceneView sceneView4(rootNode, cameraNode, Viewport(0.5, 0.5, 0.5, 0.5));
+      SceneView sceneView4(rootNode, cameras[3], Viewport(0.5, 0.5, 0.5, 0.5));
       scene->addSceneView(sceneView4);
     }
 
@@ -91,14 +98,14 @@ public:
         std::cout << "Send new game event 3" << std::endl;
         messagePublisher->sendMessage(Message(
           "game",
-          std::make_shared<NewGameEvent>(25, 3)
+          std::make_shared<NewGameEvent>(21, 3)
           )
         );
       } else if (action == NUM_4) {
         std::cout << "Send new game event 4" << std::endl;
         messagePublisher->sendMessage(Message(
           "game",
-          std::make_shared<NewGameEvent>(35, 4)
+          std::make_shared<NewGameEvent>(40, 4)
           )
         );
       }

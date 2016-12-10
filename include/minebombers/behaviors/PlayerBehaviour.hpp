@@ -17,10 +17,12 @@
 #include "minebombers/util/NodeFactory.hpp"
 
 #include <glm/vec2.hpp>
+#include <glm/gtx/rotate_vector.hpp>
 
 class PlayerBehaviour : public Behavior<Transform3D> {
 public:
-  PlayerBehaviour(Node<Transform3D>* node) {
+  PlayerBehaviour(Node<Transform3D>* node, const std::string& cameraAddress) :
+      _cameraAddress(cameraAddress) {
     node->addEventReactor([&](GameInputEvent event) {
       auto action = event.action();
       auto isPressed = event.isPressed();
@@ -56,9 +58,9 @@ public:
     });
   }
 
-  auto update(float delta, Node<Transform3D>& node) -> void override {
-    // node.setLocalRotation(glm::angleAxis(glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f)));
+  const float PI = 3.1415927;
 
+  auto update(float delta, Node<Transform3D>& node) -> void override {
     if (_newGun.isDefined()) {
       node.addAttachment(std::make_shared<GunAttachment>(_newGun.get()));
       _newGun = Option<std::shared_ptr<GunParameters>>();
@@ -67,32 +69,31 @@ public:
         "audioPlayer:clip/reload.ogg",
         std::make_shared<AudioClipEvent>(CLIP_PLAY)
       ));
-
     }
-    glm::vec2 moveDirection;
+    auto moveDirection = glm::vec2(0, 0);
     if (moveUp) moveDirection.y += 1;
     if (moveDown) moveDirection.y -= 1;
     if (moveRight) moveDirection.x += 1;
     if (moveLeft) moveDirection.x -= 1;
     if (moveDirection.x != 0 && moveDirection.y != 0) {
-      moveDirection.x /= 1.41421356237f;
-      moveDirection.y /= 1.41421356237f;
+      moveDirection = glm::normalize(moveDirection);
     }
-
-    moveDirection.x *= 4.5f;
-    moveDirection.y *= 4.5f;
 
     const auto& physAttachment = node.get<PhysicsAttachment>();
     physAttachment.foreach([&](auto phys) {
       const auto& pos = phys.position();
-      phys.setVelocity(moveDirection.x, moveDirection.y);
-
+      phys.setVelocity(
+        moveDirection.x * _playerSpeed,
+        moveDirection.y * _playerSpeed
+      );
     });
 
     auto pos = node.position().xy();
-    auto vel = physAttachment.get().velocity();
 
-    Services::messagePublisher()->sendMessage(Message("gameScene:world/camera", std::make_shared<PlayerLocationEvent>(pos)));
+    Services::messagePublisher()->sendMessage(Message(
+      "gameScene:" + _cameraAddress,
+      std::make_shared<PlayerLocationEvent>(pos)
+    ));
 
     glm::vec2 fireDirection;
     _fireDelay -= delta;
@@ -102,8 +103,7 @@ public:
     if (fireRight) fireDirection.x += 1;
     if (fireLeft) fireDirection.x -= 1;
     if (fireDirection.x != 0 && fireDirection.y != 0) {
-      fireDirection.x /= 1.41421356237f;
-      fireDirection.y /= 1.41421356237f;
+      fireDirection = glm::normalize(fireDirection);
     }
     auto shoot = fireDirection.x != 0 || fireDirection.y != 0;
 
@@ -113,11 +113,11 @@ public:
       // auto gun = gun_att.parameters().get();
 
       _fireDelay = 1.0f / gunParams->fireRate;
-      auto random = StdLibRandom();
+      auto random = Services::random();
       for (auto i = 0; i < gunParams->bulletAmount; i++) {
-        random.seed(_bulletsShot);
-        auto xVar = random.nextFloat(), yVar = random.nextFloat(); // Bad variation, we shoud calculate angle and vary that instead
+        auto angle = (random->nextFloat() - 0.5f) * PI ;
         auto spreadFactor = gunParams->accuracy;
+        auto rotatedDirection = glm::rotate(fireDirection, angle * spreadFactor);
         // fireDirection.x += (xVar * 2 * spreadFactor) - spreadFactor;
         // fireDirection.y += (yVar * 2 * spreadFactor) - spreadFactor;
         _bulletsShot++;
@@ -127,14 +127,14 @@ public:
         std::shared_ptr<b2FixtureDef> fixtureDef;
 
         std::tie(bulletNode, bodyDef, fixtureDef) = NodeFactory::createBullet(gunParams);
-        fixtureDef->filter.groupIndex = -1;
+        // fixtureDef->filter.groupIndex = -1;
         bodyDef->position.Set(
           pos.x + fireDirection.x,
           pos.y + fireDirection.y
         );
         bodyDef->linearVelocity.Set(
-          fireDirection.x * gunParams->bulletSpeed,
-          fireDirection.y * gunParams->bulletSpeed
+          rotatedDirection.x * gunParams->bulletSpeed,
+          rotatedDirection.y * gunParams->bulletSpeed
         );
 
         Services::messagePublisher()->sendMessage(Message("gameScene", std::make_shared<CreateNodeEvent>(
@@ -198,6 +198,10 @@ private:
   float _fireDelay = 0;
 
   bool throwBomb = false;
+
+  float _playerSpeed = 3.0f;
+
+  std::string _cameraAddress;
 
   Option<std::shared_ptr<GunParameters>> _newGun = Option<std::shared_ptr<GunParameters>>();
 };

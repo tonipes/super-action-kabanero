@@ -71,7 +71,7 @@ public:
   }
 
   auto addChild(std::shared_ptr<Node> child) -> void {
-
+    this->wakeUp();
     _children.insert(child->name(), child);
     child->_setParent(this->shared_from_this());
 
@@ -86,6 +86,9 @@ public:
     _addChildBB(child->boundingBox(), child->localPosition());
 
     child->_setUpdateFlag();
+    if (!child->getAllowSleep()) {
+      this->setAllowSleep(false);
+    }
   }
 
   auto addAttachment(std::shared_ptr<NodeAttachment> attachment) -> void {
@@ -180,7 +183,20 @@ public:
   }
 
   auto setSleep(bool val) -> void {
-    _isSleeping = true;
+    if (_allowSleep) {
+      _isSleeping = true;
+    }
+  }
+
+  auto getAllowSleep() -> bool {
+    return _allowSleep;
+  }
+
+  auto setAllowSleep(bool isAllowed) -> void {
+    _allowSleep = isAllowed;
+    if (!isAllowed && _parent.isDefined()) {
+      _parent.get().setAllowSleep(isAllowed);
+    }
   }
 
   auto isSleeping() const -> bool {
@@ -201,8 +217,23 @@ public:
     return behavior;
   }
 
+  auto handleEvent(std::shared_ptr<Event> event) -> void override {
+    this->wakeUp();
+    if (reactors.contains(typeid(*event))) {
+      reactors[typeid(*event)](event);
+    }
+  }
+
   auto update(float delta) -> void {
     if (!_isSleeping) {
+      auto allSleeping = true;
+      _children.values().foreach([&](auto child) {
+        child->update(delta);
+        if (!child->isSleeping()) {
+          allSleeping = false;
+        }
+      });
+
       const auto& physAttachment = this->get<PhysicsAttachment>();
       physAttachment.foreach([&](auto phys) {
         auto pos = phys.position();
@@ -216,9 +247,15 @@ public:
       _behaviors.foreach([&](auto& behavior) {
         behavior->update(delta, *this);
       });
-      _children.values().foreach([&](auto child) {
-        child->update(delta);
-      });
+      setSleep(allSleeping);
+    }
+  }
+
+  auto getRoot() -> std::shared_ptr<Node> {
+    if (_parent.isDefined()) {
+      return _parent.get().getRoot();
+    } else {
+      return this->shared_from_this();
     }
   }
 
@@ -302,6 +339,7 @@ private:
   bool _render;
   bool _toBeDestroyed = false;
   bool _isSleeping = false;
+  bool _allowSleep = true;
   Option<Node> _parent;
   KBTypeMap<std::shared_ptr<NodeAttachment>> _attachments;
   T _transform;
