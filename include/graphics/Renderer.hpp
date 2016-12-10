@@ -193,6 +193,8 @@ private:
         effects.push_back(effect);
       });
 
+    }
+
       const auto& children = node->children();
 
       for (const auto& child : children) {

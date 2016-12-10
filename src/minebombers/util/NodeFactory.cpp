@@ -2,8 +2,10 @@
 
 #include "minebombers/attachments/CollisionMaterialAttachment.hpp"
 #include "minebombers/behaviors/BombBehaviour.hpp"
+#include "minebombers/hud/HudEffect.hpp"
 #include "minebombers/behaviors/BulletBehaviour.hpp"
 #include "minebombers/behaviors/RocketBehavior.hpp"
+#include "minebombers/behaviors/HudBehavior.hpp"
 #include "minebombers/behaviors/BulletOrientationBehavior.hpp"
 #include "minebombers/behaviors/DamageAreaBehavior.hpp"
 #include "minebombers/behaviors/MainMenuBehavior.hpp"

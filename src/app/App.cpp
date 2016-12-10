@@ -15,6 +15,7 @@
 #include "resource/loader/TextureLoader.hpp"
 #include "resource/loader/AudioLoader.hpp"
 #include "resource/loader/AtlasLoader.hpp"
+#include "resource/loader/FontLoader.hpp"
 #include "audio/AudioPlayer.hpp"
 #include "input/InputTranslator.hpp"
 #include "random/StdLibRandom.hpp"
@@ -44,6 +45,10 @@ App::App(std::shared_ptr<Game> game) : _game(game) {
   auto text_loader = std::make_shared<TextLoader>();
   std::regex text_regex("^.+\\.txt$");
   resourceManager->addLoader(text_regex, text_loader);
+
+  auto font_loader = std::make_shared<FontLoader>();
+  std::regex font_regex("^.+\\.ttf$");
+  resourceManager->addLoader(font_regex, font_loader);
 
   auto audio_loader = std::make_shared<AudioLoader>();
   std::regex audio_regex("^.+\\.ogg$");

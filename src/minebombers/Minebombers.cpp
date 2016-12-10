@@ -18,6 +18,7 @@
 #include "minebombers/attachments/CollisionMaterialAttachment.hpp"
 #include "collection/Option.hpp"
 #include "physics/CollisionData.hpp"
+#include "minebombers/util/NodeFactory.hpp"
 // #include "minebombers/behaviors/EnemyOrbBehavior.hpp"
 
 #include "physics/ContactListener.hpp"
