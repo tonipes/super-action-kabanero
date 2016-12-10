@@ -35,26 +35,16 @@ auto Minebombers::init() -> void {
       auto scene = MultiplayerScene::createScene(seed, numPlayers);
       addScene(scene);
       activateScene("gameScene");
-    } else {
+    } else if (numPlayers <= 0){
       Services::logger()->info("Create new MenuScene");
       auto scene = MenuScene::createScene(seed);
       addScene(scene);
       activateScene("gameScene");
+    } else if (numPlayers > 4){
+      // Credits?
     }
   });
 
-  messagePublisher->sendMessage(
-    Message(
-      "audioPlayer:track/jazz",
-      std::make_shared<AudioTrackEvent>(TRACK_CHANGE, "resources/audio/local_forecast.ogg")
-    )
-  );
-  // messagePublisher->sendMessage(
-  //   Message(
-  //     "audioPlayer:track/jazz",
-  //     std::make_shared<AudioTrackEvent>(TRACK_PLAY)
-  //   )
-  // );
 
   int seed = 5;
 
