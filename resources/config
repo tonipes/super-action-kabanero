@@ -1,0 +1,10 @@
+window_width=800
+window_height=600
+window_name=HelloWindow
+
+update_fps=60
+draw_fps=480
+
+tilesize = 32
+
+audio_folder=resources/audio/

@@ -2,9 +2,10 @@
 #define GLM_FORCE_SWIZZLE
 #include <glm/glm.hpp>
 
-#include <sol.hpp>
+// #include <sol.hpp>
 
 #include "app/App.hpp"
+#include "app/Config.hpp"
 #include "service/Services.hpp"
 #include "logger/DefaultLogger.hpp"
 #include "resource/resourceManager/SyncResourceManager.hpp"
@@ -35,12 +36,10 @@ App::App(std::shared_ptr<Game> game) : _game(game) {
   logger->error("Error test");
   logger->fatal("Fatal test");
 
-  sol::state config;
-  config.script_file("resources/config.lua");
+  auto config = cfg::loadConfig("resources/config");
+  auto resources = cfg::loadResourceList("resources/resources");
 
   logger->info("Loading resources");
-
-  auto resources = config.get<sol::table>("resources");
 
   auto text_loader = std::make_shared<TextLoader>();
   std::regex text_regex("^.+\\.txt$");
@@ -58,23 +57,23 @@ App::App(std::shared_ptr<Game> game) : _game(game) {
   std::regex atlas_regex("^.+\\.atlas$");
   resourceManager->addLoader(atlas_regex, atlas_loader);
 
-  for(auto i = 1; i <= resources.size(); i++){
-    logger->debug(resources.get<std::string>(i));
-    resourceManager->load(resources.get<std::string>(i));
+  for(auto res : resources) {
+      logger->debug(res);
+      resourceManager->load(res);
   }
 
   // Intervals
-  _update_interval = 1.0 / config["update_fps"].get_or(30);
-  _draw_interval = 1.0 / config["draw_fps"].get_or(30);
+  _update_interval = 1.0 / std::stoi(config["update_fps"]);
+  _draw_interval = 1.0 / std::stoi(config["draw_fps"]);
 
   // Get window parameters from config file and create window
-  _window_w = config["window_width"].get_or(800);
-  _window_h = config["window_height"].get_or(600);
-  _window_name = config["window_name"].get_or<std::string>("window");
+  _window_w = std::stoi(config["window_width"]);
+  _window_h = std::stoi(config["window_height"]);
+  _window_name = config["window_name"];
 
 
-  _audioFolderPath = config["audio_folder"].get_or<std::string>("resources/audio/");
-  _tilesize = config["tilesize"].get_or(32);
+  _audioFolderPath = config["audio_path"];
+  _tilesize = std::stoi(config["tilesize"]);
 }
 
 auto App::init() -> void {
