@@ -2,13 +2,17 @@
 
 #include "minebombers/attachments/CollisionMaterialAttachment.hpp"
 #include "minebombers/behaviors/BombBehaviour.hpp"
+#include "minebombers/hud/HudEffect.hpp"
 #include "minebombers/behaviors/BulletBehaviour.hpp"
 #include "minebombers/behaviors/RocketBehavior.hpp"
+#include "minebombers/behaviors/HudBehavior.hpp"
 #include "minebombers/behaviors/BulletOrientationBehavior.hpp"
 #include "minebombers/behaviors/DamageAreaBehavior.hpp"
+#include "minebombers/behaviors/MainMenuBehavior.hpp"
 #include "scene/attachment/SpriteAttachment.hpp"
 #include "scene/attachment/EffectAttachment.hpp"
 #include "graphics/effects/CircleEffect.hpp"
+#include "graphics/effects/MainMenuEffect.hpp"
 
 namespace NodeFactory {
   int counter = 0;
@@ -176,5 +180,26 @@ namespace NodeFactory {
     node->setAllowSleep(false);
 
     return std::make_tuple(node, bodyDef, fixtureDef);
+  }
+
+  auto createMainMenu() -> std::shared_ptr<Node<Transform3D>> {
+    std::vector<std::string> c {
+      "1 Player Survival",
+      "2 player Deathmatch",
+      "3 player Deathmatch",
+      "4 player Deathmatch"
+    };
+
+    auto node = std::make_shared<Node<Transform3D>>("player1");
+    node->addBehavior<MainMenuBehavior>(c);
+
+    auto effect_att = std::make_shared<EffectAttachment>(
+      std::make_shared<MainMenuEffect>(c)
+    );
+
+    node->addAttachment(effect_att);
+
+    node->setAllowSleep(false);
+    return node;
   }
 }

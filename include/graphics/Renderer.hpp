@@ -193,11 +193,12 @@ private:
         effects.push_back(effect);
       });
 
-      const auto& children = node->children();
+    }
 
-      for (const auto& child : children) {
-        _renderNode(std::get<1>(child), cameraNode, atlas);
-      }
+    const auto& children = node->children();
+
+    for (const auto& child : children) {
+      _renderNode(std::get<1>(child), cameraNode, atlas);
     }
   }
 

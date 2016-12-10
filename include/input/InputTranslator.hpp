@@ -8,6 +8,7 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Mouse.hpp>
 #include "service/Services.hpp"
+#include "minebombers/events/NewGameEvent.hpp"
 
 class InputTranslator {
 private:
@@ -55,7 +56,14 @@ public:
       Services::messagePublisher()->sendMessage(
         Message(std::get<1>(a), std::make_shared<GameInputEvent>(std::get<0>(a), pressed)
       ));
+    } if(event.key.code == sf::Keyboard::Escape && event.type == sf::Event::KeyPressed){
+      Services::logger()->info("Change scene to main menu");
+      Services::messagePublisher()->sendMessage(Message(
+        "game",
+        std::make_shared<NewGameEvent>(15, 0)
+        )
+      );
     }
   }
-  
+
 };

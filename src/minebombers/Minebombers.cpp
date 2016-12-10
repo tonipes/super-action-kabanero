@@ -14,9 +14,11 @@
 #include "minebombers/events/TestEvent.hpp"
 #include "minebombers/events/TestEvent.hpp"
 #include "minebombers/scenes/MultiplayerScene.hpp"
+#include "minebombers/scenes/MenuScene.hpp"
 #include "minebombers/attachments/CollisionMaterialAttachment.hpp"
 #include "collection/Option.hpp"
 #include "physics/CollisionData.hpp"
+#include "minebombers/util/NodeFactory.hpp"
 // #include "minebombers/behaviors/EnemyOrbBehavior.hpp"
 
 #include "physics/ContactListener.hpp"
@@ -28,12 +30,18 @@ auto Minebombers::init() -> void {
   this->addEventReactor([&](NewGameEvent event) {
     auto seed = event.seed;
     auto numPlayers = event.numPlayers;
-
-    auto scene = MultiplayerScene::createScene(seed, numPlayers);
-    addScene(scene);
-    activateScene("gameScene");
+    if(numPlayers >= 1){
+      Services::logger()->info("Create new MultiplayerScene");
+      auto scene = MultiplayerScene::createScene(seed, numPlayers);
+      addScene(scene);
+      activateScene("gameScene");
+    } else {
+      Services::logger()->info("Create new MenuScene");
+      auto scene = MenuScene::createScene(seed);
+      addScene(scene);
+      activateScene("gameScene");
+    }
   });
-
 
   messagePublisher->sendMessage(
     Message(
@@ -50,7 +58,8 @@ auto Minebombers::init() -> void {
 
   int seed = 5;
 
-  auto gameScene = MultiplayerScene::createScene(seed, 1);
-  addScene(gameScene);
+  // auto gameScene = MultiplayerScene::createScene(seed, 1);
+  auto menuScene = MenuScene::createScene(seed);
+  addScene(menuScene);
   activateScene("gameScene");
 }

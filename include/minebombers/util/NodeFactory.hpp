@@ -40,4 +40,6 @@ namespace NodeFactory {
       std::shared_ptr<b2BodyDef>,
       std::shared_ptr<b2FixtureDef> >;
 
+  auto createMainMenu() -> std::shared_ptr<Node<Transform3D>>;
+
 };

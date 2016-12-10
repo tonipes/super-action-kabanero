@@ -55,6 +55,7 @@ public:
   }
 
   auto addScene(std::shared_ptr<Scene<Transform3D>> scene) -> void {
+    // scenes = KBMap<std::string, std::shared_ptr<Scene<Transform3D>>>();
     auto name = scene->socket();
     scenes[name] = scene;
     Services::messagePublisher()->addSubscriber(scene);

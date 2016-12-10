@@ -2,6 +2,7 @@
 
 #include "minebombers/events/PlayerLocationEvent.hpp"
 #include "minebombers/events/BulletEvent.hpp"
+#include "minebombers/events/UpdateHudEvent.hpp"
 #include "minebombers/behaviors/BombBehaviour.hpp"
 #include "minebombers/behaviors/EnemyOrbBehavior.hpp"
 #include "message/event/CreateNodeEvent.hpp"
@@ -15,6 +16,7 @@
 #include "random/StdLibRandom.hpp"
 #include "minebombers/data/GunParameters.hpp"
 #include "minebombers/util/NodeFactory.hpp"
+// #include "minebombers/data/HudParameters.hpp"
 
 #include <glm/vec2.hpp>
 #include <glm/gtx/rotate_vector.hpp>
@@ -49,7 +51,7 @@ public:
     });
     node->addEventReactor([&](CollisionEvent event) {
       if(event.collisionMaterialAttachment()->collisionDamage > 0.0f){
-        takeDamage = true;
+        damageToTake = event.collisionMaterialAttachment()->collisionDamage;
       }
       else if(event.collisionMaterialAttachment()->gunParameters.isDefined()) {
         Services::logger()->debug("Player got new gun");
@@ -167,13 +169,18 @@ public:
       ));
     }
 
-    if(takeDamage) {
+    if(damageToTake > 0.0f) {
       Services::messagePublisher()->sendMessage(Message(
         "audioPlayer:clip/pain.ogg",
         std::make_shared<AudioClipEvent>(CLIP_PLAY)
       ));
-      takeDamage = false;
+      hp -= damageToTake;
+      damageToTake = 0.0f;
     }
+
+    // Services::messagePublisher()->sendMessage(Message("gameScene:world/hud/player1hud", std::make_shared<UpdateHudEvent>(
+    //   pos.x, pos.y, hp, "Player 1"
+    // )));
 
     // Services::messagePublisher()->sendMessage(Message("gameScene:world/fog", std::make_shared<PlayerLocationEvent>(pos)));
 
@@ -181,8 +188,9 @@ public:
   }
 
 private:
+  float hp = 100.0f;
   int counter = 0;
-  bool takeDamage = false;
+  float damageToTake = 0.0f;
   bool moveUp = false;
   bool moveRight = false;
   bool moveDown = false;
