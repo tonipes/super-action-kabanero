@@ -29,8 +29,8 @@ public:
     _tilesize(tilesize),
     _spriteBatch(SpriteBatch(tilesize)) {}
 
-  const int WINDOW_WIDTH = 32 * 32;
-  const int WINDOW_HEIGHT = 32 * 24;
+  const int WINDOW_WIDTH = 32 * 48;
+  const int WINDOW_HEIGHT = 32 * 30;
 
   ~Renderer() {}
 
@@ -187,7 +187,7 @@ private:
           (relativePosition.x + _viewportSize.x + _viewportOffset.x) * _tilesize,
           (-relativePosition.y + _viewportSize.y + _viewportOffset.y) * _tilesize
         );
-        
+
         effect->setTileSize(_tilesize);
 
         effects.push_back(effect);
