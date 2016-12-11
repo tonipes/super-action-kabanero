@@ -9,7 +9,7 @@
 
 class EventHandler {
 public:
-  virtual auto handleEvent(std::shared_ptr<Event> event) -> void {
+  auto handleEvent(std::shared_ptr<Event> event) -> void {
     if (reactors.contains(typeid(*event))) {
       reactors[typeid(*event)](event);
     }

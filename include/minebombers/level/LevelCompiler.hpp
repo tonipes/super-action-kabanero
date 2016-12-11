@@ -16,6 +16,7 @@
 
 #include "minebombers/data/GunParameters.hpp"
 #include "minebombers/behaviors/ItemNodeBehaviour.hpp"
+#include "minebombers/nodes/Player.hpp"
 #include <sstream>
 
 class LevelCompiler {
@@ -29,19 +30,18 @@ public:
 
   auto materializeLevel(
     std::shared_ptr<TileMap> map,
-    std::shared_ptr<Node<Transform3D>> root
-  ) -> void {
+    std::shared_ptr<Node> root) -> void {
 
-    auto level = std::make_shared<Node<Transform3D>>("level");
+    auto level = std::make_shared<Node>("level");
     level->setSleep(true);
     root->addChild(level);
 
-    auto ground = std::make_shared<Node<Transform3D>>("ground");
+    auto ground = std::make_shared<Node>("ground");
     ground->setLocalPosition(glm::vec3(0,0,-200));
     ground->setSleep(true);
     level->addChild(ground);
 
-    auto obj = std::make_shared<Node<Transform3D>>("obj");
+    auto obj = std::make_shared<Node>("obj");
     obj->setLocalPosition(glm::vec3(0,0,-100));
     obj->setSleep(true);
     level->addChild(obj);
@@ -56,12 +56,12 @@ public:
 
     for (auto xChunk = 0; xChunk < xChunks; xChunk++) {
       for (auto yChunk = 0; yChunk < yChunks; yChunk++) {
-        auto chunkNode = std::make_shared<Node<Transform3D>>(name("chunk", xChunk, yChunk));
+        auto chunkNode = std::make_shared<Node>(name("chunk", xChunk, yChunk));
         chunkNode->setLocalPosition(glm::vec3(xChunk * CHUNK_SIZE, yChunk * CHUNK_SIZE, 0));
         chunkNode->setSleep(true);
         obj->addChild(chunkNode);
 
-        auto groundChunk = std::make_shared<Node<Transform3D>>(name("ground-chunk", xChunk, yChunk));
+        auto groundChunk = std::make_shared<Node>(name("ground-chunk", xChunk, yChunk));
         groundChunk->setLocalPosition(glm::vec3(xChunk * CHUNK_SIZE, yChunk * CHUNK_SIZE, 0));
         groundChunk->setSleep(true);
         ground->addChild(groundChunk);
@@ -70,7 +70,7 @@ public:
             auto totalX = (int)(xChunk * CHUNK_SIZE + x);
             auto totalY = (int)(yChunk * CHUNK_SIZE + y);
 
-            auto groundNode = std::make_shared<Node<Transform3D>>(name("ground", totalX, totalY));
+            auto groundNode = std::make_shared<Node>(name("ground", totalX, totalY));
             // groundNode->setBoundingBox(BousndingBox(glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.5f, 0.5f, 0.5f)));
             chunkNode->addChild(groundNode);
             groundNode->setLocalPosition(glm::vec3(x, y, -100));
@@ -130,38 +130,25 @@ public:
   }
 
   auto materializePlayer(
-    std::shared_ptr<TileMap> map,
-    std::shared_ptr<Node<Transform3D>> root,
-    std::string playerId,
-    std::string cameraAddress
-  ) -> void{
+      std::shared_ptr<TileMap> map,
+      std::shared_ptr<Node> root,
+      int playerNumber) -> void {
+
     auto tile = map->getRandom(PLAYER_SPAWN_POINT, _rand);
 
-    auto node = std::make_shared<Node<Transform3D>>(playerId);
-    node->setAllowSleep(false);
-    node->setLocalPosition(glm::vec3(tile.getX(), tile.getY(), 2));
-    node->addAttachment(getSprite("tiles/spriggan_druid", -1));
+    auto playerId = "player" + std::to_string(playerNumber);
 
-    // auto effect_att = std::make_shared<EffectAttachment>(std::make_shared<CircleEffect>(32.0f));
-    // node->addAttachment(effect_att);
+    auto node = Player::create(playerId, _world);
 
-    auto material_att = std::make_shared<CollisionMaterialAttachment>();
-    // material_att->bulletRebound = true;
-    material_att->isPlayer = true;
-
-    node->addAttachment(material_att);
-    auto gun = std::make_shared<GunAttachment>(
-      normalGuns[0] //std::make_shared<GunParameters>(5.0f, 1.0f, 1, 0.4f, 8.0f, "tiles/sniper_normal")
-    );
-
+    auto gun = std::make_shared<GunAttachment>(normalGuns[0]);
     node->addAttachment(gun);
 
-    auto physCircle = createPhysCircle(tile.getX(), tile.getY());
-    auto physAttachment = std::make_shared<PhysicsAttachment>(physCircle);
+    node->setLocalPosition(glm::vec3(tile.getX(), tile.getY(), node->position().z));
+    const auto& physAttachment = node->get<PhysicsAttachment>();
+    physAttachment.foreach([&](auto phys) {
+      phys.setPosition(tile.getX(), tile.getY());
+    });
 
-    node->addAttachment(physAttachment);
-
-    node->addBehavior<PlayerBehaviour>(cameraAddress);
     root->addChild(node);
   }
 
@@ -207,8 +194,8 @@ private:
     return oss.str();
   }
 
-  auto getItem(std::shared_ptr<GunParameters> gun, int x, int y) -> std::shared_ptr<Node<Transform3D>> {
-    auto node = std::make_shared<Node<Transform3D>>(name("item",x,y));
+  auto getItem(std::shared_ptr<GunParameters> gun, int x, int y) -> std::shared_ptr<Node> {
+    auto node = std::make_shared<Node>(name("item",x,y));
     node->addAttachment(getSprite(gun->sprite, -1));
 
     auto itBeh = node->addBehavior<ItemNodeBehaviour>();

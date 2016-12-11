@@ -6,13 +6,14 @@
 #include "minebombers/level/LevelCompiler.hpp"
 #include "minebombers/level/LevelCompiler.hpp"
 #include "minebombers/behaviors/CameraBehavior.hpp"
+#include "minebombers/behaviors/CameraTrackBehavior.hpp"
 #include "minebombers/events/NewGameEvent.hpp"
 
 class MultiplayerScene {
 public:
   static auto createScene(int seed, int numPlayers = 1) -> std::shared_ptr<GameScene> {
     const auto& messagePublisher = Services::messagePublisher();
-    auto rootNode = std::make_shared<Node<Transform3D>>("world");
+    auto rootNode = std::make_shared<Node>("world");
 
     auto scene = std::make_shared<GameScene>("gameScene", rootNode);
 
@@ -26,18 +27,19 @@ public:
     auto levelCompiler = LevelCompiler(*random, scene->physWorld());
     levelCompiler.materializeLevel(tileMap, rootNode);
 
-    auto bulletBag = std::make_shared<Node<Transform3D>>("bullets");
+    auto bulletBag = std::make_shared<Node>("bullets");
     bulletBag->setLocalPosition(glm::vec3(0, 0, 0));
     rootNode->addChild(bulletBag);
 
-    std::vector<std::shared_ptr<Node<Transform3D>>> cameras;
+    std::vector<std::shared_ptr<Node>> cameras;
 
     for (auto i = 1; i <= numPlayers; i++) {
       auto id = std::to_string(i);
-      levelCompiler.materializePlayer(tileMap, rootNode, "player" + id, "world/camera" + id);
+      levelCompiler.materializePlayer(tileMap, rootNode, i);
 
-      auto cameraNode = std::make_shared<Node<Transform3D>>("camera" + id);
-      cameraNode->addBehavior<CameraBehavior>(0.2f);
+      auto cameraNode = std::make_shared<Node>("camera" + id);
+      cameraNode->setAllowSleep(false);
+      cameraNode->addBehavior<CameraTrackBehavior>("player" + id);
       auto visibilityAttachment = std::make_shared<VisibilityAttachment>(w, h, tileMap);
       cameraNode->addAttachment(visibilityAttachment);
       rootNode->addChild(cameraNode);

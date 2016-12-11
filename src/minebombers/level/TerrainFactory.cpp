@@ -2,6 +2,7 @@
 
 #include <utility>
 #include "minebombers/behaviors/TerrainBehavior.hpp"
+#include "scene/attachment/PhysicsAttachment.hpp"
 
 std::map<TileType, TerrainProperty> TerrainFactory::terrainProperties = {
   { CAVE_WALL, TerrainProperty(8, 100.0f, "tiles/pebble_brown") },
@@ -14,9 +15,9 @@ auto TerrainFactory::generateTerrain(
     TileType tileType,
     std::string name,
     b2World& world,
-    std::shared_ptr<TileMap>& map) -> std::shared_ptr<Node<Transform3D>> {
+    std::shared_ptr<TileMap>& map) -> std::shared_ptr<Node> {
 
-  auto node = std::make_shared<Node3D>(name);
+  auto node = std::make_shared<Node>(name);
 
   const auto properties = terrainProperties[tileType];
   const auto spriteBaseName = properties.spriteBaseName;

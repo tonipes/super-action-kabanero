@@ -6,14 +6,16 @@
 #include "service/Services.hpp"
 #include "message/event/CollisionEvent.hpp"
 #include "message/event/DestroyNodeEvent.hpp"
+#include "scene/attachment/PhysicsAttachment.hpp"
+
 
 #include <glm/vec2.hpp>
 
 #include <iostream>
 
-class EnemyOrbBehavior : public Behavior<Transform3D> {
+class EnemyOrbBehavior : public Behavior {
 public:
-  EnemyOrbBehavior(Node<Transform3D>* node){
+  EnemyOrbBehavior(Node* node){
     moveDirection.x = 2.0f;
 
     node->addEventReactor([&](CollisionEvent event) {
@@ -24,7 +26,7 @@ public:
     });
   }
 
-  auto update(float delta, Node<Transform3D>& node) -> void override {
+  auto update(float delta, Node& node) -> void override {
 
     if(turn) {
 

@@ -11,9 +11,9 @@
 
 #include <iostream>
 
-class BulletBehavior : public Behavior<Transform3D> {
+class BulletBehavior : public Behavior {
 public:
-  BulletBehavior(Node<Transform3D>* node, float maxTime) :_maxTime(maxTime){
+  BulletBehavior(Node* node, float maxTime) :_maxTime(maxTime){
     node->addEventReactor([&, node](CollisionEvent event) {
       if(!event.collisionMaterialAttachment()->bulletRebound) {
         if (!destroyed) {
@@ -24,7 +24,7 @@ public:
     });
   }
 
-  auto update(float delta, Node<Transform3D>& node) -> void override {
+  auto update(float delta, Node& node) -> void override {
     // if(destroy) {
     //   Services::messagePublisher()->sendMessage(Message("gameScene",std::make_shared<DestroyNodeEvent>(node.path())));
     //   destroyed = false;

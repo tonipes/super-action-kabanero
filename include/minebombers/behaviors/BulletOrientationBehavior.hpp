@@ -12,18 +12,19 @@
 #include "message/event/CollisionEvent.hpp"
 #include "message/event/DestroyNodeEvent.hpp"
 #include "message/Event.hpp"
+#include "scene/attachment/PhysicsAttachment.hpp"
 
 
 // Keeps node rotation to face same direction as the body is moving
-class BulletOrientationBehavior : public Behavior<Transform3D> {
+class BulletOrientationBehavior : public Behavior {
 public:
-  BulletOrientationBehavior(Node<Transform3D>* node) {
+  BulletOrientationBehavior(Node* node) {
     // node->addEventReactor([&](CollisionEvent event) {
     //   updateOrientation = true;
     // });
   }
 
-  auto update(float delta, Node<Transform3D>& node) -> void override {
+  auto update(float delta, Node& node) -> void override {
     if(updateOrientation) {
       auto physicsAttachment = node.get<PhysicsAttachment>();
 

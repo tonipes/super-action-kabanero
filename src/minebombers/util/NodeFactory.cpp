@@ -20,11 +20,11 @@ namespace NodeFactory {
 
   auto createBomb() ->
     std::tuple<
-      std::shared_ptr<Node<Transform3D>>,
+      std::shared_ptr<Node>,
       std::shared_ptr<b2BodyDef>,
       std::shared_ptr<b2FixtureDef> > {
 
-    auto node = std::make_shared<Node<Transform3D>>("bomb_" + std::to_string(getId()));
+    auto node = std::make_shared<Node>("bomb_" + std::to_string(getId()));
 
     auto sprite_att = std::make_shared<SpriteAttachment>("test-effect/orb_of_destruction");
     auto material_att = std::make_shared<CollisionMaterialAttachment>();
@@ -54,7 +54,7 @@ namespace NodeFactory {
 
   auto createBullet(std::shared_ptr<GunParameters> params) ->
     std::tuple<
-      std::shared_ptr<Node<Transform3D>>,
+      std::shared_ptr<Node>,
       std::shared_ptr<b2BodyDef>,
       std::shared_ptr<b2FixtureDef> > {
 
@@ -65,11 +65,11 @@ namespace NodeFactory {
 
   auto createDamageCircle(float radius, float damage, float force = 0.0f) ->
     std::tuple<
-      std::shared_ptr<Node<Transform3D>>,
+      std::shared_ptr<Node>,
       std::shared_ptr<b2BodyDef>,
       std::shared_ptr<b2FixtureDef> > {
 
-    auto node = std::make_shared<Node<Transform3D>>("damageCircle_" + std::to_string(getId()));
+    auto node = std::make_shared<Node>("damageCircle_" + std::to_string(getId()));
 
     auto material_att = std::make_shared<CollisionMaterialAttachment>();
 
@@ -100,11 +100,11 @@ namespace NodeFactory {
 
   auto _createRegularBullet(std::shared_ptr<GunParameters> params) ->
     std::tuple<
-      std::shared_ptr<Node<Transform3D>>,
+      std::shared_ptr<Node>,
       std::shared_ptr<b2BodyDef>,
       std::shared_ptr<b2FixtureDef> > {
 
-    auto node = std::make_shared<Node<Transform3D>>("bullet_" + std::to_string(getId()));
+    auto node = std::make_shared<Node>("bullet_" + std::to_string(getId()));
     node->setLocalPosition(glm::vec3(0, 0, 100));
 
     auto sprite_att = std::make_shared<SpriteAttachment>(params->bulletSprite);
@@ -141,11 +141,11 @@ namespace NodeFactory {
 
   auto _createRocketBullet(std::shared_ptr<GunParameters> params) ->
     std::tuple<
-      std::shared_ptr<Node<Transform3D>>,
+      std::shared_ptr<Node>,
       std::shared_ptr<b2BodyDef>,
       std::shared_ptr<b2FixtureDef> > {
 
-    auto node = std::make_shared<Node<Transform3D>>("rocket_" + std::to_string(getId()));
+    auto node = std::make_shared<Node>("rocket_" + std::to_string(getId()));
 
     auto sprite_att = std::make_shared<SpriteAttachment>(params->bulletSprite);
     auto material_att = std::make_shared<CollisionMaterialAttachment>();

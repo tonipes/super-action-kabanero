@@ -13,9 +13,9 @@
 #include <iostream>
 #include <memory>
 
-class ItemNodeBehaviour : public Behavior<Transform3D> {
+class ItemNodeBehaviour : public Behavior {
 public:
-  ItemNodeBehaviour(Node<Transform3D>* node) {
+  ItemNodeBehaviour(Node* node) {
     node->addEventReactor([&, node](CollisionEvent event) {
       if(event.collisionMaterialAttachment()->isPlayer){
         destroy = true;
@@ -24,7 +24,7 @@ public:
     });
   }
 
-  auto update(float delta, Node<Transform3D>& node) -> void override {
+  auto update(float delta, Node& node) -> void override {
     if(destroy) {
       Services::logger()->debug("destroy itemnode");
       Services::messagePublisher()->sendMessage(Message("gameScene",std::make_shared<DestroyNodeEvent>(node.path())));

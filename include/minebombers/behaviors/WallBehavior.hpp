@@ -4,9 +4,9 @@
 #include "scene/Node.hpp"
 #include "scene/3D/Transform3D.hpp"
 
-class WallBehavior : public Behavior<Transform3D> {
+class WallBehavior : public Behavior {
 public:
-  WallBehavior(Node<Transform3D>* node) {
+  WallBehavior(Node* node) {
     node->setSleep(true);
     node->addEventReactor([&](CollisionEvent event) {
       // Services::logger()->debug("wall collided");

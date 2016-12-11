@@ -11,7 +11,7 @@
 template <typename T>
 class SceneGraph : public Updateable {
 public:
-  SceneGraph(std::shared_ptr<Node<T>> rootNode): _root(rootNode) {}
+  SceneGraph(std::shared_ptr<Node> rootNode): _root(rootNode) {}
   ~SceneGraph() {}
 
   auto init() -> void override {}
@@ -22,7 +22,7 @@ public:
     return _sceneViews;
   }
 
-  auto root() -> std::shared_ptr<Node<T>> {
+  auto root() -> std::shared_ptr<Node> {
     return _root;
   }
 
@@ -31,6 +31,6 @@ public:
   }
 
 private:
-  std::shared_ptr<Node<T>> _root;
+  std::shared_ptr<Node> _root;
   KBVector<SceneView> _sceneViews;
 };

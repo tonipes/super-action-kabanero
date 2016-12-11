@@ -16,9 +16,9 @@
 #include "util/StringUtil.hpp"
 #include "minebombers/attachments/GunAttachment.hpp"
 
-class TerrainBehavior : public Behavior<Transform3D> {
+class TerrainBehavior : public Behavior {
 public:
-  TerrainBehavior(Node<Transform3D>* node, float health, std::shared_ptr<TileMap> map) :
+  TerrainBehavior(Node* node, float health, std::shared_ptr<TileMap> map) :
    _health(health),
    _map(map) {
 
@@ -31,7 +31,7 @@ public:
     });
   }
 
-  auto update(float delta, Node<Transform3D>& node) -> void override {
+  auto update(float delta, Node& node) -> void override {
     const auto& name = node.name().erase(0, 7);
     const auto& coords = split(name, '-');
     if (_dmgToTake > 0.0f) {

@@ -8,11 +8,9 @@
 #include <functional>
 #include <memory>
 
-template <typename T>
 class Node;
 
-template <typename T>
 class Behavior {
 public:
-  virtual auto update(float delta, Node<T>& node) -> void { };
+  virtual auto update(float delta, Node& node) -> void { };
 };

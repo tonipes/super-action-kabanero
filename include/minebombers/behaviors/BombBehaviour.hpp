@@ -14,20 +14,20 @@
 
 #include <iostream>
 
-class BombBehaviour : public Behavior<Transform3D> {
+class BombBehaviour : public Behavior {
 public:
-  BombBehaviour(Node<Transform3D>* node, float fuseLength) :_fuseLength(fuseLength){
+  BombBehaviour(Node* node, float fuseLength) :_fuseLength(fuseLength){
     node->addEventReactor([&](CollisionEvent event) {
 
     });
   }
 
-  auto update(float delta, Node<Transform3D>& node) -> void override {
+  auto update(float delta, Node& node) -> void override {
     if(!exploded){
       if(_fuseTime > _fuseLength){
-        auto pos = node.position().xy();
+        auto pos = glm::vec2(node.position());
 
-        std::shared_ptr<Node<Transform3D>> damageNode;
+        std::shared_ptr<Node> damageNode;
         std::shared_ptr<b2BodyDef> bodyDef;
         std::shared_ptr<b2FixtureDef> fixtureDef;
 

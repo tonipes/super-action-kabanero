@@ -13,9 +13,9 @@
 
 #include "minebombers/util/NodeFactory.hpp"
 
-class RocketBehavior : public Behavior<Transform3D> {
+class RocketBehavior : public Behavior {
 public:
-  RocketBehavior(Node<Transform3D>* node, float radius, float damage) :
+  RocketBehavior(Node* node, float radius, float damage) :
     _radius(radius),
     _damage(damage)
   {
@@ -24,11 +24,11 @@ public:
     });
   }
 
-  auto update(float delta, Node<Transform3D>& node) -> void override {
+  auto update(float delta, Node& node) -> void override {
     if(explode && !alreadyExploded) {
       auto pos = node.position().xy();
 
-      std::shared_ptr<Node<Transform3D>> damageNode;
+      std::shared_ptr<Node> damageNode;
       std::shared_ptr<b2BodyDef> bodyDef;
       std::shared_ptr<b2FixtureDef> fixtureDef;
 

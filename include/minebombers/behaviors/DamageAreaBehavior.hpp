@@ -11,15 +11,15 @@
 
 #include <iostream>
 
-class DamageAreaBehavior : public Behavior<Transform3D> {
+class DamageAreaBehavior : public Behavior {
 public:
-  DamageAreaBehavior(Node<Transform3D>* node, float damageTime) : _damageTime(damageTime){
+  DamageAreaBehavior(Node* node, float damageTime) : _damageTime(damageTime){
     node->addEventReactor([&](CollisionEvent event) {
 
     });
   }
 
-  auto update(float delta, Node<Transform3D>& node) -> void override {
+  auto update(float delta, Node& node) -> void override {
     if(_alive > _damageTime) {
       Services::messagePublisher()->sendMessage(Message("gameScene",std::make_shared<DestroyNodeEvent>(node.path())));
     }

@@ -12,15 +12,15 @@
 
 #include <iostream>
 
-class CameraBehavior : public Behavior<Transform3D> {
+class CameraBehavior : public Behavior {
 public:
-  CameraBehavior(Node<Transform3D>* node, float camSpeed) : _camSpeed(camSpeed) {
+  CameraBehavior(Node* node, float camSpeed) : _camSpeed(camSpeed) {
     node->addEventReactor([&](PlayerLocationEvent event) {
       _target = event.getV();
     });
   }
 
-  auto update(float delta, Node<Transform3D>& node) -> void override {
+  auto update(float delta, Node& node) -> void override {
     auto moveDirection = _target - node.position().xy();
 
     auto pos = node.position();

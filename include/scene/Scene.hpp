@@ -14,7 +14,7 @@ class Scene : public Updateable, public MessageSubscriber {
 public:
   Scene(
       std::string name,
-      std::shared_ptr<Node<T>> rootNode) :
+      std::shared_ptr<Node> rootNode) :
     MessageSubscriber(name),
     _graph(rootNode) {}
   virtual ~Scene() {}
@@ -23,7 +23,7 @@ public:
     return _graph.getSceneViews();
   }
 
-  auto rootNode() -> std::shared_ptr<Node<T>> {
+  auto rootNode() -> std::shared_ptr<Node> {
     return _graph.root();
   }
 

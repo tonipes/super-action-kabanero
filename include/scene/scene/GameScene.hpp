@@ -6,6 +6,7 @@
 #include "message/event/DestroyNodeEvent.hpp"
 #include "message/event/CreateNodeEvent.hpp"
 #include "physics/ContactListener.hpp"
+#include "scene/attachment/PhysicsAttachment.hpp"
 #include <Box2D/Box2D.h>
 
 /**
@@ -13,7 +14,7 @@
  */
 class GameScene : public Scene<Transform3D>, public EventHandler {
 public:
-  GameScene(std::string name, std::shared_ptr<Node<Transform3D>> rootNode) :
+  GameScene(std::string name, std::shared_ptr<Node> rootNode) :
       Scene<Transform3D>(name, rootNode), _physWorld(b2Vec2(0.0f,0.0f)), _phys_elapsed(0.0), _phys_step(0.033) {
 
     _physWorld.SetContactListener(&_contactListener);
@@ -61,7 +62,7 @@ public:
       const auto& parentNode = getNode(path);
       parentNode->addChild(node);
     }
-    _toBeAdded = KBVector<std::tuple<std::string, std::shared_ptr<Node<Transform3D>>>>();
+    _toBeAdded = KBVector<std::tuple<std::string, std::shared_ptr<Node>>>();
     _physWorld.Step(_phys_step, 8, 3);
     this->rootNode()->update(delta);
   }
@@ -89,7 +90,7 @@ public:
     }
   }
 
-  auto getNode(const std::string& address) -> std::shared_ptr<Node<Transform3D>> {
+  auto getNode(const std::string& address) -> std::shared_ptr<Node> {
     auto names = split(address, '/');
     auto node = this->rootNode();
     auto notFound = false;
@@ -122,7 +123,7 @@ public:
   }
 private:
   KBVector<std::string> _toBeDestroyed;
-  KBVector<std::tuple<std::string, std::shared_ptr<Node<Transform3D>>>> _toBeAdded;
+  KBVector<std::tuple<std::string, std::shared_ptr<Node>>> _toBeAdded;
   b2World _physWorld;
   ContactListener _contactListener;
   double _phys_elapsed;
@@ -132,8 +133,8 @@ private:
     _toBeDestroyed += path;
   }
 
-  auto _getAllNodes(std::shared_ptr<Node<Transform3D>> node) -> KBVector<std::shared_ptr<Node<Transform3D>>> {
-    auto v = KBVector<std::shared_ptr<Node<Transform3D>>>();
+  auto _getAllNodes(std::shared_ptr<Node> node) -> KBVector<std::shared_ptr<Node>> {
+    auto v = KBVector<std::shared_ptr<Node>>();
     v += node;
     auto children = node->children().values();
     children.foreach([&](auto child) {

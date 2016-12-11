@@ -15,14 +15,15 @@
 #include "random/StdLibRandom.hpp"
 #include "minebombers/data/GunParameters.hpp"
 #include "minebombers/util/NodeFactory.hpp"
+#include "scene/attachment/PhysicsAttachment.hpp"
+
 
 #include <glm/vec2.hpp>
 #include <glm/gtx/rotate_vector.hpp>
 
-class PlayerBehaviour : public Behavior<Transform3D> {
+class PlayerBehaviour : public Behavior {
 public:
-  PlayerBehaviour(Node<Transform3D>* node, const std::string& cameraAddress) :
-      _cameraAddress(cameraAddress) {
+  PlayerBehaviour(Node* node) {
     node->addEventReactor([&](GameInputEvent event) {
       auto action = event.action();
       auto isPressed = event.isPressed();
@@ -60,7 +61,7 @@ public:
 
   const float PI = 3.1415927;
 
-  auto update(float delta, Node<Transform3D>& node) -> void override {
+  auto update(float delta, Node& node) -> void override {
     if (_newGun.isDefined()) {
       node.addAttachment(std::make_shared<GunAttachment>(_newGun.get()));
       _newGun = Option<std::shared_ptr<GunParameters>>();
@@ -88,12 +89,7 @@ public:
       );
     });
 
-    auto pos = node.position().xy();
-
-    Services::messagePublisher()->sendMessage(Message(
-      "gameScene:" + _cameraAddress,
-      std::make_shared<PlayerLocationEvent>(pos)
-    ));
+    auto pos = glm::vec2(node.position());
 
     glm::vec2 fireDirection;
     _fireDelay -= delta;
@@ -108,9 +104,7 @@ public:
     auto shoot = fireDirection.x != 0 || fireDirection.y != 0;
 
     if (shoot && _fireDelay <= 0) {
-      // auto gun_att = node.get<GunAttachment>().get();
       auto gunParams = node.get<GunAttachment>().get().parameters();
-      // auto gun = gun_att.parameters().get();
 
       _fireDelay = 1.0f / gunParams->fireRate;
       auto random = Services::random();
@@ -118,16 +112,13 @@ public:
         auto angle = (random->nextFloat() - 0.5f) * PI ;
         auto spreadFactor = gunParams->accuracy;
         auto rotatedDirection = glm::rotate(fireDirection, angle * spreadFactor);
-        // fireDirection.x += (xVar * 2 * spreadFactor) - spreadFactor;
-        // fireDirection.y += (yVar * 2 * spreadFactor) - spreadFactor;
         _bulletsShot++;
 
-        std::shared_ptr<Node<Transform3D>> bulletNode;
+        std::shared_ptr<Node> bulletNode;
         std::shared_ptr<b2BodyDef> bodyDef;
         std::shared_ptr<b2FixtureDef> fixtureDef;
 
         std::tie(bulletNode, bodyDef, fixtureDef) = NodeFactory::createBullet(gunParams);
-        // fixtureDef->filter.groupIndex = -1;
         bodyDef->position.Set(
           pos.x + fireDirection.x,
           pos.y + fireDirection.y
@@ -151,7 +142,7 @@ public:
     }
 
     if (throwBomb) {
-      std::shared_ptr<Node<Transform3D>> bombNode;
+      std::shared_ptr<Node> bombNode;
       std::shared_ptr<b2BodyDef> bodyDef;
       std::shared_ptr<b2FixtureDef> fixtureDef;
 
@@ -167,15 +158,13 @@ public:
       ));
     }
 
-    if(takeDamage) {
+    if (takeDamage) {
       Services::messagePublisher()->sendMessage(Message(
         "audioPlayer:clip/pain.ogg",
         std::make_shared<AudioClipEvent>(CLIP_PLAY)
       ));
       takeDamage = false;
     }
-
-    // Services::messagePublisher()->sendMessage(Message("gameScene:world/fog", std::make_shared<PlayerLocationEvent>(pos)));
 
     throwBomb = false;
   }
@@ -200,8 +189,6 @@ private:
   bool throwBomb = false;
 
   float _playerSpeed = 3.0f;
-
-  std::string _cameraAddress;
 
   Option<std::shared_ptr<GunParameters>> _newGun = Option<std::shared_ptr<GunParameters>>();
 };

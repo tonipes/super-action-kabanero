@@ -118,7 +118,7 @@ private:
 
   auto _isWithinWindow(const glm::vec3& nodePosition, const BoundingBox& boundingBox) -> bool;
 
-  auto _renderNode(const std::shared_ptr<Node<Transform3D>> node, const std::shared_ptr<Node<Transform3D>> cameraNode, const Atlas& atlas) -> void {
+  auto _renderNode(const std::shared_ptr<Node> node, const std::shared_ptr<Node> cameraNode, const Atlas& atlas) -> void {
     const auto& boundingBox = node->boundingBox();
 
     const auto& nodePosition = node->position();

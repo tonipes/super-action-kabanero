@@ -9,18 +9,18 @@
 class SceneView {
 public:
   SceneView(
-      std::shared_ptr<Node<Transform3D>> rootNode,
-      std::shared_ptr<Node<Transform3D>> cameraNode,
+      std::shared_ptr<Node> rootNode,
+      std::shared_ptr<Node> cameraNode,
       Viewport viewport) :
     _rootNode(rootNode),
     _cameraNode(cameraNode),
     _viewport(viewport) { }
 
-  auto cameraNode() const -> std::shared_ptr<Node<Transform3D>> {
+  auto cameraNode() const -> std::shared_ptr<Node> {
     return _cameraNode;
   }
 
-  auto rootNode() const -> std::shared_ptr<Node<Transform3D>> {
+  auto rootNode() const -> std::shared_ptr<Node> {
     return _rootNode;
   }
 
@@ -29,7 +29,7 @@ public:
   }
 
 private:
-  std::shared_ptr<Node<Transform3D>> _rootNode;
-  std::shared_ptr<Node<Transform3D>> _cameraNode;
+  std::shared_ptr<Node> _rootNode;
+  std::shared_ptr<Node> _cameraNode;
   Viewport _viewport;
 };

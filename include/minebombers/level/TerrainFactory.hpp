@@ -1,11 +1,12 @@
 #pragma once
 
-#include "scene/3D/Node3D.hpp"
+#include "scene/Node.hpp"
 #include "scene/attachment/SpriteAttachment.hpp"
 #include "service/Services.hpp"
 #include "minebombers/level/Tile.hpp"
 #include "minebombers/level/TerrainProperty.hpp"
 #include "minebombers/level/TileMap.hpp"
+#include <Box2D/Box2D.h>
 
 class TerrainFactory {
 public:
@@ -13,7 +14,7 @@ public:
       TileType tileType,
       std::string name,
       b2World& world,
-      std::shared_ptr<TileMap>& map) -> std::shared_ptr<Node<Transform3D>>;
+      std::shared_ptr<TileMap>& map) -> std::shared_ptr<Node>;
 
   static auto getRandomSprite(
       std::string baseName,
