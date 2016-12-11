@@ -16,10 +16,12 @@
 #include "minebombers/data/GunParameters.hpp"
 #include "minebombers/util/NodeFactory.hpp"
 #include "scene/attachment/PhysicsAttachment.hpp"
-
+#include <cmath>
 
 #include <glm/vec2.hpp>
 #include <glm/gtx/rotate_vector.hpp>
+#include <glm/gtc/quaternion.hpp>
+
 
 class PlayerBehaviour : public Behavior {
 public:
@@ -79,6 +81,12 @@ public:
     if (moveDirection.x != 0 && moveDirection.y != 0) {
       moveDirection = glm::normalize(moveDirection);
     }
+
+    if (!(moveDirection.x == 0 && moveDirection.y == 0)) {
+      auto rotationAngle = std::atan2(moveDirection.y, moveDirection.x);
+      node.setLocalRotation(glm::angleAxis(rotationAngle, glm::vec3(0, 0, -1)));
+    }
+
 
     const auto& physAttachment = node.get<PhysicsAttachment>();
     physAttachment.foreach([&](auto phys) {
