@@ -13,6 +13,7 @@
 #include "minebombers/behaviors/TerrainBehavior.hpp"
 #include "minebombers/behaviors/PlayerBehaviour.hpp"
 #include "minebombers/attachments/CollisionMaterialAttachment.hpp"
+#include "minebombers/util/NodeFactory.hpp"
 
 #include "minebombers/data/GunParameters.hpp"
 #include "minebombers/behaviors/ItemNodeBehaviour.hpp"
@@ -142,7 +143,7 @@ public:
       auto node = NodeFactory::createRandomEnemy(dfficulty, _rand.nextInt(3));
 
       node->setLocalPosition(glm::vec3(tile.getX(), tile.getY(), 2));
-      auto physCircle = createPhysCircle(tile.getX(), tile.getY());
+      auto physCircle = createPhysCircle(tile.getX(), tile.getY(), COLLISION_CATEGORY_BULLET, COLLISION_MASK_BULLET);
       auto physAttachment = std::make_shared<PhysicsAttachment>(physCircle);
       node->addAttachment(physAttachment);
 
@@ -179,7 +180,7 @@ public:
 
     node->addAttachment(gun);
 
-    auto physCircle = createPhysCircle(tile.getX(), tile.getY());
+    auto physCircle = createPhysCircle(tile.getX(), tile.getY(), COLLISION_CATEGORY_PLAYER, COLLISION_MASK_PLAYER);
     auto physAttachment = std::make_shared<PhysicsAttachment>(physCircle);
 
     node->addAttachment(physAttachment);
@@ -188,16 +189,25 @@ public:
     root->addChild(node);
   }
 
-  auto createPhysSquare(float x, float y) -> b2Body* {
+  auto createPhysSquare(float x, float y, uint categoryBits, uint maskBits) -> b2Body* {
     b2BodyDef bodyDef;
     bodyDef.position.Set(x, y);
     b2Body* body = _world.CreateBody(&bodyDef);
+
     b2PolygonShape box;
     box.SetAsBox(0.5f, 0.5f);
-    body->CreateFixture(&box, 0.0f);
+
+    b2FixtureDef fixtureDef;
+    fixtureDef.shape = &box;
+    fixtureDef.density = 1.0f;
+    fixtureDef.filter.categoryBits = categoryBits;
+    fixtureDef.filter.maskBits = maskBits;
+
+    body->CreateFixture(&fixtureDef);
     return body;
   }
-  auto createPhysCircle(float x, float y) -> b2Body* {
+
+  auto createPhysCircle(float x, float y, uint categoryBits, uint maskBits) -> b2Body* {
     b2BodyDef bodyDef;
     bodyDef.type = b2_dynamicBody;
     bodyDef.position.Set(x, y);
@@ -208,7 +218,9 @@ public:
     circleShape.m_radius = 0.35f;
     b2FixtureDef fixtureDef;
     fixtureDef.shape = &circleShape;
-    // fixtureDef.filter.groupIndex = -1;
+    fixtureDef.filter.categoryBits = categoryBits;
+    fixtureDef.filter.maskBits = maskBits;
+
     fixtureDef.density = 1.0f;
     body->CreateFixture(&fixtureDef);
     return body;
@@ -240,7 +252,7 @@ private:
     // material_att->itemLink = itBeh;
     node->addAttachment(material_att);
 
-    auto physBody = createPhysSquare(0, 0);
+    auto physBody = createPhysSquare(0, 0, COLLISION_CATEGORY_PICKUP, COLLISION_MASK_PICKUP);
 
     auto collisionData = new CollisionData("", material_att);
     physBody->SetUserData(collisionData);

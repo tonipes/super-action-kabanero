@@ -6,6 +6,7 @@
 #include "service/Services.hpp"
 #include "message/event/CollisionEvent.hpp"
 #include "message/event/DestroyNodeEvent.hpp"
+#include "minebombers/util/NodeFactory.hpp"
 
 #include <glm/vec2.hpp>
 
@@ -32,6 +33,8 @@ public:
 
 protected:
   auto updateCommon(float delta, Node<Transform3D>& node) -> void {
+    auto pos = node.position().xy();
+
     const auto& physAttachment = node.get<PhysicsAttachment>();
     physAttachment.foreach([&](auto phys) {
       phys.setVelocity(moveDirection.x, moveDirection.y);
@@ -41,12 +44,20 @@ protected:
       _health -= _dmgToTake;
       _dmgToTake = 0;
       if (_health <= 0.0f) {
+
         Services::messagePublisher()->sendMessage(
           Message(
             "gameScene",
             std::make_shared<DestroyNodeEvent>(node.path())
           )
         );
+        auto meat = NodeFactory::createMeatPieces(pos.x, pos.y, 6);
+        for(auto m : meat){
+          Services::messagePublisher()->sendMessage(Message("gameScene", std::make_shared<CreateNodeEvent>(
+            "world/bullets", std::get<0>(m), std::get<1>(m), std::get<2>(m)
+          )));
+        }
+
       }
     }
   }

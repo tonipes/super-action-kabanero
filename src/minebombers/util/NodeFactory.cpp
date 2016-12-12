@@ -9,6 +9,8 @@
 #include "minebombers/behaviors/BulletOrientationBehavior.hpp"
 #include "minebombers/behaviors/DamageAreaBehavior.hpp"
 #include "minebombers/behaviors/MainMenuBehavior.hpp"
+#include "minebombers/behaviors/BloodstainBehavior.hpp"
+#include "minebombers/behaviors/MeatPieceBehavior.hpp"
 
 #include "scene/attachment/SpriteAttachment.hpp"
 #include "scene/attachment/EffectAttachment.hpp"
@@ -18,6 +20,9 @@
 #include "minebombers/behaviors/EnemyBrainBehavior.hpp"
 #include "minebombers/behaviors/EnemyGnomeBehavior.hpp"
 #include "minebombers/behaviors/EnemyKnightBehavior.hpp"
+
+#include <glm/vec2.hpp>
+#include <glm/gtx/rotate_vector.hpp>
 
 namespace NodeFactory {
   int counter = 0;
@@ -52,6 +57,8 @@ namespace NodeFactory {
     fixtureDef->shape = shape;
     fixtureDef->density = 5;
     fixtureDef->restitution = 0.3;
+    fixtureDef->filter.categoryBits = COLLISION_CATEGORY_ITEM;
+    fixtureDef->filter.maskBits = COLLISION_MASK_ITEM;
 
     node->addBehavior<BombBehaviour>(5.0f);
     node->setAllowSleep(false);
@@ -100,6 +107,9 @@ namespace NodeFactory {
     fixtureDef->shape = shape;
     fixtureDef->isSensor = true;
 
+    fixtureDef->filter.categoryBits = COLLISION_CATEGORY_BULLET;
+    fixtureDef->filter.maskBits = COLLISION_MASK_BULLET;
+
     node->addBehavior<DamageAreaBehavior>(0.1f);
 
     node->addAttachment(material_att);
@@ -138,6 +148,8 @@ namespace NodeFactory {
     fixtureDef->shape = shape;
     fixtureDef->density = 1;
     fixtureDef->restitution = 0;
+    fixtureDef->filter.categoryBits = COLLISION_CATEGORY_BULLET;
+    fixtureDef->filter.maskBits = COLLISION_MASK_BULLET;
 
     node->addBehavior<BulletBehavior>(10.0f);
     node->addBehavior<BulletOrientationBehavior>();
@@ -178,8 +190,124 @@ namespace NodeFactory {
     fixtureDef->density = 1;
     fixtureDef->restitution = 0;
 
+    fixtureDef->filter.categoryBits = COLLISION_CATEGORY_BULLET;
+    fixtureDef->filter.maskBits = COLLISION_MASK_BULLET;
+
     node->addBehavior<RocketBehavior>(params->explosionSize, params->damage);
     node->addBehavior<BulletOrientationBehavior>();
+
+    node->addAttachment(material_att);
+    node->addAttachment(sprite_att);
+    node->setAllowSleep(false);
+
+    return std::make_tuple(node, bodyDef, fixtureDef);
+  }
+
+  auto createMeatPieces(int x, int y, int count) ->
+    std::vector<std::tuple<
+      std::shared_ptr<Node<Transform3D>>,
+      std::shared_ptr<b2BodyDef>,
+      std::shared_ptr<b2FixtureDef>>>{
+
+    // const float PI = 3.1415927;
+    const float PI2 = 6.283185307;
+    auto dir = glm::vec2(0,1);
+    auto speed = 2.0f;
+    auto pieces = std::vector<std::tuple<std::shared_ptr<Node<Transform3D>>,std::shared_ptr<b2BodyDef>,std::shared_ptr<b2FixtureDef>>>();
+    float sector = PI2 / count;
+
+    for(auto i = 0; i < count; i++){
+
+      auto rotatedDirection = glm::rotate(dir, sector * i);
+
+      std::shared_ptr<Node<Transform3D>> node;
+      std::shared_ptr<b2BodyDef> bodyDef;
+      std::shared_ptr<b2FixtureDef> fixtureDef;
+
+      std::tie(node, bodyDef, fixtureDef) = NodeFactory::_createMeatPiece();
+
+      bodyDef->position.Set(x, y);
+      bodyDef->linearVelocity.Set(
+        rotatedDirection.x * speed,
+        rotatedDirection.y * speed
+      );
+      pieces.push_back(std::make_tuple(node, bodyDef, fixtureDef));
+
+    }
+
+    return pieces;
+  }
+
+  auto _createMeatPiece() ->
+    std::tuple<
+      std::shared_ptr<Node<Transform3D>>,
+      std::shared_ptr<b2BodyDef>,
+      std::shared_ptr<b2FixtureDef> >{
+
+    auto node = std::make_shared<Node<Transform3D>>("meat_" + std::to_string(getId()));
+
+    auto sprite_att = std::make_shared<SpriteAttachment>("test-effect/blood_puddle_red1");
+    auto material_att = std::make_shared<CollisionMaterialAttachment>();
+
+    material_att->collisionDamage = 0.0f;
+
+    auto bodyDef = std::make_shared<b2BodyDef>();
+    bodyDef->type = b2_dynamicBody;
+    bodyDef->allowSleep = false;
+    bodyDef->fixedRotation = false;
+    bodyDef->linearDamping = 0.0f;
+
+    auto shape = new b2CircleShape;
+    shape->m_p.Set(0, 0);
+    shape->m_radius = 0.2f;
+
+    auto fixtureDef = std::make_shared<b2FixtureDef>();
+    fixtureDef->shape = shape;
+    fixtureDef->density = 0.5;
+    fixtureDef->filter.categoryBits = COLLISION_CATEGORY_DECAL;
+    fixtureDef->filter.maskBits = COLLISION_MASK_DECAL;
+    // fixtureDef->isSensor = true;
+
+    node->addBehavior<MeatPieceBehavior>(2.0f);
+
+    node->addAttachment(material_att);
+    node->addAttachment(sprite_att);
+    node->setAllowSleep(false);
+
+    return std::make_tuple(node, bodyDef, fixtureDef);
+  }
+
+  auto createBlood() ->
+    std::tuple<
+      std::shared_ptr<Node<Transform3D>>,
+      std::shared_ptr<b2BodyDef>,
+      std::shared_ptr<b2FixtureDef> >{
+
+    auto node = std::make_shared<Node<Transform3D>>("blood_" + std::to_string(getId()));
+
+    auto sprite_att = std::make_shared<SpriteAttachment>("test-effect/blood_red25");
+    auto material_att = std::make_shared<CollisionMaterialAttachment>();
+
+    material_att->collisionDamage = 0.0f;
+
+    auto bodyDef = std::make_shared<b2BodyDef>();
+    bodyDef->type = b2_dynamicBody;
+    bodyDef->allowSleep = false;
+    bodyDef->fixedRotation = true;
+    bodyDef->linearDamping = 0.0f;
+
+    auto shape = new b2CircleShape;
+    shape->m_p.Set(0, 0);
+    shape->m_radius = 0.2f;
+
+    auto fixtureDef = std::make_shared<b2FixtureDef>();
+    fixtureDef->shape = shape;
+    fixtureDef->density = 0.5;
+    fixtureDef->isSensor = true;
+    fixtureDef->filter.categoryBits = COLLISION_CATEGORY_DECAL;
+    fixtureDef->filter.maskBits = COLLISION_MASK_DECAL;
+
+    node->addBehavior<BloodstainBehavior>(2.0f);
 
     node->addAttachment(material_att);
     node->addAttachment(sprite_att);

@@ -56,13 +56,13 @@ class ContactListener : public b2ContactListener {
       }
     }
 
-    if(a_data->collisionMaterialAttachment()->force > 0.0f) {
-      ApplyCollisionForce(a_body, b_body, a_data->collisionMaterialAttachment()->force);
-
-    }
-    if(b_data->collisionMaterialAttachment()->force > 0.0f) {
-      ApplyCollisionForce(b_body, a_body, b_data->collisionMaterialAttachment()->force);
-    }
+    // if(a_data->collisionMaterialAttachment()->force > 0.0f) {
+    //   ApplyCollisionForce(a_body, b_body, a_data->collisionMaterialAttachment()->force);
+    //
+    // }
+    // if(b_data->collisionMaterialAttachment()->force > 0.0f) {
+    //   ApplyCollisionForce(b_body, a_body, b_data->collisionMaterialAttachment()->force);
+    // }
   }
 
   void ApplyCollisionForce(b2Body* centerBody, b2Body* otherBody, float force) {

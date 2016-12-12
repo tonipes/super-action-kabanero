@@ -2,6 +2,7 @@
 
 #include <utility>
 #include "minebombers/behaviors/TerrainBehavior.hpp"
+#include "minebombers/util/NodeFactory.hpp"
 
 std::map<TileType, TerrainProperty> TerrainFactory::terrainProperties = {
   { CAVE_WALL, TerrainProperty(8, 100.0f, "tiles/pebble_brown") },
@@ -26,7 +27,7 @@ auto TerrainFactory::generateTerrain(
   const auto sprite = getRandomSprite(spriteBaseName, numVariations);
   node->addAttachment(sprite);
 
-  const auto physicsBody = createPhysSquare(world);
+  const auto physicsBody = createPhysSquare(world, COLLISION_CATEGORY_WALL, COLLISION_MASK_WALL);
   auto physAttachment = std::make_shared<PhysicsAttachment>(physicsBody);
   node->addAttachment(physAttachment);
 
@@ -39,12 +40,20 @@ auto TerrainFactory::generateTerrain(
   return node;
 }
 
-auto TerrainFactory::createPhysSquare(b2World& world) -> b2Body* {
+auto TerrainFactory::createPhysSquare(b2World& world, uint categoryBits, uint maskBits) -> b2Body* {
   b2BodyDef bodyDef;
   b2Body* body = world.CreateBody(&bodyDef);
   b2PolygonShape box;
+
   box.SetAsBox(0.5f, 0.5f);
-  body->CreateFixture(&box, 0.0f);
+  b2FixtureDef fixtureDef;
+  fixtureDef.shape = &box;
+  fixtureDef.density = 1.0f;
+  fixtureDef.filter.categoryBits = categoryBits;
+  fixtureDef.filter.maskBits = maskBits;
+
+
+  body->CreateFixture(&fixtureDef);
   return body;
 }
 
