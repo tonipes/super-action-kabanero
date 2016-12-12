@@ -16,7 +16,8 @@ public:
     bool rocket = false,
     float expSize = 0,
     int shrapnel = 0,
-    int bltSize = 0):
+    int bltSize = 0,
+    std::string name = "Gun"):
   damage(dmg),
   fireRate(fr),
   bulletAmount(ba),
@@ -28,7 +29,8 @@ public:
   fireSound(sound),
   explosionSize(expSize),
   shrapnelCount(shrapnel),
-  bulletSize(bltSize)
+  bulletSize(bltSize),
+  gunName(name)
    {}
 
   float damage;
@@ -43,4 +45,5 @@ public:
   int shrapnelCount;
   float bulletSize;
   std::string fireSound;
+  std::string gunName;
 };

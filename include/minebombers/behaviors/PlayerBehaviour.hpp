@@ -16,6 +16,7 @@
 #include "random/StdLibRandom.hpp"
 #include "minebombers/data/GunParameters.hpp"
 #include "minebombers/util/NodeFactory.hpp"
+#include "minebombers/hud/HudEffect.hpp"
 // #include "minebombers/data/HudParameters.hpp"
 
 #include <glm/vec2.hpp>
@@ -23,8 +24,8 @@
 
 class PlayerBehaviour : public Behavior<Transform3D> {
 public:
-  PlayerBehaviour(Node<Transform3D>* node, const std::string& cameraAddress) :
-      _cameraAddress(cameraAddress) {
+  PlayerBehaviour(Node<Transform3D>* node, const std::string& cameraAddress, int playerId = 1) :
+      _cameraAddress(cameraAddress), _playerId(playerId) {
     node->addEventReactor([&](GameInputEvent event) {
       auto action = event.action();
       auto isPressed = event.isPressed();
@@ -65,6 +66,7 @@ public:
   auto update(float delta, Node<Transform3D>& node) -> void override {
     if (_newGun.isDefined()) {
       node.addAttachment(std::make_shared<GunAttachment>(_newGun.get()));
+      // _gunName = _newGun.get()->gunName;
       _newGun = Option<std::shared_ptr<GunParameters>>();
 
       Services::messagePublisher()->sendMessage(Message(
@@ -178,11 +180,16 @@ public:
       damageToTake = 0.0f;
     }
 
-    // Services::messagePublisher()->sendMessage(Message("gameScene:world/hud/player1hud", std::make_shared<UpdateHudEvent>(
-    //   pos.x, pos.y, hp, "Player 1"
-    // )));
+    auto gunAttachment = node.get<GunAttachment>();
+    std::string gunName = "";
 
-    // Services::messagePublisher()->sendMessage(Message("gameScene:world/fog", std::make_shared<PlayerLocationEvent>(pos)));
+    if(gunAttachment.isDefined()){
+      gunName = gunAttachment.get().parameters()->gunName;
+    }
+
+    Services::messagePublisher()->sendMessage(Message("gameScene:" + _cameraAddress, std::make_shared<UpdateHudEvent>(
+      "Player " + std::to_string(_playerId) + "\nHP: " + std::to_string((int) hp) + "\nGUN: " + gunName + "\n"
+    )));
 
     throwBomb = false;
   }
@@ -210,6 +217,6 @@ private:
   float _playerSpeed = 3.0f;
 
   std::string _cameraAddress;
-
+  int _playerId;
   Option<std::shared_ptr<GunParameters>> _newGun = Option<std::shared_ptr<GunParameters>>();
 };

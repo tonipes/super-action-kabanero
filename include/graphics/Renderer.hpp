@@ -14,7 +14,7 @@
 #include "graphics/Effect.hpp"
 #include "service/Services.hpp"
 #include "minebombers/attachments/VisibilityAttachment.hpp"
-
+#include "minebombers/attachments/HudAttachment.hpp"
 
 /**
  * Renderer class.
@@ -93,10 +93,18 @@ public:
       }
     }
     sprites = std::map<int, std::vector<sf::Sprite>>();
+
     for (auto& effect : effects) {
       _window.draw(*effect.get());
     }
+
     effects = std::vector<std::shared_ptr<Effect>>();
+
+    const auto& hudAttachment = cameraNode->get<HudAttachment>();
+    if (hudAttachment.isDefined()) {
+      auto effect = hudAttachment.get().effect();
+      _window.draw(*effect.get());
+    }
   }
 
 private:

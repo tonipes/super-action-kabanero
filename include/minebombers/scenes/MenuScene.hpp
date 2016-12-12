@@ -44,18 +44,18 @@ public:
     menuNode->setLocalPosition(glm::vec3(0, 0, 100.0f));
     rootNode->addChild(menuNode);
 
-    messagePublisher->sendMessage(
-      Message(
-        "audioPlayer:track/track",
-        std::make_shared<AudioTrackEvent>(TRACK_CHANGE, "resources/audio/music_ride.ogg")
-      )
-    );
-    messagePublisher->sendMessage(
-      Message(
-        "audioPlayer:track/track",
-        std::make_shared<AudioTrackEvent>(TRACK_PLAY)
-      )
-    );
+    // messagePublisher->sendMessage(
+    //   Message(
+    //     "audioPlayer:track/track",
+    //     std::make_shared<AudioTrackEvent>(TRACK_CHANGE, "resources/audio/music_ride.ogg")
+    //   )
+    // );
+    // messagePublisher->sendMessage(
+    //   Message(
+    //     "audioPlayer:track/track",
+    //     std::make_shared<AudioTrackEvent>(TRACK_PLAY)
+    //   )
+    // );
 
     scene->addEventReactor([messagePublisher](GameInputEvent event) {
       auto action = event.action();

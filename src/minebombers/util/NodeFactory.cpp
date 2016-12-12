@@ -2,7 +2,7 @@
 
 #include "minebombers/attachments/CollisionMaterialAttachment.hpp"
 #include "minebombers/behaviors/BombBehaviour.hpp"
-#include "minebombers/hud/HudEffect.hpp"
+// #include "minebombers/hud/HudEffect.hpp"
 #include "minebombers/behaviors/BulletBehaviour.hpp"
 #include "minebombers/behaviors/RocketBehavior.hpp"
 #include "minebombers/behaviors/HudBehavior.hpp"
@@ -49,7 +49,8 @@ namespace NodeFactory {
     fixtureDef->restitution = 0.3;
 
     node->addBehavior<BombBehaviour>(5.0f);
-
+    node->setAllowSleep(false);
+    
     node->addAttachment(sprite_att);
     node->addAttachment(material_att);
 

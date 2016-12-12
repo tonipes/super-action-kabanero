@@ -6,7 +6,11 @@
 #include "minebombers/level/LevelCompiler.hpp"
 #include "minebombers/level/LevelCompiler.hpp"
 #include "minebombers/behaviors/CameraBehavior.hpp"
+#include "minebombers/behaviors/HudBehavior.hpp"
+// #include "minebombers/attachments/HudAttachment.hpp"
 #include "minebombers/events/NewGameEvent.hpp"
+// #include "minebombers/hud/HudEffect.hpp"
+#include "scene/attachment/EffectAttachment.hpp"
 
 class MultiplayerScene {
 public:
@@ -34,29 +38,33 @@ public:
 
     for (auto i = 1; i <= numPlayers; i++) {
       auto id = std::to_string(i);
-      levelCompiler.materializePlayer(tileMap, rootNode, "player" + id, "world/camera" + id);
+      levelCompiler.materializePlayer(tileMap, rootNode, "player" + id, "world/camera" + id, i);
 
       auto cameraNode = std::make_shared<Node<Transform3D>>("camera" + id);
       cameraNode->addBehavior<CameraBehavior>(0.2f);
+
+      cameraNode->addBehavior<HudBehavior>();
+
       auto visibilityAttachment = std::make_shared<VisibilityAttachment>(w, h, tileMap);
       cameraNode->addAttachment(visibilityAttachment);
+      // cameraNode->addAttachment(std::make_shared<HudAttachment>( std::make_shared<HudEffect>(100, "CamTest" + std::to_string(i)) ));
       rootNode->addChild(cameraNode);
 
       cameras.push_back(cameraNode);
     }
 
-    messagePublisher->sendMessage(
-      Message(
-        "audioPlayer:track/track",
-        std::make_shared<AudioTrackEvent>(TRACK_CHANGE, "resources/audio/music_highway.ogg")
-      )
-    );
-    messagePublisher->sendMessage(
-      Message(
-        "audioPlayer:track/track",
-        std::make_shared<AudioTrackEvent>(TRACK_PLAY)
-      )
-    );
+    // messagePublisher->sendMessage(
+    //   Message(
+    //     "audioPlayer:track/track",
+    //     std::make_shared<AudioTrackEvent>(TRACK_CHANGE, "resources/audio/music_highway.ogg")
+    //   )
+    // );
+    // messagePublisher->sendMessage(
+    //   Message(
+    //     "audioPlayer:track/track",
+    //     std::make_shared<AudioTrackEvent>(TRACK_PLAY)
+    //   )
+    // );
 
     if (numPlayers == 1) {
       SceneView sceneView(rootNode, cameras[0], Viewport(0, 0, 1.0, 1.0));

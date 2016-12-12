@@ -5,17 +5,15 @@
 #include "graphics/Effect.hpp"
 #include "service/Services.hpp"
 #include "resource/resource/Font.hpp"
-#include "minebombers/data/HudParameters.hpp"
 
 class HudEffect : public Effect {
 public:
-  HudEffect(int hp, std::string name) : Effect(1.0f), _hp(hp), _name(name) {
-    auto resourceManager = Services::resourceManager();
-    const auto& font = *Services::resourceManager()->getRequired<Font>("resources/font.ttf");
+  HudEffect(std::string str) : Effect(1.0f), _str(str) {
+    const auto& font = Services::resourceManager()->getRequired<Font>("resources/font.ttf");
 
-    text.setString(_name + "\n" + std::to_string(_hp));
+    text.setString(_str);
 
-    text.setFont(font.getFont());
+    text.setFont(font->getFont());
 
     text.setCharacterSize(24);
     text.setColor(sf::Color::White);
@@ -24,11 +22,15 @@ public:
   }
 
   auto draw(sf::RenderTarget &target, sf::RenderStates states) const -> void override {
+    auto viewCenter = target.getView().getCenter();
+    auto viewSize = target.getView().getSize();
+
+    text.setPosition(viewCenter.x - viewSize.x / 2.0f, viewCenter.y - viewSize.y / 2.0f);
+
     target.draw(text, states);
   }
 
-  sf::Text text;
-  int _hp;
-  std::string _name;
+  mutable sf::Text text;
+  std::string _str;
 
 };
