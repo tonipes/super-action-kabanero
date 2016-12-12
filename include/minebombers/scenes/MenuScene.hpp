@@ -18,8 +18,8 @@ public:
 
     auto scene = std::make_shared<GameScene>("gameScene", rootNode);
 
-    auto w = 40;
-    auto h = 28;
+    auto w = 48;
+    auto h = 30;
 
     auto caveGen = CaveGenerator(seed, w, h, 4, 3);
     auto tileMap = caveGen.generate();
@@ -29,7 +29,8 @@ public:
     levelCompiler.materializeLevel(tileMap, rootNode);
 
     auto cameraNode = std::make_shared<Node<Transform3D>>("camera");
-    cameraNode->setLocalPosition(glm::vec3(w/2 + 0.5f, h/2 + 0.5, 0));
+    cameraNode->setLocalPosition(glm::vec3(w/2.0f+2.0f, h/2.0f+1.0f, 0));
+
 
     cameraNode->addBehavior<CameraBehavior>(0.1f);
     auto visibilityAttachment = std::make_shared<VisibilityAttachment>(w, h, tileMap, true);
