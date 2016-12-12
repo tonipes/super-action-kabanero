@@ -4,7 +4,6 @@
 #include "minebombers/events/BulletEvent.hpp"
 #include "minebombers/events/UpdateHudEvent.hpp"
 #include "minebombers/behaviors/BombBehaviour.hpp"
-#include "minebombers/behaviors/EnemyOrbBehavior.hpp"
 #include "message/event/CreateNodeEvent.hpp"
 #include "message/event/GameInputEvent.hpp"
 #include "message/event/AudioClipEvent.hpp"

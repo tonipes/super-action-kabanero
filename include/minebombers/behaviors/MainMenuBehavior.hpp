@@ -17,7 +17,7 @@
 
 class MainMenuBehavior : public Behavior<Transform3D> {
 public:
-  MainMenuBehavior(Node<Transform3D>* node, std::vector<std::string> choices): _choices(choices) {
+  MainMenuBehavior(Node<Transform3D>* node, std::vector<std::string> choices, std::string motd): _motd(motd), _choices(choices) {
     node->addEventReactor([&, node](GameInputEvent event) {
       Services::logger()->debug("Menu input event");
       auto action = event.action();
@@ -42,7 +42,7 @@ public:
       currentChoice = currentChoice >= _choices.size() ? _choices.size() - 1 : currentChoice;
 
       node.addAttachment(std::make_shared<EffectAttachment>(
-        std::make_shared<MainMenuEffect>(_choices, currentChoice)
+        std::make_shared<MainMenuEffect>(_choices, _motd, currentChoice)
       ));
 
       Services::messagePublisher()->sendMessage(Message(
@@ -73,6 +73,7 @@ private:
   bool select = false;
 
   int currentChoice = 0;
+  std::string _motd;
 
   std::vector<std::string> _choices;
   bool destroyed = false;

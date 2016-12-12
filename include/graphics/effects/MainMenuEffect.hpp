@@ -7,7 +7,8 @@
 
 class MainMenuEffect : public Effect {
 public:
-  MainMenuEffect(std::vector<std::string> choices, int currentChoise = 0) : Effect(currentChoise * 0.1f), _choices(choices), _currentChoise(currentChoise) {
+  MainMenuEffect(std::vector<std::string> choices, std::string motd, int currentChoise = 0) :
+    Effect(currentChoise * 0.1f), _choices(choices), _currentChoise(currentChoise), _motd(motd) {
     const auto& font = Services::resourceManager()->getRequired<Font>("resources/font.ttf");
     title.setString("Super Action Kabanero");
     title.setFont(font->getFont());
@@ -16,7 +17,7 @@ public:
     title.setOutlineColor(sf::Color::Black);
     title.setOutlineThickness(5);
 
-    subtitle.setString("Tale of dungeons and guns");
+    subtitle.setString(_motd);
     subtitle.setFont(font->getFont());
     subtitle.setCharacterSize(32);
     subtitle.setOutlineColor(sf::Color::Black);
@@ -74,7 +75,7 @@ private:
   // }
 
   int _currentChoise;
-
+  std::string _motd;
   mutable sf::Text title;
   mutable sf::Text subtitle;
   mutable std::vector<std::string> _choices;

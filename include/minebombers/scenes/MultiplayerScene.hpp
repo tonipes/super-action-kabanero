@@ -22,6 +22,8 @@ public:
 
     auto w = 64;
     auto h = 64;
+    auto difficulty = 0.5f;
+    auto enemyCount = w * h * 0.03f * difficulty;
 
     auto caveGen = CaveGenerator(seed, w, h, 4, 3);
     auto tileMap = caveGen.generate();
@@ -29,6 +31,7 @@ public:
 
     auto levelCompiler = LevelCompiler(*random, scene->physWorld());
     levelCompiler.materializeLevel(tileMap, rootNode);
+    levelCompiler.materializeEnemies(tileMap, rootNode, enemyCount, difficulty);
 
     auto bulletBag = std::make_shared<Node<Transform3D>>("bullets");
     bulletBag->setLocalPosition(glm::vec3(0, 0, 0));

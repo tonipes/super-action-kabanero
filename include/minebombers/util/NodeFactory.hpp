@@ -42,4 +42,6 @@ namespace NodeFactory {
 
   auto createMainMenu() -> std::shared_ptr<Node<Transform3D>>;
 
+  auto createRandomEnemy(float difficulty, int rand) -> std::shared_ptr<Node<Transform3D>> ;
+
 };

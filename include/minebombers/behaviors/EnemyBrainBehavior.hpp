@@ -11,24 +11,29 @@
 
 #include <iostream>
 
-class EnemyOrbBehavior : public Behavior<Transform3D> {
+class EnemyBrainBehavior : public Behavior<Transform3D> {
 public:
-  EnemyOrbBehavior(Node<Transform3D>* node){
-    moveDirection.x = 2.0f;
+  EnemyBrainBehavior(Node<Transform3D>* node, float speed) : _speed(speed){
+    moveDirection.x = _speed;
 
     node->addEventReactor([&](CollisionEvent event) {
-
-      if(event.collisionMaterialAttachment()->staticMaterial){
+      // if(event.collisionMaterialAttachment()->staticMaterial){
         turn = true;
-      }
+      // }
     });
   }
 
   auto update(float delta, Node<Transform3D>& node) -> void override {
+    // Services::logger()->debug("enemy update " + std::to_string(moveDirection.x) + ", " + std::to_string(moveDirection.y));
 
     if(turn) {
+      const auto& physAttachment = node.get<PhysicsAttachment>();
+      physAttachment.foreach([&](auto phys) {
+        phys.setPosition(phys.position().x + -0.01f * moveDirection.x, phys.position().y + -0.01f * moveDirection.y);
+      });
 
       if(moveDirection.x != 0){
+
         moveDirection.y -= moveDirection.x;
         moveDirection.x = 0;
       }
@@ -41,12 +46,13 @@ public:
 
     const auto& physAttachment = node.get<PhysicsAttachment>();
     physAttachment.foreach([&](auto phys) {
+
       phys.setVelocity(moveDirection.x, moveDirection.y);
     });
   }
 
 private:
   glm::vec2 moveDirection;
-  float speed = 2.0f;
+  float _speed;
   bool turn = false;
 };

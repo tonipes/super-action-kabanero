@@ -8,11 +8,11 @@
 #include "minebombers/behaviors/CameraBehavior.hpp"
 #include "minebombers/events/NewGameEvent.hpp"
 #include "minebombers/util/NodeFactory.hpp"
+#include "graphics/effects/MainMenuEffect.hpp"
 
 class MenuScene {
 public:
   static auto createScene(int seed) -> std::shared_ptr<GameScene> {
-
     const auto& messagePublisher = Services::messagePublisher();
     auto rootNode = std::make_shared<Node<Transform3D>>("world");
 
@@ -20,6 +20,8 @@ public:
 
     auto w = 48;
     auto h = 30;
+    auto difficulty = 0.5f;
+    auto enemyCount = w * h * 0.03f * difficulty;
 
     auto caveGen = CaveGenerator(seed, w, h, 4, 3);
     auto tileMap = caveGen.generate();
@@ -27,10 +29,14 @@ public:
 
     auto levelCompiler = LevelCompiler(*random, scene->physWorld());
     levelCompiler.materializeLevel(tileMap, rootNode);
+    levelCompiler.materializeEnemies(tileMap, rootNode, enemyCount, difficulty);
 
     auto cameraNode = std::make_shared<Node<Transform3D>>("camera");
     cameraNode->setLocalPosition(glm::vec3(w/2.0f+2.0f, h/2.0f+1.0f, 0));
 
+    auto bulletBag = std::make_shared<Node<Transform3D>>("bullets");
+    bulletBag->setLocalPosition(glm::vec3(0, 0, 0));
+    rootNode->addChild(bulletBag);
 
     cameraNode->addBehavior<CameraBehavior>(0.1f);
     auto visibilityAttachment = std::make_shared<VisibilityAttachment>(w, h, tileMap, true);

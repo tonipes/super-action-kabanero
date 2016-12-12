@@ -23,7 +23,7 @@ public:
    _map(map) {
 
     node->addEventReactor([&, node](CollisionEvent event) {
-      if (event.collisionMaterialAttachment()->collisionDamage > 0.0f) {
+      if (event.collisionMaterialAttachment()->collisionDamage > 0.0f || !event.collisionMaterialAttachment()->isEnemy) {
         const auto damage = event.collisionMaterialAttachment()->collisionDamage;
         _dmgToTake += damage;
         node->wakeUp();
