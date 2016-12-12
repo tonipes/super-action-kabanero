@@ -6,27 +6,22 @@
 #include "service/Services.hpp"
 #include "message/event/CollisionEvent.hpp"
 #include "message/event/DestroyNodeEvent.hpp"
+#include "minebombers/behaviors/EnemyBehavior.hpp"
 
 #include <glm/vec2.hpp>
 
 #include <iostream>
 
-class EnemyBrainBehavior : public Behavior<Transform3D> {
+class EnemyBrainBehavior : public EnemyBehavior {
 public:
-  EnemyBrainBehavior(Node<Transform3D>* node, float speed) : _speed(speed){
-    moveDirection.x = _speed;
-
-    node->addEventReactor([&](CollisionEvent event) {
-      // if(event.collisionMaterialAttachment()->staticMaterial){
-        turn = true;
-      // }
-    });
+  EnemyBrainBehavior(Node<Transform3D>* node, float difficulty) : EnemyBehavior(node, difficulty) {
+    moveDirection.x = 2.0f * difficulty;
+    _health = 20.0f + 50.0f * difficulty;
   }
 
   auto update(float delta, Node<Transform3D>& node) -> void override {
-    // Services::logger()->debug("enemy update " + std::to_string(moveDirection.x) + ", " + std::to_string(moveDirection.y));
 
-    if(turn) {
+    if(_collided) {
       const auto& physAttachment = node.get<PhysicsAttachment>();
       physAttachment.foreach([&](auto phys) {
         phys.setPosition(phys.position().x + -0.01f * moveDirection.x, phys.position().y + -0.01f * moveDirection.y);
@@ -41,18 +36,10 @@ public:
         moveDirection.x = moveDirection.y;
         moveDirection.y = 0;
       }
-      turn = false;
+      _collided = false;
     }
 
-    const auto& physAttachment = node.get<PhysicsAttachment>();
-    physAttachment.foreach([&](auto phys) {
+    updateCommon(delta, node);
 
-      phys.setVelocity(moveDirection.x, moveDirection.y);
-    });
   }
-
-private:
-  glm::vec2 moveDirection;
-  float _speed;
-  bool turn = false;
 };

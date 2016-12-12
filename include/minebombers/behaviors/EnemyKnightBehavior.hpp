@@ -6,28 +6,24 @@
 #include "service/Services.hpp"
 #include "message/event/CollisionEvent.hpp"
 #include "message/event/DestroyNodeEvent.hpp"
+#include "minebombers/behaviors/EnemyBehavior.hpp"
 
 #include <glm/vec2.hpp>
 
 #include <iostream>
 
-class EnemyKnightBehavior : public Behavior<Transform3D> {
+class EnemyKnightBehavior : public EnemyBehavior {
 public:
-  EnemyKnightBehavior(Node<Transform3D>* node, float speed) : _speed(speed){
-    moveDirection.y = _speed;
-    _shootInterval = 2.0f * speed;
+  EnemyKnightBehavior(Node<Transform3D>* node, float difficulty) : EnemyBehavior(node, difficulty) {
+    moveDirection.x = 2.0f * difficulty;
+    _health = 75.0f + 75.0f * difficulty;
 
-    node->addEventReactor([&](CollisionEvent event) {
-      // if(event.collisionMaterialAttachment()->staticMaterial){
-        turn = true;
-      // }
-    });
+    _shootInterval = 2.0f / difficulty;
+
   }
 
   auto update(float delta, Node<Transform3D>& node) -> void override {
-    // Services::logger()->debug("enemy update " + std::to_string(moveDirection.x) + ", " + std::to_string(moveDirection.y));
-
-    if(turn) {
+    if(_collided) {
       const auto& physAttachment = node.get<PhysicsAttachment>();
       physAttachment.foreach([&](auto phys) {
         phys.setPosition(phys.position().x + -0.01f * moveDirection.x, phys.position().y + -0.01f * moveDirection.y);
@@ -36,7 +32,7 @@ public:
       moveDirection.x = -moveDirection.x;
       moveDirection.y = -moveDirection.y;
 
-      turn = false;
+      _collided = false;
     }
     auto pos = node.position().xy();
 
@@ -66,20 +62,12 @@ public:
 
       _shootTimer = 0.0f;
     }
-    const auto& physAttachment = node.get<PhysicsAttachment>();
-    physAttachment.foreach([&](auto phys) {
-
-      phys.setVelocity(moveDirection.x, moveDirection.y);
-    });
 
     _shootTimer += delta;
-
+    updateCommon(delta, node);
   }
 
 private:
-  glm::vec2 moveDirection;
-  float _speed;
   float _shootTimer = 0.0f;
   float _shootInterval = 0.0f;
-  bool turn = false;
 };

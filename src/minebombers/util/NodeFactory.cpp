@@ -234,12 +234,12 @@ namespace NodeFactory {
     if(random == 0) {
       auto sprite_att = std::make_shared<SpriteAttachment>("test-effect/giant_orange_brain");
       node->addAttachment(sprite_att);
-      node->addBehavior<EnemyBrainBehavior>(5.0f * difficulty);
+      node->addBehavior<EnemyBrainBehavior>(difficulty);
 
     } else if(random == 1) {
       auto sprite_att = std::make_shared<SpriteAttachment>("test-effect/boggart");
       node->addAttachment(sprite_att);
-      node->addBehavior<EnemyGnomeBehavior>(3.0f * difficulty);
+      node->addBehavior<EnemyGnomeBehavior>(difficulty);
 
     } else if(random == 2) {
       auto sprite_att = std::make_shared<SpriteAttachment>("test-effect/hell_knight");
@@ -248,7 +248,7 @@ namespace NodeFactory {
       node->addAttachment(gun_att);
       node->addAttachment(sprite_att);
 
-      node->addBehavior<EnemyKnightBehavior>(3.0f * difficulty);
+      node->addBehavior<EnemyKnightBehavior>(difficulty);
 
     }
     return node;
