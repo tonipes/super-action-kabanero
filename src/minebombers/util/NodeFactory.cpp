@@ -203,22 +203,23 @@ namespace NodeFactory {
     return std::make_tuple(node, bodyDef, fixtureDef);
   }
 
-  auto createMeatPieces(int x, int y, int count) ->
+  auto createMeatPieces(glm::vec2 loc, glm::vec2 dir, int count) ->
     std::vector<std::tuple<
       std::shared_ptr<Node<Transform3D>>,
       std::shared_ptr<b2BodyDef>,
       std::shared_ptr<b2FixtureDef>>>{
+    auto random = Services::random();
 
-    // const float PI = 3.1415927;
-    const float PI2 = 6.283185307;
-    auto dir = glm::vec2(0,1);
-    auto speed = 2.0f;
+    const float PI = 3.1415927;
+    float sector = (PI / 3.0f) / count;
+    auto direction = glm::rotate(dir, -sector * count / 2.0f);
+
+
     auto pieces = std::vector<std::tuple<std::shared_ptr<Node<Transform3D>>,std::shared_ptr<b2BodyDef>,std::shared_ptr<b2FixtureDef>>>();
-    float sector = PI2 / count;
 
     for(auto i = 0; i < count; i++){
-
-      auto rotatedDirection = glm::rotate(dir, sector * i);
+      auto speed = 4.0f * random->nextFloat();
+      auto rotatedDirection = glm::rotate(direction, sector * i * random->nextFloat());
 
       std::shared_ptr<Node<Transform3D>> node;
       std::shared_ptr<b2BodyDef> bodyDef;
@@ -226,7 +227,7 @@ namespace NodeFactory {
 
       std::tie(node, bodyDef, fixtureDef) = NodeFactory::_createMeatPiece();
 
-      bodyDef->position.Set(x, y);
+      bodyDef->position.Set(loc.x, loc.y);
       bodyDef->linearVelocity.Set(
         rotatedDirection.x * speed,
         rotatedDirection.y * speed
@@ -255,7 +256,7 @@ namespace NodeFactory {
     bodyDef->type = b2_dynamicBody;
     bodyDef->allowSleep = false;
     bodyDef->fixedRotation = false;
-    bodyDef->linearDamping = 0.0f;
+    bodyDef->linearDamping = 0.75f;
 
     auto shape = new b2CircleShape;
     shape->m_p.Set(0, 0);
@@ -277,7 +278,7 @@ namespace NodeFactory {
     return std::make_tuple(node, bodyDef, fixtureDef);
   }
 
-  auto createBlood() ->
+  auto createBloodstain() ->
     std::tuple<
       std::shared_ptr<Node<Transform3D>>,
       std::shared_ptr<b2BodyDef>,
@@ -307,7 +308,7 @@ namespace NodeFactory {
     fixtureDef->filter.categoryBits = COLLISION_CATEGORY_DECAL;
     fixtureDef->filter.maskBits = COLLISION_MASK_DECAL;
 
-    node->addBehavior<BloodstainBehavior>(2.0f);
+    node->addBehavior<BloodstainBehavior>(0.5f);
 
     node->addAttachment(material_att);
     node->addAttachment(sprite_att);

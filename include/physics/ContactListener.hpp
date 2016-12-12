@@ -6,6 +6,7 @@
 #include "service/Services.hpp"
 #include "message/event/CollisionEvent.hpp"
 #include "physics/CollisionData.hpp"
+#include <glm/vec2.hpp>
 
 class ContactListener : public b2ContactListener {
   void BeginContact(b2Contact* contact) {
@@ -23,6 +24,9 @@ class ContactListener : public b2ContactListener {
 
     b2Manifold* manifold = contact->GetManifold();
 
+    auto a_to_b = b_body->GetPosition() - a_body->GetPosition();
+    auto b_to_a = a_body->GetPosition() - b_body->GetPosition();
+
     // Cast collision datas
     if (a_userData) {
       a_data = (CollisionData*) a_userData;
@@ -39,7 +43,8 @@ class ContactListener : public b2ContactListener {
             BEGIN,
             b_data->path(),
             b_data->collisionMaterialAttachment(),
-            b_isSensor
+            b_isSensor,
+            glm::vec2(b_to_a.x, b_to_a.y)
           ))
         );
       }
@@ -50,7 +55,8 @@ class ContactListener : public b2ContactListener {
             BEGIN,
             a_data->path(),
             a_data->collisionMaterialAttachment(),
-            a_isSensor
+            a_isSensor,
+            glm::vec2(a_to_b.x, a_to_b.y)
           ))
         );
       }

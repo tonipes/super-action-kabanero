@@ -21,6 +21,7 @@ public:
     node->addEventReactor([&](CollisionEvent event) {
       if(event.collisionMaterialAttachment()->collisionDamage > 0.0f){
         _dmgToTake += event.collisionMaterialAttachment()->collisionDamage;
+        _collisionVec = event.vec();
       }
       _collided = true;
     });
@@ -51,7 +52,9 @@ protected:
             std::make_shared<DestroyNodeEvent>(node.path())
           )
         );
-        auto meat = NodeFactory::createMeatPieces(pos.x, pos.y, 6);
+
+        auto meat = NodeFactory::createMeatPieces(pos, glm::normalize(_collisionVec),  6);
+
         for(auto m : meat){
           Services::messagePublisher()->sendMessage(Message("gameScene", std::make_shared<CreateNodeEvent>(
             "world/bullets", std::get<0>(m), std::get<1>(m), std::get<2>(m)
@@ -67,5 +70,6 @@ protected:
   float _difficulty;
   float _health = 0.0f;
   bool _collided = false;
+  glm::vec2 _collisionVec = glm::vec2(0,0);
 
 };

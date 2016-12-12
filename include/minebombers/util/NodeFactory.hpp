@@ -67,9 +67,15 @@ namespace NodeFactory {
       std::shared_ptr<b2BodyDef>,
       std::shared_ptr<b2FixtureDef> >;
 
-  auto createMeatPieces(int x, int y, int count) ->
+  auto createMeatPieces(glm::vec2 pos, glm::vec2 dir, int count) ->
     std::vector<std::tuple<
       std::shared_ptr<Node<Transform3D>>,
       std::shared_ptr<b2BodyDef>,
       std::shared_ptr<b2FixtureDef>>>;
+
+  auto createBloodstain() ->
+    std::tuple<
+      std::shared_ptr<Node<Transform3D>>,
+      std::shared_ptr<b2BodyDef>,
+      std::shared_ptr<b2FixtureDef> >;
 };
