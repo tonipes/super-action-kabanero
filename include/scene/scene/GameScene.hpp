@@ -34,7 +34,7 @@ public:
       auto physAttachment = std::make_shared<PhysicsAttachment>(body);
       node->addAttachment(physAttachment);
 
-      _toBeAdded += { path, node };
+      _toBeAdded += std::make_tuple(path, node);
     });
   }
   virtual ~GameScene() {}
@@ -137,7 +137,7 @@ private:
     v += node;
     auto children = node->children().values();
     children.foreach([&](auto child) {
-      auto n = _getAllNodes(child);
+      auto n = this->_getAllNodes(child);
       for (auto c : n) {
         v += c;
       }

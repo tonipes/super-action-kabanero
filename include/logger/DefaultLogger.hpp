@@ -12,19 +12,7 @@
  */
 class DefaultLogger: public Logger {
 public:
-  DefaultLogger(): level(DEBUG) {
-    // colors[DEBUG] = "\u001B[32m";
-    // colors[INFO] = "\u001B[34m";
-    // colors[WARN] = "\u001B[33m";
-    // colors[ERROR] = "\u001B[31m";
-    // colors[FATAL] = "\u001B[35m";
-    //
-    // headers[DEBUG] = " DEBUG ";
-    // headers[INFO] = " INFO  ";
-    // headers[WARN] = " WARN  ";
-    // headers[ERROR] = " ERROR ";
-    // headers[FATAL] = " FATAL ";
-  }
+  DefaultLogger(): level(DEBUG) {}
   ~DefaultLogger() {}
 
   auto setLevel(const LogLevel l) -> void { level = l; }
@@ -41,8 +29,6 @@ protected:
   bool enableColor = true;
   std::string colorReset = "\u001B[0m";
 
-  // KBMap<LogLevel, std::string> colors;
-  // KBMap<LogLevel, std::string> headers;
   std::map<LogLevel, std::string> colors {
     {DEBUG, "\u001B[32m"},
     {INFO, "\u001B[34m"},
@@ -50,6 +36,7 @@ protected:
     {ERROR, "\u001B[31m"},
     {FATAL, "\u001B[35m"}
   };
+
   std::map<LogLevel, std::string> headers {
     {DEBUG, " DEBUG "},
     {INFO, " INFO  "},

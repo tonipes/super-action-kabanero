@@ -17,8 +17,8 @@ public:
 
     text.setCharacterSize(24);
     text.setColor(sf::Color::White);
-    text.setOutlineColor(sf::Color::Black);
-    text.setOutlineThickness(2.0f);
+//    text.setOutlineColor(sf::Color::Black);
+//    text.setOutlineThickness(2.0f);
   }
 
   auto draw(sf::RenderTarget &target, sf::RenderStates states) const -> void override {

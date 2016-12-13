@@ -14,14 +14,14 @@ public:
     title.setFont(font->getFont());
     title.setStyle(sf::Text::Bold);
     title.setCharacterSize(72);
-    title.setOutlineColor(sf::Color::Black);
-    title.setOutlineThickness(5);
+//    title.setOutlineColor(sf::Color::Black);
+//    title.setOutlineThickness(5);
 
     subtitle.setString(_motd);
     subtitle.setFont(font->getFont());
     subtitle.setCharacterSize(32);
-    subtitle.setOutlineColor(sf::Color::Black);
-    subtitle.setOutlineThickness(5);
+//    subtitle.setOutlineColor(sf::Color::Black);
+//    subtitle.setOutlineThickness(5);
 
     title.setOrigin(title.getLocalBounds().width * 0.5f, title.getLocalBounds().height * 0.5f);
     for (auto a : _choices){
@@ -29,8 +29,8 @@ public:
       c.setString(a);
       c.setFont(font->getFont());
       c.setCharacterSize(32);
-      c.setOutlineColor(sf::Color::Black);
-      c.setOutlineThickness(5);
+//      c.setOutlineColor(sf::Color::Black);
+//      c.setOutlineThickness(5);
       _choicesText.push_back(c);
     }
   }

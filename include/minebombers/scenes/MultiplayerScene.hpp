@@ -58,18 +58,18 @@ public:
       cameras.push_back(cameraNode);
     }
 
-    // messagePublisher->sendMessage(
-    //   Message(
-    //     "audioPlayer:track/track",
-    //     std::make_shared<AudioTrackEvent>(TRACK_CHANGE, "resources/audio/music_highway.ogg")
-    //   )
-    // );
-    // messagePublisher->sendMessage(
-    //   Message(
-    //     "audioPlayer:track/track",
-    //     std::make_shared<AudioTrackEvent>(TRACK_PLAY)
-    //   )
-    // );
+    messagePublisher->sendMessage(
+      Message(
+        "audioPlayer:track/track",
+        std::make_shared<AudioTrackEvent>(TRACK_CHANGE, "resources/audio/music_highway.ogg")
+      )
+    );
+    messagePublisher->sendMessage(
+      Message(
+        "audioPlayer:track/track",
+        std::make_shared<AudioTrackEvent>(TRACK_PLAY)
+      )
+    );
 
     if (numPlayers == 1) {
       SceneView sceneView(rootNode, cameras[0], Viewport(0, 0, 1.0, 1.0));
