@@ -21,7 +21,7 @@ public:
   ~SyncResourceManager() {}
 
   auto addLoader(std::regex regex, std::shared_ptr<Loader> loader) -> void override {
-    _loaders += { regex, loader };
+    _loaders += std::make_tuple(regex, loader);
   }
 
   auto load(std::string filePath) -> void override {
