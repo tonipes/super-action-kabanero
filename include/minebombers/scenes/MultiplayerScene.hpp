@@ -11,6 +11,7 @@
 #include "minebombers/events/NewGameEvent.hpp"
 // #include "minebombers/hud/HudEffect.hpp"
 #include "scene/attachment/EffectAttachment.hpp"
+#include "minebombers/events/RespawnEvent.hpp"
 
 class MultiplayerScene {
 public:
@@ -41,7 +42,8 @@ public:
 
     for (auto i = 1; i <= numPlayers; i++) {
       auto id = std::to_string(i);
-      levelCompiler.materializePlayer(tileMap, rootNode, "player" + id, "world/camera" + id, i);
+      levelCompiler.materializePlayer(tileMap, rootNode, i);
+      // levelCompiler.materializePlayer(tileMap, rootNode, "player" + id, "world/camera" + id, i);
 
       auto cameraNode = std::make_shared<Node<Transform3D>>("camera" + id);
       cameraNode->addBehavior<CameraBehavior>(0.2f);
@@ -132,6 +134,23 @@ public:
           )
         );
       }
+    });
+
+    scene->addEventReactor([tileMap, random](RespawnEvent event) {
+      auto id = event.getPlayerId();
+      auto lives = event.getLives();
+      
+      auto tile = tileMap->getRandom(PLAYER_SPAWN_POINT, *random);
+
+      std::shared_ptr<Node<Transform3D>> node;
+      std::shared_ptr<b2BodyDef> bodyDef;
+      std::shared_ptr<b2FixtureDef> fixtureDef;
+
+      std::tie(node, bodyDef, fixtureDef) = NodeFactory::createPlayer(id, lives, glm::vec2(tile.getX(), tile.getY()));
+
+      Services::messagePublisher()->sendMessage(Message("gameScene", std::make_shared<CreateNodeEvent>(
+        "world", node, bodyDef, fixtureDef
+      )));
     });
 
     return scene;

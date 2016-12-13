@@ -78,4 +78,22 @@ namespace NodeFactory {
       std::shared_ptr<Node<Transform3D>>,
       std::shared_ptr<b2BodyDef>,
       std::shared_ptr<b2FixtureDef> >;
+
+  auto createPlayer(int playerId, int lives, glm::vec2 loc) ->
+    std::tuple<
+      std::shared_ptr<Node<Transform3D>>,
+      std::shared_ptr<b2BodyDef>,
+      std::shared_ptr<b2FixtureDef> >;
+
+  // auto createFireball() ->
+  //   std::tuple<
+  //     std::shared_ptr<Node<Transform3D>>,
+  //     std::shared_ptr<b2BodyDef>,
+  //     std::shared_ptr<b2FixtureDef> >;
+  //
+  // auto createFireDecal() ->
+  //   std::tuple<
+  //     std::shared_ptr<Node<Transform3D>>,
+  //     std::shared_ptr<b2BodyDef>,
+  //     std::shared_ptr<b2FixtureDef> >;
 };

@@ -3,7 +3,9 @@
 #include "minebombers/events/PlayerLocationEvent.hpp"
 #include "minebombers/events/BulletEvent.hpp"
 #include "minebombers/events/UpdateHudEvent.hpp"
+#include "minebombers/events/RespawnEvent.hpp"
 #include "minebombers/behaviors/BombBehaviour.hpp"
+#include "scene/attachment/SpriteAttachment.hpp"
 #include "message/event/CreateNodeEvent.hpp"
 #include "message/event/GameInputEvent.hpp"
 #include "message/event/AudioClipEvent.hpp"
@@ -23,35 +25,41 @@
 
 class PlayerBehaviour : public Behavior<Transform3D> {
 public:
-  PlayerBehaviour(Node<Transform3D>* node, const std::string& cameraAddress, int playerId = 1) :
-      _cameraAddress(cameraAddress), _playerId(playerId) {
+  PlayerBehaviour(Node<Transform3D>* node, const std::string& cameraAddress, int playerId = 1, int lives = 3) :
+      _cameraAddress(cameraAddress), _playerId(playerId), _lives(lives) {
     node->addEventReactor([&](GameInputEvent event) {
       auto action = event.action();
       auto isPressed = event.isPressed();
-
-      if (action == UP) {
-        moveUp = isPressed;
-      } else if (action == RIGHT) {
-        moveRight = isPressed;
-      } else if (action == DOWN) {
-        moveDown = isPressed;
-      } else if (action == LEFT) {
-        moveLeft = isPressed;
-      } else if (action == FIRE_RIGHT) {
-        fireRight = isPressed;
-      } else if (action == FIRE_DOWN) {
-        fireDown = isPressed;
-      } else if (action == FIRE_LEFT) {
-        fireLeft = isPressed;
-      } else if (action == FIRE_UP) {
-        fireUp = isPressed;
+      if(hp > 0.0f){
+        if (action == UP) {
+          moveUp = isPressed;
+        } else if (action == RIGHT) {
+          moveRight = isPressed;
+        } else if (action == DOWN) {
+          moveDown = isPressed;
+        } else if (action == LEFT) {
+          moveLeft = isPressed;
+        } else if (action == FIRE_RIGHT) {
+          fireRight = isPressed;
+        } else if (action == FIRE_DOWN) {
+          fireDown = isPressed;
+        } else if (action == FIRE_LEFT) {
+          fireLeft = isPressed;
+        } else if (action == FIRE_UP) {
+          fireUp = isPressed;
+        } else if (action == FIRE) {
+          throwBomb = isPressed;
+        }
       } else if (action == FIRE) {
-        throwBomb = isPressed;
+        respawn = isPressed;
       }
+
+
     });
     node->addEventReactor([&](CollisionEvent event) {
       if(event.collisionMaterialAttachment()->collisionDamage > 0.0f){
         damageToTake = event.collisionMaterialAttachment()->collisionDamage;
+        _collisionVec = event.vec();
       }
       else if(event.collisionMaterialAttachment()->gunParameters.isDefined()) {
         Services::logger()->debug("Player got new gun");
@@ -170,13 +178,46 @@ public:
       ));
     }
 
-    if(damageToTake > 0.0f) {
-      Services::messagePublisher()->sendMessage(Message(
-        "audioPlayer:clip/pain.ogg",
-        std::make_shared<AudioClipEvent>(CLIP_PLAY)
-      ));
+    if (damageToTake > 0.0f) {
+      if(hp >= 0.0f) {
+        Services::messagePublisher()->sendMessage(Message(
+          "audioPlayer:clip/pain.ogg",
+          std::make_shared<AudioClipEvent>(CLIP_PLAY)
+        ));
+      }
+
       hp -= damageToTake;
-      damageToTake = 0.0f;
+      damageToTake = 0;
+
+      if (hp <= 0.0f) {
+        moveUp = false;
+        moveRight = false;
+        moveDown = false;
+        moveLeft = false;
+        fireUp = false;
+        fireRight = false;
+        fireDown = false;
+        fireLeft = false;
+
+        node.addAttachment(std::make_shared<SpriteAttachment>("test-effect/blood_red25"));
+
+        auto meat = NodeFactory::createMeatPieces(pos, glm::normalize(_collisionVec),  6);
+
+        for(auto m : meat){
+          Services::messagePublisher()->sendMessage(Message("gameScene", std::make_shared<CreateNodeEvent>(
+            "world/bullets", std::get<0>(m), std::get<1>(m), std::get<2>(m)
+          )));
+        }
+      }
+    }
+
+    if(respawn && _lives > 0) {
+      Services::messagePublisher()->sendMessage(Message("gameScene", std::make_shared<RespawnEvent>(
+        _playerId, _lives-1
+      )));
+      Services::messagePublisher()->sendMessage(Message("gameScene", std::make_shared<DestroyNodeEvent>(
+        node.path()
+      )));
     }
 
     auto gunAttachment = node.get<GunAttachment>();
@@ -186,17 +227,31 @@ public:
       gunName = gunAttachment.get().parameters()->gunName;
     }
 
-    Services::messagePublisher()->sendMessage(Message("gameScene:" + _cameraAddress, std::make_shared<UpdateHudEvent>(
-      "Player " + std::to_string(_playerId) + "\nHP: " + std::to_string((int) hp) + "\nGUN: " + gunName + "\n"
-    )));
+    if(hp > 0.0f && _lives >= 0){
+      Services::messagePublisher()->sendMessage(Message("gameScene:" + _cameraAddress, std::make_shared<UpdateHudEvent>(
+        "Player " + std::to_string(_playerId) + "\nHP: " + std::to_string((int) hp) + "\nLIVES: " + std::to_string(_lives) + "\nGUN: " + gunName + "\n"
+      )));
+    } else if(hp <= 0.0f && _lives > 0) {
+      Services::messagePublisher()->sendMessage(Message("gameScene:" + _cameraAddress, std::make_shared<UpdateHudEvent>(
+        "Player " + std::to_string(_playerId) + "\nPress FIRE to respawn "
+      )));
+    } else {
+      Services::messagePublisher()->sendMessage(Message("gameScene:" + _cameraAddress, std::make_shared<UpdateHudEvent>(
+        "Player " + std::to_string(_playerId) + "\nGAME OVER"
+      )));
+    }
+
 
     throwBomb = false;
+    respawn = false;
   }
 
 private:
   float hp = 100.0f;
+
   int counter = 0;
   float damageToTake = 0.0f;
+
   bool moveUp = false;
   bool moveRight = false;
   bool moveDown = false;
@@ -206,6 +261,10 @@ private:
   bool fireRight = false;
   bool fireDown = false;
   bool fireLeft = false;
+
+  bool respawn = false;
+
+  int _lives;
 
   int _bulletsShot = 0;
 
@@ -217,5 +276,6 @@ private:
 
   std::string _cameraAddress;
   int _playerId;
+  glm::vec2 _collisionVec = glm::vec2(0,0);
   Option<std::shared_ptr<GunParameters>> _newGun = Option<std::shared_ptr<GunParameters>>();
 };

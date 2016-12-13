@@ -1,6 +1,7 @@
 #include "minebombers/util/NodeFactory.hpp"
 
 #include "minebombers/attachments/CollisionMaterialAttachment.hpp"
+#include "minebombers/attachments/GunAttachment.hpp"
 #include "minebombers/behaviors/BombBehaviour.hpp"
 // #include "minebombers/hud/HudEffect.hpp"
 #include "minebombers/behaviors/BulletBehaviour.hpp"
@@ -20,6 +21,8 @@
 #include "minebombers/behaviors/EnemyBrainBehavior.hpp"
 #include "minebombers/behaviors/EnemyGnomeBehavior.hpp"
 #include "minebombers/behaviors/EnemyKnightBehavior.hpp"
+
+#include "minebombers/level/LevelCompiler.hpp"
 
 #include <glm/vec2.hpp>
 #include <glm/gtx/rotate_vector.hpp>
@@ -382,4 +385,65 @@ namespace NodeFactory {
     }
     return node;
   }
+
+  auto createPlayer(int playerId, int lives, glm::vec2 loc) ->
+    std::tuple<
+      std::shared_ptr<Node<Transform3D>>,
+      std::shared_ptr<b2BodyDef>,
+      std::shared_ptr<b2FixtureDef> > {
+
+    auto name = "player" + std::to_string(playerId);
+    auto cameraAddress = "world/camera" + std::to_string(playerId);
+
+    auto node = std::make_shared<Node<Transform3D>>(name);
+    node->setAllowSleep(false);
+    // node->setLocalPosition(glm::vec3(loc.x, loc.y, 2));
+    node->addAttachment(std::make_shared<SpriteAttachment>("tiles/spriggan_druid"));
+
+    auto material_att = std::make_shared<CollisionMaterialAttachment>();
+    material_att->isPlayer = true;
+    node->addAttachment(material_att);
+
+    auto gun = std::make_shared<GunAttachment>(
+      std::make_shared<GunParameters>(150.0f,  2.0f, 1, 0.1f, 10.0f, "tiles/pistol_normal", "test-effect/crystal_spear0", "rocket_launch.ogg", true,  1.0f, 0, 0, "Rocket Launcher")
+    );
+
+    node->addAttachment(gun);
+
+    node->addBehavior<PlayerBehaviour>(cameraAddress, playerId, lives);
+
+    auto bodyDef = std::make_shared<b2BodyDef>();
+    bodyDef->type = b2_dynamicBody;
+    bodyDef->allowSleep = false;
+    bodyDef->position.Set(loc.x, loc.y);
+
+    auto shape = new b2CircleShape;
+    shape->m_p.Set(0, 0);
+    shape->m_radius = 0.35f;
+
+    auto fixtureDef = std::make_shared<b2FixtureDef>();
+    fixtureDef->shape = shape;
+    fixtureDef->density = 1.0f;
+    fixtureDef->filter.categoryBits = COLLISION_CATEGORY_PLAYER;
+    fixtureDef->filter.maskBits = COLLISION_MASK_PLAYER;
+
+    return std::make_tuple(node, bodyDef, fixtureDef);
+
+  }
+
+  // auto createFireball() ->
+  //   std::tuple<
+  //     std::shared_ptr<Node<Transform3D>>,
+  //     std::shared_ptr<b2BodyDef>,
+  //     std::shared_ptr<b2FixtureDef> > {
+  //
+  //     }
+  //
+  // auto createFireDecal() ->
+  //   std::tuple<
+  //     std::shared_ptr<Node<Transform3D>>,
+  //     std::shared_ptr<b2BodyDef>,
+  //     std::shared_ptr<b2FixtureDef> >{
+  //
+  //     }
 }
