@@ -162,7 +162,7 @@ public:
 
   auto rotation() const -> typename T::rotationType {
     return _parent.map([&](const auto& parentNode) {
-      return parentNode.rotation() * localRotation();
+      return parentNode.rotation() * this->localRotation();
     }).getOrElse(localRotation());
   }
 
@@ -174,8 +174,8 @@ public:
 
   auto path() const -> std::string {
     return _parent.map([&](const auto& parentNode) {
-      return parentNode.path() + "/" + name();
-    }).getOrElse(name());
+      return parentNode.path() + "/" + this->name();
+    }).getOrElse(this->name());
   }
 
   auto operator==(Node<T> other) -> bool {

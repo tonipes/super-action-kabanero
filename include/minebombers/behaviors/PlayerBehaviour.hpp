@@ -53,8 +53,6 @@ public:
       } else if (action == FIRE) {
         respawn = isPressed;
       }
-
-
     });
     node->addEventReactor([&](CollisionEvent event) {
       if(event.collisionMaterialAttachment()->collisionDamage > 0.0f){

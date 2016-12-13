@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.5)
 
 # Used with documentation
 set(MAIN_PROJECT_NAME "Kabanero")
@@ -14,7 +14,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 file(GLOB_RECURSE SOURCE_FILES      src/*.cpp include/*.hpp)
-file(GLOB_RECURSE SOURCE_TEST_FILES test/*.cpp)
+# file(GLOB_RECURSE SOURCE_TEST_FILES test/*.cpp)
 file(GLOB_RECURSE RESOURCE_FILES resources/*)
 
 include_directories(/usr/bin/include)
@@ -24,7 +24,7 @@ include_directories(lib/box2d/Box2D)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
 
-add_subdirectory(test)
+# add_subdirectory(test)
 
 set(BOX2D_BUILD_EXAMPLES OFF CACHE BOOL "Build Box2D examples")
 add_subdirectory("lib/box2d/Box2D")
