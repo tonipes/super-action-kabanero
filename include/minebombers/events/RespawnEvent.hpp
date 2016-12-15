@@ -3,6 +3,9 @@
 #include "message/Event.hpp"
 #include <glm/vec2.hpp>
 
+/**
+ * An event used to respawn a player, if possible.
+ */
 class RespawnEvent : public Event {
 public:
   RespawnEvent(int playerId, int livesLeft):

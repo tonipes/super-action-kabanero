@@ -8,6 +8,10 @@ enum BulletAction {
   DESTROY_BULLET,
 };
 
+/**
+ * Event used in handling bullets. When an entity means to fire or destroy a bullet
+ * (such as on collision), it fires this event, with the required parameters.
+ */
 class BulletEvent : public Event {
 public:
   BulletEvent(
