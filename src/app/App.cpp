@@ -26,6 +26,8 @@ App::App(std::shared_ptr<Game> game) : _game(game) {
   auto messagePublisher = std::make_shared<DefaultMessagePublisher>();
   auto random = std::make_shared<StdLibRandom>();
 
+  logger->setLevel(INFO);
+
   Services::provideMessagePublisher(messagePublisher);
   Services::provideResourceManager(resourceManager);
   Services::provideLogger(logger);
