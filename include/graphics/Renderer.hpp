@@ -58,7 +58,9 @@ public:
 
     auto cameraNode  = sceneView.cameraNode();
     auto rootNode = sceneView.rootNode();
-    this->_cameraPosition = cameraNode->position();
+    _cameraPosition = cameraNode->position();
+    _cameraPosition.x = round(_cameraPosition.x * _tilesize) / _tilesize;
+    _cameraPosition.y = round(_cameraPosition.y * _tilesize) / _tilesize;
 
     _viewportSize.x = WINDOW_WIDTH * viewport.w() / _tilesize * 0.5f;
     _viewportSize.y = WINDOW_HEIGHT * viewport.h() / _tilesize * 0.5f;
