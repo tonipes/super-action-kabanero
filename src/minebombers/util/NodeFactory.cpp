@@ -59,7 +59,7 @@ namespace NodeFactory {
     auto fixtureDef = std::make_shared<b2FixtureDef>();
     fixtureDef->shape = shape;
     fixtureDef->density = 5;
-    fixtureDef->restitution = 0.3;
+    fixtureDef->restitution = 0.0;
     fixtureDef->filter.categoryBits = COLLISION_CATEGORY_ITEM;
     fixtureDef->filter.maskBits = COLLISION_MASK_ITEM;
 

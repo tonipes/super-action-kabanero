@@ -176,8 +176,8 @@ public:
         std::tie(bulletNode, bodyDef, fixtureDef) = NodeFactory::createBullet(gunParams);
         // fixtureDef->filter.groupIndex = -1;
         bodyDef->position.Set(
-          pos.x + fireDirection.x,
-          pos.y + fireDirection.y
+          pos.x + fireDirection.x * 0.4f,
+          pos.y + fireDirection.y * 0.4f
         );
         bodyDef->linearVelocity.Set(
           rotatedDirection.x * gunParams->bulletSpeed,
@@ -203,7 +203,7 @@ public:
       std::shared_ptr<b2FixtureDef> fixtureDef;
 
       std::tie(bombNode, bodyDef, fixtureDef) = NodeFactory::createBomb();
-      bodyDef->position.Set(pos.x, pos.y);
+      bodyDef->position.Set(pos.x + _lookDirection.x * 0.5, pos.y + _lookDirection.y * 0.5);
 
       Services::messagePublisher()->sendMessage(
         Message("gameScene",
