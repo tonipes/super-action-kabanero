@@ -14,6 +14,10 @@ public:
   auto spriteId() const -> std::string {
     return _spriteId;
   }
+
+  auto setSpriteId(std::string id) -> void {
+    _spriteId = id;
+  }
 private:
   std::string _spriteId;
 };
