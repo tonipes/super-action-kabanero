@@ -13,8 +13,6 @@
 
 /**
  * Game class.
- * @todo Resizing could also do resizing with message.
- * @todo Could be more generic. (transform)
  */
 class Game: public Updateable, public MessageSubscriber, public EventHandler {
 public:

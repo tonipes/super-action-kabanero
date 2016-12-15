@@ -10,6 +10,10 @@
 #include "minebombers/util/NodeFactory.hpp"
 #include "graphics/effects/MainMenuEffect.hpp"
 
+/**
+ * Main menu scene.
+ * Used to create menu scene.
+ */
 class MenuScene {
 public:
   static auto createScene(int seed) -> std::shared_ptr<GameScene> {

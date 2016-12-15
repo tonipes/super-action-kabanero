@@ -10,6 +10,10 @@
 #include "service/Services.hpp"
 #include "minebombers/events/NewGameEvent.hpp"
 
+/**
+ * InputTranslator class.
+ * Translates SFML events to meaningful game input events.
+ */
 class InputTranslator {
 private:
 

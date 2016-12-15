@@ -2,6 +2,10 @@
 
 #include <string>
 
+/**
+ * Gun parameters.
+ * Contains all values that are needed for gun.
+ */
 class GunParameters {
 public:
   GunParameters(

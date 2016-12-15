@@ -11,6 +11,9 @@
 template <typename T>
 class Node;
 
+/**
+ * Base behavior class.
+ */
 template <typename T>
 class Behavior {
 public:

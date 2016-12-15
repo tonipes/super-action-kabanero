@@ -13,6 +13,10 @@
 #include "scene/attachment/EffectAttachment.hpp"
 #include "minebombers/events/RespawnEvent.hpp"
 
+/**
+ * Multiplayer scene.
+ * Used to create multiplayer game scene.
+ */
 class MultiplayerScene {
 public:
   static auto createScene(int seed, int numPlayers = 1) -> std::shared_ptr<GameScene> {
@@ -139,7 +143,7 @@ public:
     scene->addEventReactor([tileMap, random](RespawnEvent event) {
       auto id = event.getPlayerId();
       auto lives = event.getLives();
-      
+
       auto tile = tileMap->getRandom(PLAYER_SPAWN_POINT, *random);
 
       std::shared_ptr<Node<Transform3D>> node;

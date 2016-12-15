@@ -5,6 +5,10 @@
 #include <Box2D/Box2D.h>
 #include <glm/vec2.hpp>
 
+/**
+ * Physics Attachment.
+ * Holds information about physics body that is attached to the node.
+ */
 class PhysicsAttachment : public NodeAttachment {
 public:
   PhysicsAttachment(b2Body* body) : _body(body) { }

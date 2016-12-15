@@ -27,7 +27,8 @@
 #include "game/Behavior.hpp"
 
 /**
- * Node interface.
+ * Node class.
+ * Main game object.
  */
 template <typename T>
 class Node : public EventHandler, public std::enable_shared_from_this<Node<T>> {

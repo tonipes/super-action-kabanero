@@ -7,6 +7,10 @@
 #include <functional>
 #include <memory>
 
+/**
+ * EventHandler class.
+ * Handles event reactors and forwards events.
+ */
 class EventHandler {
 public:
   virtual auto handleEvent(std::shared_ptr<Event> event) -> void {

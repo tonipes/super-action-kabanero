@@ -3,6 +3,10 @@
 #include "scene/NodeAttachment.hpp"
 #include <string>
 
+/**
+ * Sprite Attachment.
+ * Holds information about sprite that is attached to the node.
+ */
 class SpriteAttachment : public NodeAttachment {
 public:
   SpriteAttachment(std::string spriteId) : _spriteId(spriteId) {}

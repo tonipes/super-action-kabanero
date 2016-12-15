@@ -3,6 +3,10 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 
+/**
+ * Effect class.
+ * Used for graphical effects and other drawing that needs access to SFML RenderTarget.
+ */
 class Effect : public sf::Drawable {
 public:
   Effect(float time): _time(time), _x(0), _y(0) {}

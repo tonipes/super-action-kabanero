@@ -6,6 +6,10 @@
 #include "service/Services.hpp"
 #include "resource/resource/Font.hpp"
 
+/**
+ * Effect that draws hud.
+ * Uses Effect interface to get access to SFML RenderTarget.
+ */
 class HudEffect : public Effect {
 public:
   HudEffect(std::string str) : Effect(1.0f), _str(str) {
