@@ -7,7 +7,7 @@ TerrainBehavior::TerrainBehavior(Node* node, float health, std::shared_ptr<TileM
   node->addEventReactor([&, node](CollisionEvent event) {
     auto material = event.collisionMaterialAttachment();
 
-    if (material->collisionDamage > 0.0f) {
+    if (material->collisionDamage > 0.0f || !material->isEnemy) {
       const auto damage = event.collisionMaterialAttachment()->collisionDamage;
       _dmgToTake += damage;
       node->wakeUp();

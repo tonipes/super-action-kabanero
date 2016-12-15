@@ -8,7 +8,6 @@
 /**
  * SceneGraph class.
  */
-template <typename T>
 class SceneGraph : public Updateable {
 public:
   SceneGraph(std::shared_ptr<Node> rootNode): _root(rootNode) {}

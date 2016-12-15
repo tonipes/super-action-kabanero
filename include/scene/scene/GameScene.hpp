@@ -12,10 +12,10 @@
 /**
  * Scene interface.
  */
-class GameScene : public Scene<Transform3D>, public EventHandler {
+class GameScene : public Scene, public EventHandler {
 public:
   GameScene(std::string name, std::shared_ptr<Node> rootNode) :
-      Scene<Transform3D>(name, rootNode), _physWorld(b2Vec2(0.0f,0.0f)), _phys_elapsed(0.0), _phys_step(0.033) {
+      Scene(name, rootNode), _physWorld(b2Vec2(0.0f,0.0f)), _phys_elapsed(0.0), _phys_step(0.033) {
 
     _physWorld.SetContactListener(&_contactListener);
     this->addEventReactor([&](DestroyNodeEvent event) {
@@ -35,7 +35,7 @@ public:
       auto physAttachment = std::make_shared<PhysicsAttachment>(body);
       node->addAttachment(physAttachment);
 
-      _toBeAdded += { path, node };
+      _toBeAdded += std::make_tuple(path, node);
     });
   }
   virtual ~GameScene() {}
@@ -138,7 +138,7 @@ private:
     v += node;
     auto children = node->children().values();
     children.foreach([&](auto child) {
-      auto n = _getAllNodes(child);
+      auto n = this->_getAllNodes(child);
       for (auto c : n) {
         v += c;
       }

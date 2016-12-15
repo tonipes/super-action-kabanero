@@ -9,15 +9,15 @@
 
 class VisibilityAttachment : public NodeAttachment {
 public:
-  VisibilityAttachment(int width, int height, std::shared_ptr<TileMap> tilemap): _tilemap(tilemap) {
+  VisibilityAttachment(int width, int height, std::shared_ptr<TileMap> tilemap, bool val = false): _tilemap(tilemap) {
     Services::logger()->debug("Visibility create");
 
     for (auto x = 0; x < width; x++) {
       _visited.push_back(std::vector<bool>());
       _visible.push_back(std::vector<bool>());
       for (auto y = 0; y < height; y++) {
-        _visited[x].push_back(false);
-        _visible[x].push_back(false);
+        _visited[x].push_back(val);
+        _visible[x].push_back(val);
       }
     }
   }

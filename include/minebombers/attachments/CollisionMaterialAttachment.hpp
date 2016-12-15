@@ -17,6 +17,7 @@ public:
   bool bulletRebound = false;
   bool staticMaterial = false;
   bool isPlayer = false;
+  bool isEnemy = false;
 
   Option<std::shared_ptr<GunParameters>> gunParameters = Option<std::shared_ptr<GunParameters>>();
 

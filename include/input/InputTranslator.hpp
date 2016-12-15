@@ -8,6 +8,7 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Mouse.hpp>
 #include "service/Services.hpp"
+#include "minebombers/events/NewGameEvent.hpp"
 
 class InputTranslator {
 private:
@@ -22,6 +23,7 @@ private:
     {sf::Keyboard::G,       std::make_tuple(FIRE_LEFT,    "gameScene:world/player1")},
     {sf::Keyboard::H,       std::make_tuple(FIRE_DOWN,    "gameScene:world/player1")},
     {sf::Keyboard::J,       std::make_tuple(FIRE_RIGHT,   "gameScene:world/player1")},
+    {sf::Keyboard::T,       std::make_tuple(FIRE,         "gameScene:world/player1")},
 
     {sf::Keyboard::Up,      std::make_tuple(UP,           "gameScene:world/player2")},
     {sf::Keyboard::Left,    std::make_tuple(LEFT,         "gameScene:world/player2")},
@@ -32,6 +34,8 @@ private:
     {sf::Keyboard::Numpad4, std::make_tuple(FIRE_LEFT,    "gameScene:world/player2")},
     {sf::Keyboard::Numpad5, std::make_tuple(FIRE_DOWN,    "gameScene:world/player2")},
     {sf::Keyboard::Numpad6, std::make_tuple(FIRE_RIGHT,   "gameScene:world/player2")},
+    {sf::Keyboard::Numpad9, std::make_tuple(FIRE,         "gameScene:world/player2")},
+
 
     {sf::Keyboard::Num1,    std::make_tuple(NUM_1,        "gameScene")},
     {sf::Keyboard::Num2,    std::make_tuple(NUM_2,        "gameScene")},
@@ -55,7 +59,14 @@ public:
       Services::messagePublisher()->sendMessage(
         Message(std::get<1>(a), std::make_shared<GameInputEvent>(std::get<0>(a), pressed)
       ));
+    } if(event.key.code == sf::Keyboard::Escape && event.type == sf::Event::KeyPressed){
+      Services::logger()->info("Change scene to main menu");
+      Services::messagePublisher()->sendMessage(Message(
+        "game",
+        std::make_shared<NewGameEvent>(15, 0)
+        )
+      );
     }
   }
-  
+
 };

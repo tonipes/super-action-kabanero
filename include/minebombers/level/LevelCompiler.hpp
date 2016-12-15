@@ -13,6 +13,7 @@
 #include "minebombers/behaviors/TerrainBehavior.hpp"
 #include "minebombers/behaviors/PlayerBehavior.hpp"
 #include "minebombers/attachments/CollisionMaterialAttachment.hpp"
+#include "minebombers/util/NodeFactory.hpp"
 
 #include "minebombers/data/GunParameters.hpp"
 #include "minebombers/behaviors/ItemNodeBehaviour.hpp"
@@ -132,36 +133,61 @@ public:
   auto materializePlayer(
       std::shared_ptr<TileMap> map,
       std::shared_ptr<Node> root,
-      int playerNumber) -> void {
+      int playerId) -> void {
 
     auto tile = map->getRandom(PLAYER_SPAWN_POINT, _rand);
-
-    auto playerId = "player" + std::to_string(playerNumber);
-
-    auto node = Player::create(playerId, _world);
-
-    auto gun = std::make_shared<GunAttachment>(normalGuns[0]);
-    node->addAttachment(gun);
-
-    node->setLocalPosition(glm::vec3(tile.getX(), tile.getY(), node->position().z));
-    const auto& physAttachment = node->get<PhysicsAttachment>();
-    physAttachment.foreach([&](auto phys) {
-      phys.setPosition(tile.getX(), tile.getY());
-    });
-
+    std::shared_ptr<Node> node;
+    std::shared_ptr<b2BodyDef> bodyDef;
+    std::shared_ptr<b2FixtureDef> fixtureDef;
+    std::tie(node, bodyDef, fixtureDef) = NodeFactory::createPlayer(playerId, 3, glm::vec2(tile.getX(), tile.getY()));
+    b2Body* body = _world.CreateBody(bodyDef.get());
+    body->CreateFixture(fixtureDef.get());
+    auto physAttachment = std::make_shared<PhysicsAttachment>(body);
+    node->addAttachment(physAttachment);
     root->addChild(node);
   }
 
-  auto createPhysSquare(float x, float y) -> b2Body* {
+  auto materializeEnemies(
+      std::shared_ptr<TileMap> map,
+      std::shared_ptr<Node> root,
+      int count,
+      float dfficulty) -> void  {
+
+    for(auto i = 0; i < count; i++){
+      auto tileType = OPEN_MAIN;
+      if(_rand.nextInt(1) == 0) tileType = OPEN_SIDE;
+      auto tile = map->getRandom(OPEN_MAIN, _rand);
+      auto node = NodeFactory::createRandomEnemy(dfficulty, _rand.nextInt(3));
+
+      node->setLocalPosition(glm::vec3(tile.getX(), tile.getY(), 2));
+      auto physCircle = createPhysCircle(tile.getX(), tile.getY(), COLLISION_CATEGORY_BULLET, COLLISION_MASK_BULLET);
+      auto physAttachment = std::make_shared<PhysicsAttachment>(physCircle);
+      node->addAttachment(physAttachment);
+
+      root->addChild(node);
+    }
+
+  }
+
+  auto createPhysSquare(float x, float y, uint categoryBits, uint maskBits) -> b2Body* {
     b2BodyDef bodyDef;
     bodyDef.position.Set(x, y);
     b2Body* body = _world.CreateBody(&bodyDef);
+
     b2PolygonShape box;
     box.SetAsBox(0.5f, 0.5f);
-    body->CreateFixture(&box, 0.0f);
+
+    b2FixtureDef fixtureDef;
+    fixtureDef.shape = &box;
+    fixtureDef.density = 1.0f;
+    fixtureDef.filter.categoryBits = categoryBits;
+    fixtureDef.filter.maskBits = maskBits;
+
+    body->CreateFixture(&fixtureDef);
     return body;
   }
-  auto createPhysCircle(float x, float y) -> b2Body* {
+
+  auto createPhysCircle(float x, float y, uint categoryBits, uint maskBits) -> b2Body* {
     b2BodyDef bodyDef;
     bodyDef.type = b2_dynamicBody;
     bodyDef.position.Set(x, y);
@@ -172,7 +198,9 @@ public:
     circleShape.m_radius = 0.35f;
     b2FixtureDef fixtureDef;
     fixtureDef.shape = &circleShape;
-    // fixtureDef.filter.groupIndex = -1;
+    fixtureDef.filter.categoryBits = categoryBits;
+    fixtureDef.filter.maskBits = maskBits;
+
     fixtureDef.density = 1.0f;
     body->CreateFixture(&fixtureDef);
     return body;
@@ -204,7 +232,7 @@ private:
     // material_att->itemLink = itBeh;
     node->addAttachment(material_att);
 
-    auto physBody = createPhysSquare(0, 0);
+    auto physBody = createPhysSquare(0, 0, COLLISION_CATEGORY_PICKUP, COLLISION_MASK_PICKUP);
 
     auto collisionData = new CollisionData("", material_att);
     physBody->SetUserData(collisionData);
@@ -215,18 +243,18 @@ private:
     return node;
   }
 };
-
-KBVector<std::shared_ptr<GunParameters>> LevelCompiler::normalGuns {
-  std::make_shared<GunParameters>(150.0f,  2.0f, 1, 0.1f, 10.0f, "tiles/pistol_normal",   "test-effect/crystal_spear0", "rocket_launch.ogg", true, 1.0f, 0),
-  std::make_shared<GunParameters>(  8.0f,  6.0f, 1, 0.3f, 12.0f, "tiles/rifle_normal",    "test-effect/crystal_spear0", "gunshot.ogg"),
-  std::make_shared<GunParameters>( 10.0f,  1.5f, 3, 0.2f, 10.0f, "tiles/shotgun_normal",  "test-effect/crystal_spear0", "gunshot.ogg"),
-  std::make_shared<GunParameters>( 60.0f,  0.5f, 1, 0.0f, 25.0f, "tiles/sniper_normal",   "test-effect/crystal_spear0", "gunshot.ogg"),
-  std::make_shared<GunParameters>( 60.0f,  0.5f, 1, 0.0f, 25.0f, "tiles/sniper_normal",   "test-effect/crystal_spear0", "gunshot.ogg")
-};
-
-KBVector<std::shared_ptr<GunParameters>> LevelCompiler::artifactGuns {
-  std::make_shared<GunParameters>( 45.0f,  2.0f, 1, 0.05f, 20.0f, "tiles/pistol_artifact",  "test-effect/crystal_spear0", "gunshot.ogg"),
-  std::make_shared<GunParameters>( 20.0f, 10.0f, 1, 0.25f, 20.0f, "tiles/rifle_artifact",   "test-effect/crystal_spear0", "gunshot.ogg"),
-  std::make_shared<GunParameters>( 15.0f,  2.5f, 5, 0.15f, 15.0f, "tiles/shotgun_artifact", "test-effect/crystal_spear0", "gunshot.ogg"),
-  std::make_shared<GunParameters>(140.0f, 0.75f, 1, 0.00f, 45.0f, "tiles/sniper_artifact",  "test-effect/crystal_spear0", "gunshot.ogg")
-};
+//
+// KBVector<std::shared_ptr<GunParameters>> LevelCompiler::normalGuns {
+//   std::make_shared<GunParameters>(150.0f,  2.0f, 1, 0.1f, 10.0f, "tiles/pistol_normal",   "test-effect/crystal_spear0", "rocket_launch.ogg", true,  1.0f, 0, 0, "Rocket Launcher"),
+//   std::make_shared<GunParameters>( 20.0f,  2.0f, 1, 0.1f, 10.0f, "tiles/pistol_normal",   "test-effect/crystal_spear0", "gunshot.ogg",       false, 1.0f, 0, 0, "Pistol"),
+//   std::make_shared<GunParameters>(  8.0f,  6.0f, 1, 0.3f, 12.0f, "tiles/rifle_normal",    "test-effect/crystal_spear0", "gunshot.ogg",       false, 1.0f, 0, 0, "Rifle"),
+//   std::make_shared<GunParameters>( 10.0f,  1.5f, 3, 0.2f, 10.0f, "tiles/shotgun_normal",  "test-effect/crystal_spear0", "gunshot.ogg",       false, 1.0f, 0, 0, "Shotgun"),
+//   std::make_shared<GunParameters>( 60.0f,  0.5f, 1, 0.0f, 25.0f, "tiles/sniper_normal",   "test-effect/crystal_spear0", "gunshot.ogg",       false, 1.0f, 0, 0, "Sniper")
+// };
+//
+// KBVector<std::shared_ptr<GunParameters>> LevelCompiler::artifactGuns {
+//   std::make_shared<GunParameters>( 45.0f,  2.0f, 1, 0.05f, 20.0f, "tiles/pistol_artifact",  "test-effect/crystal_spear0", "gunshot.ogg",     false, 1.0f, 0, 0, "Super Pistol"),
+//   std::make_shared<GunParameters>( 16.0f, 10.0f, 1, 0.25f, 20.0f, "tiles/rifle_artifact",   "test-effect/crystal_spear0", "gunshot.ogg",     false, 1.0f, 0, 0, "Super Rifle"),
+//   std::make_shared<GunParameters>( 15.0f,  2.5f, 5, 0.15f, 15.0f, "tiles/shotgun_artifact", "test-effect/crystal_spear0", "gunshot.ogg",     false, 1.0f, 0, 0, "Super Shotgun"),
+//   std::make_shared<GunParameters>(150.0f, 0.75f, 1, 0.00f, 45.0f, "tiles/sniper_artifact",  "test-effect/crystal_spear0", "gunshot.ogg",     false, 1.0f, 0, 0, "Super Sniper")
+// };

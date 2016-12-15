@@ -23,5 +23,5 @@ public:
 private:
   static std::map<TileType, TerrainProperty> terrainProperties;
 
-  static auto createPhysSquare(b2World& world) -> b2Body*;
+  static auto createPhysSquare(b2World& world, uint categoryBits, uint maskBits) -> b2Body*;
 };

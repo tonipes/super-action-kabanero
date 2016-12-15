@@ -1,3 +1,4 @@
+/*
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide a main()
 
 #define GLM_FORCE_SWIZZLE
@@ -223,3 +224,4 @@ TEST_CASE( "Seq tests", "[seq]" ) {
 //   REQUIRE_THROWS(f());
 //
 // }
+*/

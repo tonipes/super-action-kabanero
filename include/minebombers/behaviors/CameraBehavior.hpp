@@ -28,7 +28,7 @@ public:
     node->setLocalPosition(pos + glm::vec3(moveDirection, 0) * _camSpeed);
 
     const auto& visibilityAttachment = node->get<VisibilityAttachment>();
-    if(visibilityAttachment.isDefined()){
+    if (visibilityAttachment.isDefined()) {
       visibilityAttachment.get().markVisited(round(_target.x), round(_target.y));
     }
   }

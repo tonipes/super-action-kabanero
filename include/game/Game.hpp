@@ -54,17 +54,18 @@ public:
     return v;
   }
 
-  auto addScene(std::shared_ptr<Scene<Transform3D>> scene) -> void {
+  auto addScene(std::shared_ptr<Scene> scene) -> void {
+    // scenes = KBMap<std::string, std::shared_ptr<Scene>>();
     auto name = scene->socket();
     scenes[name] = scene;
     Services::messagePublisher()->addSubscriber(scene);
   }
 
   auto activateScene(std::string name) {
-    activeScene = Option<std::shared_ptr<Scene<Transform3D>>>(scenes[name]);
+    activeScene = Option<std::shared_ptr<Scene>>(scenes[name]);
   }
 
 protected:
-  KBMap<std::string, std::shared_ptr<Scene<Transform3D>>> scenes;
-  Option<std::shared_ptr<Scene<Transform3D>>> activeScene;
+  KBMap<std::string, std::shared_ptr<Scene>> scenes;
+  Option<std::shared_ptr<Scene>> activeScene;
 };

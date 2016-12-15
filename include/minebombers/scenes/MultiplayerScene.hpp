@@ -6,7 +6,10 @@
 #include "minebombers/level/LevelCompiler.hpp"
 #include "minebombers/level/LevelCompiler.hpp"
 #include "minebombers/behaviors/CameraTrackBehavior.hpp"
+#include "minebombers/behaviors/HudBehavior.hpp"
 #include "minebombers/events/NewGameEvent.hpp"
+#include "scene/attachment/EffectAttachment.hpp"
+#include "minebombers/events/RespawnEvent.hpp"
 
 class MultiplayerScene {
 public:
@@ -18,6 +21,8 @@ public:
 
     auto w = 64;
     auto h = 64;
+    auto difficulty = 0.5f;
+    auto enemyCount = w * h * 0.03f * difficulty;
 
     auto caveGen = CaveGenerator(seed, w, h, 4, 3);
     auto tileMap = caveGen.generate();
@@ -25,6 +30,7 @@ public:
 
     auto levelCompiler = LevelCompiler(*random, scene->physWorld());
     levelCompiler.materializeLevel(tileMap, rootNode);
+    levelCompiler.materializeEnemies(tileMap, rootNode, enemyCount, difficulty);
 
     auto bulletBag = std::make_shared<Node>("bullets");
     bulletBag->setLocalPosition(glm::vec3(0, 0, 0));
@@ -39,13 +45,28 @@ public:
       auto cameraNode = std::make_shared<Node>("camera" + id);
       cameraNode->setAllowSleep(false);
       cameraNode->addBehavior<CameraTrackBehavior>("player" + id);
+      cameraNode->addBehavior<HudBehavior>();
+
       auto visibilityAttachment = std::make_shared<VisibilityAttachment>(w, h, tileMap);
       cameraNode->addAttachment(visibilityAttachment);
+      // cameraNode->addAttachment(std::make_shared<HudAttachment>( std::make_shared<HudEffect>(100, "CamTest" + std::to_string(i)) ));
       rootNode->addChild(cameraNode);
 
       cameras.push_back(cameraNode);
     }
 
+    messagePublisher->sendMessage(
+      Message(
+        "audioPlayer:track/track",
+        std::make_shared<AudioTrackEvent>(TRACK_CHANGE, "resources/audio/music_highway.ogg")
+      )
+    );
+    messagePublisher->sendMessage(
+      Message(
+        "audioPlayer:track/track",
+        std::make_shared<AudioTrackEvent>(TRACK_PLAY)
+      )
+    );
 
     if (numPlayers == 1) {
       SceneView sceneView(rootNode, cameras[0], Viewport(0, 0, 1.0, 1.0));
@@ -110,6 +131,23 @@ public:
           )
         );
       }
+    });
+
+    scene->addEventReactor([tileMap, random](RespawnEvent event) {
+      auto id = event.getPlayerId();
+      auto lives = event.getLives();
+
+      auto tile = tileMap->getRandom(PLAYER_SPAWN_POINT, *random);
+
+      std::shared_ptr<Node> node;
+      std::shared_ptr<b2BodyDef> bodyDef;
+      std::shared_ptr<b2FixtureDef> fixtureDef;
+
+      std::tie(node, bodyDef, fixtureDef) = NodeFactory::createPlayer(id, lives, glm::vec2(tile.getX(), tile.getY()));
+
+      Services::messagePublisher()->sendMessage(Message("gameScene", std::make_shared<CreateNodeEvent>(
+        "world", node, bodyDef, fixtureDef
+      )));
     });
 
     return scene;

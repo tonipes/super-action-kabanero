@@ -8,8 +8,12 @@ resources/audio/pain.ogg
 resources/audio/reload.ogg
 resources/audio/rocket_launch.ogg
 resources/audio/set_bomb.ogg
+resources/audio/music_catnip.ogg
+resources/audio/music_highway.ogg
+resources/audio/music_ride.ogg
 resources/test.txt
 resources/atlases/pack.atlas
 resources/atlases/pack.png
 resources/atlases/pack2.png
 resources/atlases/pack3.png
+resources/font.ttf

@@ -9,7 +9,6 @@
 /**
  * Scene interface.
  */
-template <typename T>
 class Scene : public Updateable, public MessageSubscriber {
 public:
   Scene(
@@ -32,5 +31,5 @@ public:
   }
 
 protected:
-  SceneGraph<T> _graph;
+  SceneGraph _graph;
 };

@@ -1,33 +1,41 @@
 #include "minebombers/behaviors/PlayerBehavior.hpp"
+#include "scene/attachment/SpriteAttachment.hpp"
+#include "minebombers/events/RespawnEvent.hpp"
+#include "minebombers/events/UpdateHudEvent.hpp"
 
-PlayerBehavior::PlayerBehavior(Node* node) {
+PlayerBehavior::PlayerBehavior(Node* node, int playerId, int lives) : _playerId(playerId), _lives(lives) {
+  _cameraAddress = "world/camera" + std::to_string(playerId);
   node->addEventReactor([&](GameInputEvent event) {
     auto action = event.action();
     auto isPressed = event.isPressed();
-
-    if (action == UP) {
-      moveUp = isPressed;
-    } else if (action == RIGHT) {
-      moveRight = isPressed;
-    } else if (action == DOWN) {
-      moveDown = isPressed;
-    } else if (action == LEFT) {
-      moveLeft = isPressed;
-    } else if (action == FIRE_RIGHT) {
-      fireRight = isPressed;
-    } else if (action == FIRE_DOWN) {
-      fireDown = isPressed;
-    } else if (action == FIRE_LEFT) {
-      fireLeft = isPressed;
-    } else if (action == FIRE_UP) {
-      fireUp = isPressed;
+    if(hp > 0.0f){
+      if (action == UP) {
+        moveUp = isPressed;
+      } else if (action == RIGHT) {
+        moveRight = isPressed;
+      } else if (action == DOWN) {
+        moveDown = isPressed;
+      } else if (action == LEFT) {
+        moveLeft = isPressed;
+      } else if (action == FIRE_RIGHT) {
+        fireRight = isPressed;
+      } else if (action == FIRE_DOWN) {
+        fireDown = isPressed;
+      } else if (action == FIRE_LEFT) {
+        fireLeft = isPressed;
+      } else if (action == FIRE_UP) {
+        fireUp = isPressed;
+      } else if (action == FIRE) {
+        throwBomb = isPressed;
+      }
     } else if (action == FIRE) {
-      throwBomb = isPressed;
+      respawn = isPressed;
     }
   });
   node->addEventReactor([&](CollisionEvent event) {
     if(event.collisionMaterialAttachment()->collisionDamage > 0.0f){
-      takeDamage = true;
+      damageToTake = event.collisionMaterialAttachment()->collisionDamage;
+      _collisionVec = event.vec();
     }
     else if(event.collisionMaterialAttachment()->gunParameters.isDefined()) {
       Services::logger()->debug("Player got new gun");
@@ -50,6 +58,7 @@ auto PlayerBehavior::update(float delta, std::shared_ptr<Node> node) -> void {
       std::make_shared<AudioClipEvent>(CLIP_PLAY)
     ));
   }
+
   auto moveDirection = glm::vec2(0, 0);
   if (moveUp) moveDirection.y += 1;
   if (moveDown) moveDirection.y -= 1;
@@ -64,7 +73,6 @@ auto PlayerBehavior::update(float delta, std::shared_ptr<Node> node) -> void {
     node->setLocalRotation(glm::angleAxis(rotationAngle, glm::vec3(0, 0, -1)));
   }
 
-
   const auto& physAttachment = node->get<PhysicsAttachment>();
   physAttachment.foreach([&](auto phys) {
     phys.setVelocity(
@@ -72,8 +80,6 @@ auto PlayerBehavior::update(float delta, std::shared_ptr<Node> node) -> void {
       moveDirection.y * _playerSpeed
     );
   });
-
-  // auto pos = glm::vec2(node->position());
 
   glm::vec2 fireDirection;
   _fireDelay -= delta;
@@ -112,14 +118,17 @@ auto PlayerBehavior::update(float delta, std::shared_ptr<Node> node) -> void {
         rotatedDirection.y * gunParams->bulletSpeed
       );
 
-      Services::messagePublisher()->sendMessage(Message("gameScene", std::make_shared<CreateNodeEvent>(
-        "world/bullets", bulletNode, bodyDef, fixtureDef
-      )));
+      Services::messagePublisher()->sendMessage(
+        Message("gameScene",
+          std::make_shared<CreateNodeEvent>("world/bullets",
+            bulletNode, bodyDef, fixtureDef
+          )
+        )
+      );
     }
 
     Services::messagePublisher()->sendMessage(
-      Message(
-        "audioPlayer:clip/" + gunParams->fireSound,
+      Message("audioPlayer:clip/" + gunParams->fireSound,
         std::make_shared<AudioClipEvent>(CLIP_PLAY)
       )
     );
@@ -129,26 +138,95 @@ auto PlayerBehavior::update(float delta, std::shared_ptr<Node> node) -> void {
     std::shared_ptr<Node> bombNode;
     std::shared_ptr<b2BodyDef> bodyDef;
     std::shared_ptr<b2FixtureDef> fixtureDef;
-
     std::tie(bombNode, bodyDef, fixtureDef) = NodeFactory::createBomb();
+
     bodyDef->position.Set(pos.x, pos.y);
 
-    Services::messagePublisher()->sendMessage(Message("gameScene", std::make_shared<CreateNodeEvent>(
-      "world/bullets", bombNode, bodyDef, fixtureDef
-    )));
-    Services::messagePublisher()->sendMessage(Message(
-      "audioPlayer:clip/set_bomb.ogg",
-      std::make_shared<AudioClipEvent>(CLIP_PLAY)
-    ));
+    Services::messagePublisher()->sendMessage(
+      Message("gameScene",
+        std::make_shared<CreateNodeEvent>("world/bullets",
+          bombNode, bodyDef, fixtureDef
+        )
+      )
+    );
+
+    Services::messagePublisher()->sendMessage(
+      Message("audioPlayer:clip/set_bomb.ogg",
+        std::make_shared<AudioClipEvent>(CLIP_PLAY)
+      )
+    );
   }
 
-  if (takeDamage) {
-    Services::messagePublisher()->sendMessage(Message(
-      "audioPlayer:clip/pain.ogg",
-      std::make_shared<AudioClipEvent>(CLIP_PLAY)
-    ));
-    takeDamage = false;
+  if (damageToTake > 0.0f) {
+    if (hp >= 0.0f) {
+      Services::messagePublisher()->sendMessage(
+        Message("audioPlayer:clip/pain.ogg",
+          std::make_shared<AudioClipEvent>(CLIP_PLAY)
+        )
+      );
+    }
+
+    hp -= damageToTake;
+    damageToTake = 0;
+
+    if (hp <= 0.0f) {
+      moveUp = false;
+      moveRight = false;
+      moveDown = false;
+      moveLeft = false;
+      fireUp = false;
+      fireRight = false;
+      fireDown = false;
+      fireLeft = false;
+
+      node->addAttachment(std::make_shared<SpriteAttachment>("test-effect/blood_red25"));
+      auto meat = NodeFactory::createMeatPieces(pos, glm::normalize(_collisionVec), 6);
+      for (auto m : meat) {
+        Services::messagePublisher()->sendMessage(
+          Message("gameScene",
+            std::make_shared<CreateNodeEvent>("world/bullets", std::get<0>(m), std::get<1>(m), std::get<2>(m))
+          )
+        );
+      }
+    }
   }
+  if (respawn && _lives > 0) {
+    Services::messagePublisher()->sendMessage(Message("gameScene", std::make_shared<RespawnEvent>(
+      _playerId, _lives-1
+    )));
+    Services::messagePublisher()->sendMessage(Message("gameScene", std::make_shared<DestroyNodeEvent>(
+      node->path()
+    )));
+  }
+  auto gunAttachment = node->get<GunAttachment>();
+  std::string gunName = "";
+  if (gunAttachment.isDefined()) {
+    gunName = gunAttachment.get().parameters()->gunName;
+  }
+  if (hp > 0.0f && _lives >= 0) {
+    Services::messagePublisher()->sendMessage(
+      Message("gameScene:" + _cameraAddress,
+        std::make_shared<UpdateHudEvent>(
+          "Player " + std::to_string(_playerId) + "\nHP: " + std::to_string((int) hp) + "\nLIVES: " + std::to_string(_lives) + "\nGUN: " + gunName + "\n"
+        )
+      )
+    );
+  } else if (hp <= 0.0f && _lives > 0) {
+    Services::messagePublisher()->sendMessage(
+      Message("gameScene:" + _cameraAddress,
+        std::make_shared<UpdateHudEvent>(
+          "Player " + std::to_string(_playerId) + "\nPress FIRE to respawn "
+        )
+      )
+    );
+  } else {
+    Services::messagePublisher()->sendMessage(Message("gameScene:" + _cameraAddress, std::make_shared<UpdateHudEvent>(
+      "Player " + std::to_string(_playerId) + "\nGAME OVER"
+    )));
+  }
+  throwBomb = false;
+  respawn = false;
 
   throwBomb = false;
+  respawn = false;
 }
