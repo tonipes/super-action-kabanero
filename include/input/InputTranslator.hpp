@@ -22,29 +22,33 @@ private:
     {sf::Keyboard::A,       std::make_tuple(LEFT,         "gameScene:world/player1")},
     {sf::Keyboard::S,       std::make_tuple(DOWN,         "gameScene:world/player1")},
     {sf::Keyboard::D,       std::make_tuple(RIGHT,        "gameScene:world/player1")},
+    {sf::Keyboard::Num1,    std::make_tuple(FIRE_UP,      "gameScene:world/player1")},
+    {sf::Keyboard::Num2,    std::make_tuple(FIRE_LEFT,    "gameScene:world/player1")},
+    {sf::Keyboard::Num3,    std::make_tuple(FIRE,         "gameScene:world/player1")},
 
-    {sf::Keyboard::Y,       std::make_tuple(FIRE_UP,      "gameScene:world/player1")},
-    {sf::Keyboard::G,       std::make_tuple(FIRE_LEFT,    "gameScene:world/player1")},
-    {sf::Keyboard::H,       std::make_tuple(FIRE_DOWN,    "gameScene:world/player1")},
-    {sf::Keyboard::J,       std::make_tuple(FIRE_RIGHT,   "gameScene:world/player1")},
-    {sf::Keyboard::T,       std::make_tuple(FIRE,         "gameScene:world/player1")},
+    {sf::Keyboard::Y,       std::make_tuple(UP,           "gameScene:world/player2")},
+    {sf::Keyboard::G,       std::make_tuple(LEFT,         "gameScene:world/player2")},
+    {sf::Keyboard::H,       std::make_tuple(DOWN,         "gameScene:world/player2")},
+    {sf::Keyboard::J,       std::make_tuple(RIGHT,        "gameScene:world/player2")},
+    {sf::Keyboard::Num5,    std::make_tuple(FIRE_UP,      "gameScene:world/player2")},
+    {sf::Keyboard::Num6,    std::make_tuple(FIRE_LEFT,    "gameScene:world/player2")},
+    {sf::Keyboard::Num7,    std::make_tuple(FIRE,         "gameScene:world/player2")},
 
-    {sf::Keyboard::Up,      std::make_tuple(UP,           "gameScene:world/player2")},
-    {sf::Keyboard::Left,    std::make_tuple(LEFT,         "gameScene:world/player2")},
-    {sf::Keyboard::Down,    std::make_tuple(DOWN,         "gameScene:world/player2")},
-    {sf::Keyboard::Right,   std::make_tuple(RIGHT,        "gameScene:world/player2")},
+    {sf::Keyboard::Up,      std::make_tuple(UP,           "gameScene:world/player3")},
+    {sf::Keyboard::Left,    std::make_tuple(LEFT,         "gameScene:world/player3")},
+    {sf::Keyboard::Down,    std::make_tuple(DOWN,         "gameScene:world/player3")},
+    {sf::Keyboard::Right,   std::make_tuple(RIGHT,        "gameScene:world/player3")},
+    {sf::Keyboard::Delete,  std::make_tuple(FIRE_UP,      "gameScene:world/player3")},
+    {sf::Keyboard::End,     std::make_tuple(FIRE_LEFT,    "gameScene:world/player3")},
+    {sf::Keyboard::PageDown, std::make_tuple(FIRE,       "gameScene:world/player3")},
 
-    {sf::Keyboard::Numpad8, std::make_tuple(FIRE_UP,      "gameScene:world/player2")},
-    {sf::Keyboard::Numpad4, std::make_tuple(FIRE_LEFT,    "gameScene:world/player2")},
-    {sf::Keyboard::Numpad5, std::make_tuple(FIRE_DOWN,    "gameScene:world/player2")},
-    {sf::Keyboard::Numpad6, std::make_tuple(FIRE_RIGHT,   "gameScene:world/player2")},
-    {sf::Keyboard::Numpad9, std::make_tuple(FIRE,         "gameScene:world/player2")},
-
-
-    {sf::Keyboard::Num1,    std::make_tuple(NUM_1,        "gameScene")},
-    {sf::Keyboard::Num2,    std::make_tuple(NUM_2,        "gameScene")},
-    {sf::Keyboard::Num3,    std::make_tuple(NUM_3,        "gameScene")},
-    {sf::Keyboard::Num4,    std::make_tuple(NUM_4,        "gameScene")}
+    {sf::Keyboard::Num5,       std::make_tuple(UP,           "gameScene:world/player4")},
+    {sf::Keyboard::Num1,       std::make_tuple(LEFT,         "gameScene:world/player4")},
+    {sf::Keyboard::Num2,       std::make_tuple(DOWN,         "gameScene:world/player4")},
+    {sf::Keyboard::Num3,       std::make_tuple(RIGHT,        "gameScene:world/player4")},
+    {sf::Keyboard::Num7,    std::make_tuple(FIRE_UP,      "gameScene:world/player4")},
+    {sf::Keyboard::Num8,    std::make_tuple(FIRE_LEFT,    "gameScene:world/player4")},
+    {sf::Keyboard::Num9,    std::make_tuple(FIRE,         "gameScene:world/player4")}
   };
 
 public:
