@@ -44,6 +44,7 @@ public:
         } else if (action == FIRE_DOWN) {
           fireDown = isPressed;
         } else if (action == FIRE_LEFT) {
+          _isStrafing = !isPressed;
           fireLeft = isPressed;
         } else if (action == FIRE_UP) {
           isFiring = isPressed;
@@ -90,9 +91,11 @@ public:
     }
 
     if (!(moveDirection.x == 0 && moveDirection.y == 0)) {
-      auto rotationAngle = std::atan2(moveDirection.y, moveDirection.x);
-      node.setLocalRotation(glm::angleAxis(rotationAngle, glm::vec3(0, 0, -1)));
-      _lookDirection = glm::vec2(moveDirection);
+      if (_isStrafing) {
+        auto rotationAngle = std::atan2(moveDirection.y, moveDirection.x);
+        node.setLocalRotation(glm::angleAxis(rotationAngle, glm::vec3(0, 0, -1)));
+        _lookDirection = glm::vec2(moveDirection);
+      }
     }
 
     const auto& physAttachment = node.get<PhysicsAttachment>();
@@ -266,6 +269,7 @@ private:
   bool fireDown = false;
   bool fireLeft = false;
   bool isFiring = false;
+  bool _isStrafing = false;
 
   bool respawn = false;
 
