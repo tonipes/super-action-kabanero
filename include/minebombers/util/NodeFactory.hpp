@@ -88,6 +88,12 @@ namespace NodeFactory {
       std::shared_ptr<b2BodyDef>,
       std::shared_ptr<b2FixtureDef> >;
 
+  auto createGunCrate(std::shared_ptr<GunParameters> gun, int x, int y) ->
+    std::tuple<
+      std::shared_ptr<Node<Transform3D>>,
+      std::shared_ptr<b2BodyDef>,
+      std::shared_ptr<b2FixtureDef>>;
+
   // auto createFireball() ->
   //   std::tuple<
   //     std::shared_ptr<Node<Transform3D>>,

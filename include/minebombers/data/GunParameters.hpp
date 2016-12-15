@@ -39,6 +39,23 @@ public:
   gunName(name)
    {}
 
+  GunParameters(const GunParameters& params) {
+    damage = params.damage;
+    fireRate = params.fireRate;
+    walkSpeed = params.walkSpeed;
+    bulletAmount = params.bulletAmount;
+    accuracy = params.accuracy;
+    bulletSpeed = params.bulletSpeed;
+    sprite = params.sprite;
+    bulletSprite = params.bulletSprite;
+    isRocketLauncher = params.isRocketLauncher;
+    explosionSize = params.explosionSize;
+    shrapnelCount = params.shrapnelCount;
+    bulletSize = params.bulletSize;
+    fireSound = params.fireSound;
+    gunName = params.gunName;
+  }
+
   float damage;
   float fireRate; // per second
   float walkSpeed;

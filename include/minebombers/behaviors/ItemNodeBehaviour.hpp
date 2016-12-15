@@ -16,8 +16,10 @@
 class ItemNodeBehaviour : public Behavior<Transform3D> {
 public:
   ItemNodeBehaviour(Node<Transform3D>* node) {
+    node->setAllowSleep(false);
     node->addEventReactor([&, node](CollisionEvent event) {
-      if(event.collisionMaterialAttachment()->isPlayer){
+      if(event.collisionMaterialAttachment()->isPlayer && timeToValid <= 0.0f) {
+
         destroy = true;
         node->wakeUp();
       }
@@ -25,6 +27,9 @@ public:
   }
 
   auto update(float delta, Node<Transform3D>& node) -> void override {
+    if (timeToValid > 0.0f) {
+      timeToValid -= delta;
+    }
     if(destroy) {
       Services::logger()->debug("destroy itemnode");
       Services::messagePublisher()->sendMessage(Message("gameScene",std::make_shared<DestroyNodeEvent>(node.path())));
@@ -33,4 +38,5 @@ public:
   }
 private:
   bool destroy = false;
+  float timeToValid = 2.0f;
 };
