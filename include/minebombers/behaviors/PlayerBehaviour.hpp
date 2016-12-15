@@ -72,9 +72,33 @@ public:
 
   auto update(float delta, Node<Transform3D>& node) -> void override {
     if (_newGun.isDefined()) {
+
       node.addAttachment(std::make_shared<GunAttachment>(_newGun.get()));
       // _gunName = _newGun.get()->gunName;
       _newGun = Option<std::shared_ptr<GunParameters>>();
+
+      auto gunParams = node.get<GunAttachment>().get().parameters();
+      auto gunName = gunParams->gunName;
+
+      if (gunName.compare("Shotgun") == 0 ||
+          gunName.compare("Rocket Launcher") == 0 ||
+          gunName.compare("Super Shotgun") == 0) {
+
+        auto spriteAttachment = node.get<SpriteAttachment>();
+        spriteAttachment.get().setSpriteId("player/survivor-idle_shotgun");
+
+      } else if (
+          gunName.compare("Rifle") == 0 ||
+          gunName.compare("Sniper") == 0 ||
+          gunName.compare("Super Rifle") == 0 ||
+          gunName.compare("Super Sniper") == 0) {
+
+        auto spriteAttachment = node.get<SpriteAttachment>();
+        spriteAttachment.get().setSpriteId("player/survivor-idle_rifle");
+      } else {
+        auto spriteAttachment = node.get<SpriteAttachment>();
+        spriteAttachment.get().setSpriteId("player/survivor-idle_handgun");
+      }
 
       Services::messagePublisher()->sendMessage(Message(
         "audioPlayer:clip/reload.ogg",

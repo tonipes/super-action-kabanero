@@ -398,14 +398,14 @@ namespace NodeFactory {
     auto node = std::make_shared<Node<Transform3D>>(name);
     node->setAllowSleep(false);
     // node->setLocalPosition(glm::vec3(loc.x, loc.y, 2));
-    node->addAttachment(std::make_shared<SpriteAttachment>("player/survivor-idle_shotgun"));
+    node->addAttachment(std::make_shared<SpriteAttachment>("player/survivor-idle_handgun"));
 
     auto material_att = std::make_shared<CollisionMaterialAttachment>();
     material_att->isPlayer = true;
     node->addAttachment(material_att);
 
     auto gun = std::make_shared<GunAttachment>(
-      std::make_shared<GunParameters>(150.0f,  2.0f, 1, 0.1f, 10.0f, "tiles/pistol_normal", "test-effect/crystal_spear0", "rocket_launch.ogg", true,  1.0f, 0, 0, "Rocket Launcher")
+      std::make_shared<GunParameters>( 20.0f,  2.0f, 1, 0.1f, 10.0f, "tiles/pistol_normal",   "test-effect/crystal_spear0", "gunshot.ogg",       false, 1.0f, 0, 0, "Pistol")
     );
 
     node->addAttachment(gun);
