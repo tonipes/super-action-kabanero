@@ -46,6 +46,7 @@ public:
         } else if (action == FIRE_LEFT) {
           fireLeft = isPressed;
         } else if (action == FIRE_UP) {
+          isFiring = isPressed;
           fireUp = isPressed;
         } else if (action == FIRE) {
           throwBomb = isPressed;
@@ -91,6 +92,7 @@ public:
     if (!(moveDirection.x == 0 && moveDirection.y == 0)) {
       auto rotationAngle = std::atan2(moveDirection.y, moveDirection.x);
       node.setLocalRotation(glm::angleAxis(rotationAngle, glm::vec3(0, 0, -1)));
+      _lookDirection = glm::vec2(moveDirection);
     }
 
     const auto& physAttachment = node.get<PhysicsAttachment>();
@@ -109,22 +111,18 @@ public:
       std::make_shared<PlayerLocationEvent>(pos)
     ));
 
-    glm::vec2 fireDirection;
+    glm::vec2 fireDirection = _lookDirection;
     _fireDelay -= delta;
 
-    if (fireUp) fireDirection.y += 1;
-    if (fireDown) fireDirection.y -= 1;
-    if (fireRight) fireDirection.x += 1;
-    if (fireLeft) fireDirection.x -= 1;
-    if (fireDirection.x != 0 && fireDirection.y != 0) {
-      fireDirection = glm::normalize(fireDirection);
-    }
+    // if (fireUp) fireDirection.y += 1;
+    // if (fireDown) fireDirection.y -= 1;
+    // if (fireRight) fireDirection.x += 1;
+    // if (fireLeft) fireDirection.x -= 1;
+    // if (fireDirection.x != 0 && fireDirection.y != 0) {
+    //   fireDirection = glm::normalize(fireDirection);
+    // }
 
-
-
-    auto shoot = fireDirection.x != 0 || fireDirection.y != 0;
-
-    if (shoot && _fireDelay <= 0) {
+    if (isFiring && _fireDelay <= 0) {
       // auto gun_att = node.get<GunAttachment>().get();
       auto gunParams = node.get<GunAttachment>().get().parameters();
       // auto gun = gun_att.parameters().get();
@@ -267,6 +265,7 @@ private:
   bool fireRight = false;
   bool fireDown = false;
   bool fireLeft = false;
+  bool isFiring = false;
 
   bool respawn = false;
 
@@ -283,5 +282,6 @@ private:
   std::string _cameraAddress;
   int _playerId;
   glm::vec2 _collisionVec = glm::vec2(0,0);
+  glm::vec2 _lookDirection = glm::vec2(1, 0);
   Option<std::shared_ptr<GunParameters>> _newGun = Option<std::shared_ptr<GunParameters>>();
 };
