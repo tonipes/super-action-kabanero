@@ -30,7 +30,7 @@ public:
     node->addEventReactor([&](GameInputEvent event) {
       auto action = event.action();
       auto isPressed = event.isPressed();
-      if(hp > 0.0f){
+      if (hp > 0.0f){
         if (action == UP) {
           moveUp = isPressed;
         } else if (action == RIGHT) {
@@ -61,7 +61,7 @@ public:
         damageToTake = event.collisionMaterialAttachment()->collisionDamage;
         _collisionVec = event.vec();
       }
-      else if (event.collisionMaterialAttachment()->gunParameters.isDefined()) {
+      else if (event.collisionMaterialAttachment()->gunParameters.isDefined() && _gunPickupDelay <= 0.0f) {
         Services::logger()->debug("Player got new gun");
         _newGun = event.collisionMaterialAttachment()->gunParameters;
       }
@@ -71,7 +71,30 @@ public:
   const float PI = 3.1415927;
 
   auto update(float delta, Node<Transform3D>& node) -> void override {
+    auto pos = node.position().xy();
+    if (_gunPickupDelay > 0.0f) {
+      _gunPickupDelay -= delta;
+    }
     if (_newGun.isDefined()) {
+      std::shared_ptr<Node<Transform3D>> crateNode;
+      std::shared_ptr<b2BodyDef> bodyDef;
+      std::shared_ptr<b2FixtureDef> fixtureDef;
+
+      _gunPickupDelay = 2.0f;
+
+      std::tie(crateNode, bodyDef, fixtureDef) = NodeFactory::createGunCrate(
+        std::make_shared<GunParameters>(
+          *node.get<GunAttachment>().get().parameters()
+        ), round(pos.x), round(pos.y)
+      );
+
+      Services::messagePublisher()->sendMessage(
+        Message("gameScene",
+          std::make_shared<CreateNodeEvent>("world",
+            crateNode, bodyDef, fixtureDef
+          )
+        )
+      );
 
       node.addAttachment(std::make_shared<GunAttachment>(_newGun.get()));
       // _gunName = _newGun.get()->gunName;
@@ -137,8 +160,6 @@ public:
         moveDirection.y * moveSpeed
       );
     });
-
-    auto pos = node.position().xy();
 
     Services::messagePublisher()->sendMessage(Message(
       "gameScene:" + _cameraAddress,
@@ -324,6 +345,7 @@ private:
   float bombTimer = 0.0f;
 
   float _playerSpeed = 3.0f;
+  float _gunPickupDelay = 0.0f;
 
   std::string _cameraAddress;
   int _playerId;

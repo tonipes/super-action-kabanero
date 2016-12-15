@@ -431,6 +431,43 @@ namespace NodeFactory {
 
   }
 
+  auto createGunCrate(std::shared_ptr<GunParameters> gun, int x, int y) -> std::tuple<
+        std::shared_ptr<Node<Transform3D>>,
+        std::shared_ptr<b2BodyDef>,
+        std::shared_ptr<b2FixtureDef> > {
+
+    auto node = std::make_shared<Node<Transform3D>>("item" + std::to_string(x) + "-" + std::to_string(y));
+    node->addAttachment(std::make_shared<SpriteAttachment>("new_tiles/crate"));
+
+    auto itBeh = node->addBehavior<ItemNodeBehaviour>();
+    auto material_att = std::make_shared<CollisionMaterialAttachment>();
+    material_att->gunParameters = Some<std::shared_ptr<GunParameters>>(gun);
+
+    node->addAttachment(material_att);
+
+    node->setLocalPosition(glm::vec3(0, 0, -10));
+
+    auto bodyDef = std::make_shared<b2BodyDef>();
+    bodyDef->position.Set(x, y);
+
+    // b2PolygonShape box;
+    // box.SetAsBox(0.5f, 0.5f);
+
+    auto shape = new b2CircleShape;
+    shape->m_p.Set(0, 0);
+    shape->m_radius = 0.35f;
+
+
+    auto fixtureDef = std::make_shared<b2FixtureDef>();
+    fixtureDef->shape = shape;
+    fixtureDef->density = 1.0f;
+    fixtureDef->filter.categoryBits = COLLISION_CATEGORY_PICKUP;
+    fixtureDef->filter.maskBits = COLLISION_MASK_PICKUP;
+    fixtureDef->isSensor = true;
+
+    return std::make_tuple(node, bodyDef, fixtureDef);
+  }
+
   // auto createFireball() ->
   //   std::tuple<
   //     std::shared_ptr<Node<Transform3D>>,
