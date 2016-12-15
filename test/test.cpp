@@ -1,3 +1,4 @@
+/*
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide a main()
 
 #define GLM_FORCE_SWIZZLE
@@ -11,6 +12,8 @@
 #include "scene/2D/Transform2D.hpp"
 #include "scene/3D/Transform3D.hpp"
 #include "scene/3D/Node3D.hpp"
+#include "resource/loader/TextLoader.hpp"
+#include "service/ResourceManager.hpp"
 #include <glm/vec3.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
@@ -21,6 +24,7 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/constants.hpp>
 #include <tuple>
+#include <regex>
 
 TEST_CASE( "Option tests", "[option]" ) {
   REQUIRE( Some(5).get() == 5 );
@@ -62,6 +66,12 @@ TEST_CASE( "Seq tests", "[seq]" ) {
   REQUIRE( s[3] == 4 );
   REQUIRE( s_copy[3] == 5);
   REQUIRE( s_mapped[0] == "eka_mapped");
+
+  auto tupleTest = KBVector<std::tuple<int, std::string>>();
+  tupleTest += { 0, "zero" };
+
+  REQUIRE( std::get<0>(tupleTest[0]) == 0);
+  REQUIRE( std::get<1>(tupleTest[0]) == "zero");
 }
 
 TEST_CASE( "Map tests", "[map]" ) {
@@ -179,3 +189,38 @@ TEST_CASE( "Node tests", "[node]" ) {
 
   REQUIRE(node->parent().get().position() == glm::vec3(0, 0, 0));
 }
+
+// TEST_CASE( "Resource loading", "[resource]") {
+//   auto loader = std::make_shared<TextLoader>();
+//   auto text = loader->load("resources/test.txt");
+//   REQUIRE(*(std::dynamic_pointer_cast<Text>(text)) == Text("Test string"));
+//
+//   auto resourceManager = ResourceManager();
+//   std::regex text_regex("^.+\\.txt$");
+//   resourceManager.addLoader(text_regex, loader);
+//
+//   resourceManager.load("resources/test.txt");
+//
+//   auto text2 = resourceManager.get<Text>("resources/test.txt");
+//
+//   REQUIRE(text2.isDefined());
+//   REQUIRE(text2.get().str() == "Test string");
+// }
+//
+// TEST_CASE( "Resource loading exception", "[resource]") {
+//   auto loader = std::make_shared<TextLoader>();
+//
+//   auto resourceManager = ResourceManager();
+//   std::regex text_regex("^.+\\.txt$");
+//   resourceManager.addLoader(text_regex, loader);
+//
+//   REQUIRE_THROWS(resourceManager.load("resources/nonexistent.null"));
+//
+//   auto f = [&](){
+//     resourceManager.load("resources/nonexistent.txt");
+//   };
+//
+//   REQUIRE_THROWS(f());
+//
+// }
+*/

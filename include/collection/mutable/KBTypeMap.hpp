@@ -1,6 +1,7 @@
 #pragma once
 
 #include "collection/mutable/Dictionary.hpp"
+#include "exception/EngineException.hpp"
 
 #include <unordered_map>
 #include <type_traits>
@@ -20,6 +21,9 @@ struct EqualTo {
   }
 };
 
+/**
+ * Dictionary with types as the key.
+ */
 template <typename T>
 class KBTypeMap: public Dictionary<std::unordered_map, TypeInfoRef, T, Hasher, EqualTo> {
 public:
@@ -28,9 +32,10 @@ public:
   auto get() const -> Option<T> {
     auto it = this->memory.find(typeid(A));
     if (it != this->memory.end()) {
-      return Some((*it).second);
+      return Option<T>((*it).second);
     } else {
       return Option<T>();
+      throw EngineException("Value: " + std::string(typeid(A).name()) + " not found");
     }
   }
 private:

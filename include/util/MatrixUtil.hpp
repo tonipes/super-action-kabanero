@@ -5,12 +5,13 @@
 #include <glm/vec3.hpp>
 #include <glm/vec2.hpp>
 
-namespace MatrixUtil {
-  auto getTransform(glm::mat4x4 m) -> glm::vec3 {
-    return m[3].xyz;
+class MatrixUtil {
+public:
+  static auto getTransform(glm::mat4x4 m) -> glm::vec3 {
+    return glm::vec3(m[3]);
   }
 
-  auto getTransform(glm::mat3x3 m) -> glm::vec2 {
-    return m[2].xy;
+  static auto getTransform(glm::mat3x3 m) -> glm::vec2 {
+    return glm::vec2(m[2]);
   }
-}
+};

@@ -1,15 +1,9 @@
-[submodule "lib/imgui-sfml"]
-	path = lib/imgui-sfml
-	url = https://github.com/tonipes/imgui-sfml.git
-[submodule "lib/imgui"]
-	path = lib/imgui
-	url = https://github.com/tonipes/imgui.git
-[submodule "lib/sol2"]
-	path = lib/sol2
-	url = https://github.com/ThePhD/sol2.git
 [submodule "lib/catch"]
 	path = lib/catch
 	url = https://github.com/philsquared/Catch.git
 [submodule "lib/glm"]
 	path = lib/glm
 	url = https://github.com/g-truc/glm.git
+[submodule "lib/box2d"]
+	path = lib/box2d
+	url = https://github.com/erincatto/Box2D.git

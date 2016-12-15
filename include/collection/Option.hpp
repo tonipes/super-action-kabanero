@@ -2,33 +2,58 @@
 
 #include <iostream>
 #include <vector>
+#include <memory>
 
+/**
+ * Option class.
+ */
 template <typename T>
 class Option {
 public:
   Option(std::shared_ptr<T> valuePtr) : _isDefined(true), _valueStore(valuePtr) {}
 
-  Option(T value) : _isDefined(true) {
+  Option(const T& value) : _isDefined(true) {
     _valueStore = std::make_shared<T>(value);
   }
 
   Option() {}
 
-  // `if(opt)` equals `if(opt.isDefined)`
   operator bool() const { return isDefined(); }
 
+  /**
+   * Returns true if this contains a value.
+   * @return true if this contains a value otherwise false.
+   */
   auto isDefined() const -> bool {
     return _isDefined;
   }
 
+  /**
+   * Returns true if this doesn't contain a value.
+   * @see isDefined
+   * @return false if value is not contained otherwise true.
+   */
   auto isEmpty() const -> bool {
     return !_isDefined;
   }
 
-  auto get() const -> const T {
-    return *_valueStore;
-  }
+  /**
+   * Returns pointer to contained value.
+   * @return pointer to contained value. Returns nullptr if no value is contained.
+   */
+   auto get() const -> const T& {
+     return *_valueStore;
+   }
 
+   auto get() -> T& {
+     return *_valueStore;
+   }
+
+  /**
+   * Returns pointer to contained value or default value.
+   * @param v the default value.
+   * @return pointer to contained value. Returns default value if no value is contained.
+   */
   auto getOrElse(const T& v) const -> const T& {
     if (isDefined()) {
       return *_valueStore;
@@ -37,13 +62,22 @@ public:
     }
   }
 
+  /**
+   * Applies a function to the contained value.
+   * @param func function to apply to the contained value.
+   */
   template <typename F>
-  auto foreach(F func) const -> void {
+  auto foreach(F&& func) const -> void {
     if (isDefined()) {
       func(*_valueStore);
     }
   }
 
+  /**
+   * Builds a new option by applying a function to the contained value.
+   * @param func function to apply to the contained value.
+   * @return A new option resulting from applying the function func to the element.
+   */
   template <typename F, typename R = typename std::result_of<F&(T)>::type>
   auto map(F func) const -> const Option<R> {
     if (isDefined()) {
@@ -60,7 +94,7 @@ private:
 
 
 template <typename T>
-auto Some(std::shared_ptr<T>& value) -> Option<T> {
+auto Some(std::shared_ptr<T> value) -> Option<T> {
   return Option<T>(value);
 }
 

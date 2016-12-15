@@ -1,0 +1,11 @@
+window_width=800
+window_height=600
+window_name=Super Action Kabanero
+
+update_fps=60
+draw_fps=60
+
+tilesize=32
+force_int_scaling=1
+
+audio_folder=resources/audio/
