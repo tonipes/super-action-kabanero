@@ -1,5 +1,9 @@
 #pragma once
 
+/**
+ * A random service, which can be seeded, and the used to request random floats
+ * and integers.
+ */
 class Random {
 public:
   Random() {}
@@ -9,6 +13,10 @@ public:
   virtual auto nextFloat() -> float = 0;
   virtual auto nextInt(int mod) -> int = 0;
 };
+/**
+ * The default random implementation, if nothing else is provided to Services.
+ * Returns numbers which the developer has randomly chosen for this purpose.
+ */
 class NullRandom : public Random {
 public:
   NullRandom() {}

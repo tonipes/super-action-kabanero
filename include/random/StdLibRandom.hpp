@@ -3,6 +3,9 @@
 #include "service/Random.hpp"
 #include <cstdlib>
 
+/**
+ * A Random-service implementation using the random found in the standard library
+ */
 class StdLibRandom : public Random {
 public:
   StdLibRandom() {
