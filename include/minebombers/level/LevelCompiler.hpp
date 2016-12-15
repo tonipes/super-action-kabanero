@@ -19,6 +19,10 @@
 #include "minebombers/behaviors/ItemNodeBehaviour.hpp"
 #include <sstream>
 
+/**
+ * A collection of different functions and utils to 'compile' the level from
+ * raw tilemap data into nodes, attachments, behaviours and physics objects.
+ */
 class LevelCompiler {
 public:
   static constexpr float CHUNK_SIZE = 8.0f;

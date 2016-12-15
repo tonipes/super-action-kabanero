@@ -6,7 +6,13 @@
 #include "minebombers/level/ConstructedWallPlacer.hpp"
 #include "minebombers/level/FloodFill.hpp"
 #include "random/StdLibRandom.hpp"
-
+/**
+ * CaveGenerator is the collection of all required algoritms to produce the
+ * TileMap used in the game. It uses a Random, CellularAutomata, FloodFill,
+ * SpawnPointPlacer and ConstructedWallPlacer, and also checks if the map
+ * contains a large enough main area. The output from generate must be fed
+ * into LevelCompiler to output usable node-tree.
+ */
 class CaveGenerator {
 public:
   CaveGenerator(int seed, uint width, uint height, int playerSectors, int numItems) :

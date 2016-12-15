@@ -2,6 +2,9 @@
 
 #include <string>
 
+/**
+ * A data holder class for a given terrain type
+ */
 class TerrainProperty {
 public:
   TerrainProperty() {}

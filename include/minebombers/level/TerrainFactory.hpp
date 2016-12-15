@@ -7,6 +7,9 @@
 #include "minebombers/level/TerrainProperty.hpp"
 #include "minebombers/level/TileMap.hpp"
 
+/**
+ * Compiles a node-tree of terrain from a tilemap.
+ */
 class TerrainFactory {
 public:
   static auto generateTerrain(

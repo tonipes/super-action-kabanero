@@ -7,6 +7,11 @@
 #include "service/Random.hpp"
 #include "minebombers/level/Tile.hpp"
 
+/**
+ * A collection of tiles, in the form of width*height 2d vector. contains
+ * functions to make accessing and changing the tiles easier, and also
+ * helper functions for debugging and/or getting a random tile of certain type
+ */
 class TileMap {
 public:
   TileMap(int width, int height) : _width(width), _height(height) {

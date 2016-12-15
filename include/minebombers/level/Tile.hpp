@@ -14,6 +14,12 @@ enum TileType {
   ARTIFACT_LOCATION,
 };
 
+/**
+ * Holds all required data of a single tile. A tile has coordinates, type
+ * information of which areaGroup it is and if it belongs to the biggest (=main)
+ * area in a tileMap. Funtionaly for mainArea and areaGroup is not defined
+ * for non-open areas.
+ */
 class Tile {
 public:
   Tile(TileType type, int x, int y, bool main, int group) :
