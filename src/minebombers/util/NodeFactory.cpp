@@ -63,7 +63,7 @@ namespace NodeFactory {
     fixtureDef->filter.categoryBits = COLLISION_CATEGORY_ITEM;
     fixtureDef->filter.maskBits = COLLISION_MASK_ITEM;
 
-    node->addBehavior<BombBehaviour>(5.0f);
+    node->addBehavior<BombBehaviour>(3.0f);
     node->setAllowSleep(false);
 
     node->addAttachment(sprite_att);
