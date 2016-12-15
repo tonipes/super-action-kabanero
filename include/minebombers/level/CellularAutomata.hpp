@@ -6,6 +6,14 @@
 #include "service/Random.hpp"
 #include "minebombers/level/Cell.hpp"
 
+/**
+ * CellularAutomata is a way of generating 2d boolean arrays.
+ * It functions in the same way as the famous Game of Life, with different
+ * parametrizable iterations. Each iteration outputs a new 2d array of dead
+ * and alive cells, based on the previous array and given parameters.
+ * CellularAutomata contains only the core logic for executing different
+ * iterations, called phases, and the rules are implemented in individual phases.
+ */
 class CellularAutomata {
 public:
   CellularAutomata(uint width, uint height, int seed, KBVector<std::shared_ptr<CellularAutomataPhase>>& phases):

@@ -1,7 +1,11 @@
 #pragma once
 
 #include "collection/mutable/KBVector.hpp"
-
+/**
+ * Represents a single location during level generation. A cell can be either
+ * dead or alive, and provides a helper function to get nearby cells from
+ * a two dimensional KBVector, representing the cell map.
+ */
 class Cell {
 public:
   Cell(uint x, uint y, bool alive): _x(x), _y(y), _alive(alive) {}
