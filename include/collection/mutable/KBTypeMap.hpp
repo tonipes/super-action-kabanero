@@ -21,6 +21,9 @@ struct EqualTo {
   }
 };
 
+/**
+ * Dictionary with types as the key.
+ */
 template <typename T>
 class KBTypeMap: public Dictionary<std::unordered_map, TypeInfoRef, T, Hasher, EqualTo> {
 public:

@@ -59,11 +59,11 @@ namespace NodeFactory {
     auto fixtureDef = std::make_shared<b2FixtureDef>();
     fixtureDef->shape = shape;
     fixtureDef->density = 5;
-    fixtureDef->restitution = 0.3;
+    fixtureDef->restitution = 0.0;
     fixtureDef->filter.categoryBits = COLLISION_CATEGORY_ITEM;
     fixtureDef->filter.maskBits = COLLISION_MASK_ITEM;
 
-    node->addBehavior<BombBehaviour>(5.0f);
+    node->addBehavior<BombBehaviour>(3.0f);
     node->setAllowSleep(false);
 
     node->addAttachment(sprite_att);
@@ -375,7 +375,7 @@ namespace NodeFactory {
 
     } else if(random == 2) {
       auto sprite_att = std::make_shared<SpriteAttachment>("test-effect/hell_knight");
-      auto gun_att = std::make_shared<GunAttachment>(std::make_shared<GunParameters>(25.0f,  2.0f, 1, 0.1f, 10.0f, "tiles/pistol_normal", "test-effect/javelin0", "gunshot.ogg"));
+      auto gun_att = std::make_shared<GunAttachment>(std::make_shared<GunParameters>(25.0f,  2.0f, 1, 0.1f, 10.0f, 1.0f, "tiles/pistol_normal", "test-effect/javelin0", "gunshot.ogg"));
 
       node->addAttachment(gun_att);
       node->addAttachment(sprite_att);
@@ -405,7 +405,7 @@ namespace NodeFactory {
     node->addAttachment(material_att);
 
     auto gun = std::make_shared<GunAttachment>(
-      std::make_shared<GunParameters>( 20.0f,  2.0f, 1, 0.1f, 10.0f, "tiles/pistol_normal",   "test-effect/crystal_spear0", "gunshot.ogg",       false, 1.0f, 0, 0, "Pistol")
+      std::make_shared<GunParameters>( 20.0f,  2.0f, 1, 0.1f, 10.0f, 1.0f, "tiles/pistol_normal",   "test-effect/crystal_spear0", "gunshot.ogg",       false, 1.0f, 0, 0, "Pistol")
     );
 
     node->addAttachment(gun);

@@ -14,7 +14,7 @@
 #include "util/StringUtil.hpp"
 
 /**
- * AudioPlayer class.
+ * AudioPlayer class. Plays AudioClips and AudioTracks.
  */
 class AudioPlayer: public MessageSubscriber, public EventHandler {
 public:

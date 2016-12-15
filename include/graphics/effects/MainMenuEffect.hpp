@@ -5,6 +5,9 @@
 #include "graphics/Effect.hpp"
 #include "resource/resource/Font.hpp"
 
+/**
+ * Renders main menu
+ */
 class MainMenuEffect : public Effect {
 public:
   MainMenuEffect(std::vector<std::string> choices, std::string motd, int currentChoise = 0) :

@@ -10,7 +10,6 @@
 #include "scene/attachment/EffectAttachment.hpp"
 #include "scene/3D/Transform3D.hpp"
 #include "scene/2D/Transform2D.hpp"
-#include "graphics/SpriteBatch.hpp"
 #include "graphics/Effect.hpp"
 #include "service/Services.hpp"
 #include "minebombers/attachments/VisibilityAttachment.hpp"
@@ -26,8 +25,7 @@ class Renderer {
 public:
   Renderer(sf::RenderWindow& window, int tilesize) :
     _window(window),
-    _tilesize(tilesize),
-    _spriteBatch(SpriteBatch(tilesize)) {}
+    _tilesize(tilesize) {}
 
   const int WINDOW_WIDTH = 32 * 48;
   const int WINDOW_HEIGHT = 32 * 30;
@@ -60,7 +58,9 @@ public:
 
     auto cameraNode  = sceneView.cameraNode();
     auto rootNode = sceneView.rootNode();
-    this->_cameraPosition = cameraNode->position();
+    _cameraPosition = cameraNode->position();
+    _cameraPosition.x = round(_cameraPosition.x * _tilesize) / _tilesize;
+    _cameraPosition.y = round(_cameraPosition.y * _tilesize) / _tilesize;
 
     _viewportSize.x = WINDOW_WIDTH * viewport.w() / _tilesize * 0.5f;
     _viewportSize.y = WINDOW_HEIGHT * viewport.h() / _tilesize * 0.5f;
@@ -112,7 +112,6 @@ private:
   glm::vec2 _viewportSize;
   glm::vec2 _viewportOffset;
   float _tilesize;
-  SpriteBatch _spriteBatch;
   KBMap<std::string, sf::Texture> textures;
   glm::vec3 _cameraPosition;
   sf::Vector2<uint> _windowSize;

@@ -3,7 +3,7 @@ window_height=600
 window_name=Super Action Kabanero
 
 update_fps=60
-draw_fps=480
+draw_fps=60
 
 tilesize=32
 force_int_scaling=1

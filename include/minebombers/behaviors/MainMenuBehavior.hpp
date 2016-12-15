@@ -17,6 +17,9 @@
 
 class MainMenuBehavior : public Behavior<Transform3D> {
 public:
+  typedef std::chrono::high_resolution_clock Clock;
+  typedef std::chrono::nanoseconds ns;
+
   MainMenuBehavior(Node<Transform3D>* node, std::vector<std::string> choices, std::string motd): _motd(motd), _choices(choices) {
     node->addEventReactor([&, node](GameInputEvent event) {
       Services::logger()->debug("Menu input event");
@@ -49,10 +52,12 @@ public:
         "audioPlayer:clip/gunshot.ogg",
         std::make_shared<AudioClipEvent>(CLIP_PLAY)
       ));
-    } else if (select){
+    } else if (select) {
+      auto t = Clock::now();
+      auto nanoseconds = std::chrono::duration_cast<ns>(t.time_since_epoch()).count();
       Services::messagePublisher()->sendMessage(Message(
         "game",
-        std::make_shared<NewGameEvent>(15, currentChoice + 1)
+        std::make_shared<NewGameEvent>(nanoseconds, currentChoice + 1)
         )
       );
 

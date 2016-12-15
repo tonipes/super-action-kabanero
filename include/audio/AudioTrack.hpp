@@ -10,6 +10,9 @@
 #include <iostream>
 #include <SFML/Audio.hpp>
 
+/**
+ * Class for music and looping audio. AudioPlayer uses this class.
+ */
 class AudioTrack : public EventHandler {
 public:
   AudioTrack() {

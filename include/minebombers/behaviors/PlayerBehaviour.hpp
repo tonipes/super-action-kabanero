@@ -122,7 +122,9 @@ public:
       }
     }
 
-    auto moveSpeed = _playerSpeed;
+    auto gunParams = node.get<GunAttachment>().get().parameters();
+
+    auto moveSpeed = _playerSpeed * gunParams->walkSpeed;
     if (_isStrafing) {
       moveSpeed *= 0.75f;
     }
@@ -176,8 +178,8 @@ public:
         std::tie(bulletNode, bodyDef, fixtureDef) = NodeFactory::createBullet(gunParams);
         // fixtureDef->filter.groupIndex = -1;
         bodyDef->position.Set(
-          pos.x + fireDirection.x,
-          pos.y + fireDirection.y
+          pos.x + fireDirection.x * 0.4f,
+          pos.y + fireDirection.y * 0.4f
         );
         bodyDef->linearVelocity.Set(
           rotatedDirection.x * gunParams->bulletSpeed,
@@ -197,13 +199,14 @@ public:
       );
     }
 
-    if (throwBomb) {
+    if (throwBomb && bombTimer <= 0.0f) {
+      bombTimer = 3.0f;
       std::shared_ptr<Node<Transform3D>> bombNode;
       std::shared_ptr<b2BodyDef> bodyDef;
       std::shared_ptr<b2FixtureDef> fixtureDef;
 
       std::tie(bombNode, bodyDef, fixtureDef) = NodeFactory::createBomb();
-      bodyDef->position.Set(pos.x, pos.y);
+      bodyDef->position.Set(pos.x + _lookDirection.x * 0.5, pos.y + _lookDirection.y * 0.5);
 
       Services::messagePublisher()->sendMessage(
         Message("gameScene",
@@ -217,6 +220,9 @@ public:
           std::make_shared<AudioClipEvent>(CLIP_PLAY)
         )
       );
+    }
+    if (bombTimer > 0.0f) {
+      bombTimer -= delta;
     }
 
     if (damageToTake > 0.0f) {
@@ -315,6 +321,7 @@ private:
   float _fireDelay = 0;
 
   bool throwBomb = false;
+  float bombTimer = 0.0f;
 
   float _playerSpeed = 3.0f;
 

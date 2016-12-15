@@ -26,6 +26,8 @@ App::App(std::shared_ptr<Game> game) : _game(game) {
   auto messagePublisher = std::make_shared<DefaultMessagePublisher>();
   auto random = std::make_shared<StdLibRandom>();
 
+  logger->setLevel(INFO);
+
   Services::provideMessagePublisher(messagePublisher);
   Services::provideResourceManager(resourceManager);
   Services::provideLogger(logger);
@@ -62,9 +64,9 @@ App::App(std::shared_ptr<Game> game) : _game(game) {
   std::regex atlas_regex("^.+\\.atlas$");
   resourceManager->addLoader(atlas_regex, atlas_loader);
 
-  for(auto res : resources) {
-      logger->debug(res);
-      resourceManager->load(res);
+  for (auto res : resources) {
+    logger->debug(res);
+    resourceManager->load(res);
   }
 
   // Intervals
@@ -152,12 +154,10 @@ auto App::run() -> void {
 
     sf::Event event;
     while (window.pollEvent(event)) {
-      if(event.type == sf::Event::KeyPressed ||event.type == sf::Event::KeyReleased){
+      if (event.type == sf::Event::KeyPressed ||event.type == sf::Event::KeyReleased) {
         inputTranslator->processMessage(event);
       } else if (event.type == sf::Event::Closed) {
         window.close();
-      } else if (event.type == sf::Event::Resized) {
-        window.setView(sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height)));
       }
     }
   }

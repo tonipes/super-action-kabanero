@@ -11,6 +11,9 @@
 #include <iostream>
 #include <SFML/Audio.hpp>
 
+/**
+ * Sound effect / one-off sounds. AudioPlayer uses AudioClips.
+ */
 class AudioClip : public EventHandler {
 public:
   ~AudioClip() {

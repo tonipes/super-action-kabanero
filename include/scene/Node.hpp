@@ -27,8 +27,8 @@
 #include "game/Behavior.hpp"
 
 /**
- * Node class.
- * Main game object.
+ * Node class. Nodes represent "physical" objects in the game. Nodes have a
+ * position, possibly a parent, and children.
  */
 template <typename T>
 class Node : public EventHandler, public std::enable_shared_from_this<Node<T>> {
