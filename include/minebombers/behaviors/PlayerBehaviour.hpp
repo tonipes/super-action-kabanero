@@ -197,7 +197,8 @@ public:
       );
     }
 
-    if (throwBomb) {
+    if (throwBomb && bombTimer <= 0.0f) {
+      bombTimer = 3.0f;
       std::shared_ptr<Node<Transform3D>> bombNode;
       std::shared_ptr<b2BodyDef> bodyDef;
       std::shared_ptr<b2FixtureDef> fixtureDef;
@@ -217,6 +218,9 @@ public:
           std::make_shared<AudioClipEvent>(CLIP_PLAY)
         )
       );
+    }
+    if (bombTimer > 0.0f) {
+      bombTimer -= delta;
     }
 
     if (damageToTake > 0.0f) {
@@ -315,6 +319,7 @@ private:
   float _fireDelay = 0;
 
   bool throwBomb = false;
+  float bombTimer = 0.0f;
 
   float _playerSpeed = 3.0f;
 
