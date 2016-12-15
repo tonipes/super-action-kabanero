@@ -24,7 +24,7 @@ public:
     });
   }
 
-  auto update(float delta, Node& node) -> void override {
+  auto update(float delta, std::shared_ptr<Node> node) -> void override {
     // if(destroy) {
     //   Services::messagePublisher()->sendMessage(Message("gameScene",std::make_shared<DestroyNodeEvent>(node.path())));
     //   destroyed = false;

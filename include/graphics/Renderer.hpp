@@ -38,8 +38,6 @@ public:
     _window.setView(_window.getDefaultView());
     _window.clear(sf::Color::Black);
     for (const auto& sceneView : sceneViews) {
-      // std::cout << "x: " << sceneView.cameraNode()->position().x << std::endl;
-      // _window.setView(_window.getDefaultView());
       render(sceneView);
     }
     _window.display();
@@ -121,7 +119,7 @@ private:
   auto _renderNode(const std::shared_ptr<Node> node, const std::shared_ptr<Node> cameraNode, const Atlas& atlas) -> void {
     const auto& boundingBox = node->boundingBox();
 
-    const auto& nodePosition = node->position();
+    const auto nodePosition = node->position();
 
     if (_isWithinWindow(nodePosition, boundingBox)) {
       bool isVisible = cameraNode->get<VisibilityAttachment>().get().isVisible(

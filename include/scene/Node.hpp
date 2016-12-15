@@ -78,31 +78,27 @@ public:
 
   auto transform() const -> glm::mat4x4;
 
-  auto worldTransform() const -> typename Transform3D::matrixType;
+  auto worldTransform() const -> glm::mat4x4;
 
-  auto position() const -> typename T::vectorType;
+  auto position() const -> const glm::vec3&;
 
-  auto localPosition() const -> const typename T::vectorType;
+  auto localPosition() const -> const glm::vec3;
 
   auto setLocalPosition(glm::vec3 v) -> void;
 
-  auto localScale() const -> const typename T::vectorType;
+  auto localScale() const -> const glm::vec3;
 
-  auto setLocalScale(typename T::vectorType v) -> void;
+  auto setLocalScale(glm::vec3 s) -> void;
 
-  auto localRotation() const -> const typename T::rotationType;
+  auto localRotation() const -> const glm::quat;
 
-  auto setLocalRotation(typename T::rotationType r) -> void;
+  auto setLocalRotation(glm::quat r) -> void;
 
-  auto rotation() const -> typename T::rotationType;
+  auto rotation() const -> glm::quat;
 
-  auto scale() const -> typename T::vectorType;
+  auto scale() const -> glm::vec3;
 
   auto path() const -> std::string;
-
-  auto operator==(Node other) -> bool {
-    return true;
-  }
 
   auto setSleep(bool val) -> void;
 
@@ -161,5 +157,5 @@ private:
   BoundingBox _localBoundingBox;
   mutable BoundingBox _boundingBox;
   KBVector<std::shared_ptr<Behavior>> _behaviors;
-  mutable typename Transform3D::matrixType _worldTransform;
+  mutable glm::mat4x4 _worldTransform;
 };

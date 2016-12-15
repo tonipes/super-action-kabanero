@@ -10,7 +10,7 @@ auto Player::create(
   node->setAllowSleep(false);
   node->setLocalPosition(glm::vec3(0, 0, 2));
 
-  auto sprite = std::make_shared<SpriteAttachment>("player/survivor-idle_rifle");
+  auto sprite = std::make_shared<SpriteAttachment>("player/survivor-idle_rifle_0-small");
 
   node->addAttachment(sprite);
 
@@ -29,7 +29,7 @@ auto Player::create(
 
   node->addAttachment(physAttachment);
 
-  node->addBehavior<PlayerBehaviour>();
+  node->addBehavior<PlayerBehavior>();
 
   return node;
 }

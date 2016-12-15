@@ -9,7 +9,6 @@
 #include "minebombers/events/NewGameEvent.hpp"
 #include "minebombers/level/LevelCompiler.hpp"
 #include "minebombers/level/CaveGenerator.hpp"
-#include "minebombers/behaviors/CameraBehavior.hpp"
 #include "minebombers/attachments/VisibilityAttachment.hpp"
 #include "minebombers/events/TestEvent.hpp"
 #include "minebombers/events/TestEvent.hpp"

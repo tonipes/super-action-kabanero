@@ -24,14 +24,14 @@ public:
     // });
   }
 
-  auto update(float delta, Node& node) -> void override {
+  auto update(float delta, std::shared_ptr<Node> node) -> void override {
     if(updateOrientation) {
-      auto physicsAttachment = node.get<PhysicsAttachment>();
+      auto physicsAttachment = node->get<PhysicsAttachment>();
 
       if(physicsAttachment.isDefined()){
         auto vel = physicsAttachment.get().velocity();
         auto rot = glm::atan(vel.x, vel.y);
-        node.setLocalRotation(glm::angleAxis(rot, glm::vec3(0.0f, 0.0f, 1.0f)));
+        node->setLocalRotation(glm::angleAxis(rot, glm::vec3(0.0f, 0.0f, 1.0f)));
       }
 
       updateOrientation = false;

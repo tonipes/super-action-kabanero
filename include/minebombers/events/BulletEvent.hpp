@@ -1,6 +1,7 @@
 #pragma once
 
 #include "message/Event.hpp"
+#include <string>
 #include <glm/vec2.hpp>
 
 enum BulletAction {

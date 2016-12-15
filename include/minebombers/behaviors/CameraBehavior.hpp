@@ -20,13 +20,14 @@ public:
     });
   }
 
-  auto update(float delta, Node& node) -> void override {
-    auto moveDirection = _target - node.position().xy();
+  auto update(float delta, std::shared_ptr<Node> node) -> void override {
+    auto pos = node->position();
 
-    auto pos = node.position();
-    node.setLocalPosition(pos + glm::vec3(moveDirection, 0) * _camSpeed);
+    auto moveDirection = _target - pos.xy();
 
-    const auto& visibilityAttachment = node.get<VisibilityAttachment>();
+    node->setLocalPosition(pos + glm::vec3(moveDirection, 0) * _camSpeed);
+
+    const auto& visibilityAttachment = node->get<VisibilityAttachment>();
     if(visibilityAttachment.isDefined()){
       visibilityAttachment.get().markVisited(round(_target.x), round(_target.y));
     }

@@ -73,11 +73,12 @@ auto Node::worldTransform() const -> typename Transform3D::matrixType {
   return _worldTransform;
 }
 
-auto Node::position() const -> typename T::vectorType {
-  return MatrixUtil::getTransform(worldTransform());
+auto Node::position() const -> const glm::vec3& {
+  glm::vec3 v = glm::vec3(worldTransform()[3]);
+  return v;
 }
 
-auto Node::localPosition() const -> const typename T::vectorType {
+auto Node::localPosition() const -> const glm::vec3 {
   return _transform.position();
 }
 
@@ -182,9 +183,9 @@ auto Node::update(float delta) -> void {
       }
       this->setLocalPosition(glm::vec3(pos.x, pos.y, this->localPosition().z));
     });
-    _behaviors.foreach([&](auto& behavior) {
-      behavior->update(delta, *this);
-    });
+    for (auto& behavior : _behaviors) {
+      behavior->update(delta, this->shared_from_this());
+    }
     setSleep(allSleeping);
   }
 }

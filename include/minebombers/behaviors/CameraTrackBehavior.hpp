@@ -11,18 +11,19 @@ public:
       const std::string& trackedNodePath,
       float camSpeed = 0.2f) : _trackedNodePath(trackedNodePath), _camSpeed(camSpeed) {}
 
-  auto update(float delta, Node& node) -> void override {
-    auto pos = node.position();
+  auto update(float delta, std::shared_ptr<Node> node) -> void override {
+    const auto pos = node->position();
+
     if (_trackedNode.isEmpty()) {
-      auto root = node.getRoot();
+      auto root = node->getRoot();
       _trackedNode = root->getNode(_trackedNodePath);
     }
     _trackedNode.foreach([&](auto nodePtr) {
-      auto targetPos = nodePtr->position();
-      auto moveDirection = targetPos - node.position();
-      node.setLocalPosition(pos + moveDirection * _camSpeed);
+      const auto targetPos = nodePtr->position();
+      auto moveDirection = targetPos - pos;
+      node->setLocalPosition(pos + moveDirection * _camSpeed);
 
-      const auto& visibilityAttachment = node.get<VisibilityAttachment>();
+      const auto& visibilityAttachment = node->get<VisibilityAttachment>();
       if (visibilityAttachment.isDefined()) {
         visibilityAttachment.get().markVisited(round(targetPos.x), round(targetPos.y));
       }

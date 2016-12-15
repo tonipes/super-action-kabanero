@@ -22,10 +22,10 @@ public:
     });
   }
 
-  auto update(float delta, Node& node) -> void override {
+  auto update(float delta, std::shared_ptr<Node> node) -> void override {
     if(!exploded){
       if(_fuseTime > _fuseLength){
-        auto pos = glm::vec2(node.position());
+        auto pos = glm::vec2(node->position());
 
         std::shared_ptr<Node> damageNode;
         std::shared_ptr<b2BodyDef> bodyDef;
@@ -48,7 +48,7 @@ public:
           )
         );
 
-        Services::messagePublisher()->sendMessage(Message("gameScene",std::make_shared<DestroyNodeEvent>(node.path())));
+        Services::messagePublisher()->sendMessage(Message("gameScene",std::make_shared<DestroyNodeEvent>(node->path())));
         exploded = true;
       }
       _fuseTime += delta;

@@ -5,7 +5,6 @@
 #include "minebombers/level/CaveGenerator.hpp"
 #include "minebombers/level/LevelCompiler.hpp"
 #include "minebombers/level/LevelCompiler.hpp"
-#include "minebombers/behaviors/CameraBehavior.hpp"
 #include "minebombers/behaviors/CameraTrackBehavior.hpp"
 #include "minebombers/events/NewGameEvent.hpp"
 

@@ -3,7 +3,7 @@
 #include "scene/3D/Transform3D.hpp"
 #include "scene/Node.hpp"
 #include "scene/attachment/SpriteAttachment.hpp"
-#include "minebombers/behaviors/PlayerBehaviour.hpp"
+#include "minebombers/behaviors/PlayerBehavior.hpp"
 
 class Player {
 public:

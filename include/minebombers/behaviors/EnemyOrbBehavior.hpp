@@ -26,7 +26,7 @@ public:
     });
   }
 
-  auto update(float delta, Node& node) -> void override {
+  auto update(float delta, std::shared_ptr<Node> node) -> void override {
 
     if(turn) {
 
@@ -41,7 +41,7 @@ public:
       turn = false;
     }
 
-    const auto& physAttachment = node.get<PhysicsAttachment>();
+    const auto& physAttachment = node->get<PhysicsAttachment>();
     physAttachment.foreach([&](auto phys) {
       phys.setVelocity(moveDirection.x, moveDirection.y);
     });

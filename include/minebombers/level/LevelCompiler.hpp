@@ -11,7 +11,7 @@
 #include "scene/attachment/PhysicsAttachment.hpp"
 #include "graphics/effects/CircleEffect.hpp"
 #include "minebombers/behaviors/TerrainBehavior.hpp"
-#include "minebombers/behaviors/PlayerBehaviour.hpp"
+#include "minebombers/behaviors/PlayerBehavior.hpp"
 #include "minebombers/attachments/CollisionMaterialAttachment.hpp"
 
 #include "minebombers/data/GunParameters.hpp"

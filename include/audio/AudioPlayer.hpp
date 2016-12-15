@@ -29,12 +29,8 @@ public:
     auto parts = split(path, '/');
     auto type = parts[0];
     auto id = parts[1];
-    // std::cout << "type: " << type << '\n';
-    // std::cout << "id: " << id << '\n';
 
     if (type.compare("track") == 0) { // Track event
-      // std::cout << "track" << '\n';
-
       if (!tracks.contains(id)) {
         tracks[id] = std::make_shared<AudioTrack>();
       }

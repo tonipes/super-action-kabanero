@@ -15,7 +15,6 @@ class AudioClip : public EventHandler {
 public:
   ~AudioClip() {
     _sound.stop();
-    // std::cout << "~AudioClip()" << '\n';
   }
   AudioClip(const std::string& audioPath) {
     auto resourceManager = Services::resourceManager();
