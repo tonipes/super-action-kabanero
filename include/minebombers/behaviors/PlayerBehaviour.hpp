@@ -122,7 +122,9 @@ public:
       }
     }
 
-    auto moveSpeed = _playerSpeed;
+    auto gunParams = node.get<GunAttachment>().get().parameters();
+
+    auto moveSpeed = _playerSpeed * gunParams->walkSpeed;
     if (_isStrafing) {
       moveSpeed *= 0.75f;
     }

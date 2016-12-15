@@ -14,6 +14,7 @@ public:
     int ba,
     float acc,
     float sped,
+    float walkSpeed,
     std::string sprite,
     std::string bltSprite,
     std::string sound,
@@ -27,6 +28,7 @@ public:
   bulletAmount(ba),
   accuracy(acc),
   bulletSpeed(sped),
+  walkSpeed(walkSpeed),
   sprite(sprite),
   bulletSprite(bltSprite),
   isRocketLauncher(rocket),
@@ -39,6 +41,7 @@ public:
 
   float damage;
   float fireRate; // per second
+  float walkSpeed;
   int bulletAmount; // bullets per shoot
   float accuracy; //smaller == better
   float bulletSpeed;
