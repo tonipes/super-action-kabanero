@@ -5,6 +5,9 @@
 #include "collection/Option.hpp"
 #include "collection/mutable/KBVector.hpp"
 
+/**
+ * Dictionary data structure, with functional style methods.
+ */
 template <template<
     class K,
     class T,

@@ -2,6 +2,9 @@
 
 #include "collection/mutable/Seq.hpp"
 
+/**
+ * Standard library vector with additional functional style methods.
+ */
 template<typename T>
 class KBVector : public Seq<std::vector, T> {
 public:

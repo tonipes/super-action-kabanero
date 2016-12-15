@@ -62,9 +62,9 @@ App::App(std::shared_ptr<Game> game) : _game(game) {
   std::regex atlas_regex("^.+\\.atlas$");
   resourceManager->addLoader(atlas_regex, atlas_loader);
 
-  for(auto res : resources) {
-      logger->debug(res);
-      resourceManager->load(res);
+  for (auto res : resources) {
+    logger->debug(res);
+    resourceManager->load(res);
   }
 
   // Intervals
@@ -152,7 +152,7 @@ auto App::run() -> void {
 
     sf::Event event;
     while (window.pollEvent(event)) {
-      if(event.type == sf::Event::KeyPressed ||event.type == sf::Event::KeyReleased){
+      if (event.type == sf::Event::KeyPressed ||event.type == sf::Event::KeyReleased) {
         inputTranslator->processMessage(event);
       } else if (event.type == sf::Event::Closed) {
         window.close();

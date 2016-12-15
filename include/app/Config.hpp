@@ -3,6 +3,9 @@
 #include <iostream>
 #include <fstream>
 
+/**
+ * Methods for loading config files
+ */
 namespace cfg {
 
   auto _loadFile(std::string path) -> std::vector<std::string> {

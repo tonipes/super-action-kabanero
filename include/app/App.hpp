@@ -2,6 +2,10 @@
 
 #include "game/Game.hpp"
 
+/**
+ * App is the starting point of the game. It defines the services the game can
+ * use, as well as determines the game loop.
+ */
 class App {
 public:
   App(std::shared_ptr<Game> game);
