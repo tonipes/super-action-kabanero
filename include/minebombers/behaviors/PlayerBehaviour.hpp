@@ -57,11 +57,11 @@ public:
       }
     });
     node->addEventReactor([&](CollisionEvent event) {
-      if(event.collisionMaterialAttachment()->collisionDamage > 0.0f){
+      if (event.collisionMaterialAttachment()->collisionDamage > 0.0f) {
         damageToTake = event.collisionMaterialAttachment()->collisionDamage;
         _collisionVec = event.vec();
       }
-      else if(event.collisionMaterialAttachment()->gunParameters.isDefined()) {
+      else if (event.collisionMaterialAttachment()->gunParameters.isDefined()) {
         Services::logger()->debug("Player got new gun");
         _newGun = event.collisionMaterialAttachment()->gunParameters;
       }
@@ -130,7 +130,7 @@ public:
     //   fireDirection = glm::normalize(fireDirection);
     // }
 
-    if (isFiring && _fireDelay <= 0) {
+    if (isFiring && hp > 0.0f && _fireDelay <= 0) {
       // auto gun_att = node.get<GunAttachment>().get();
       auto gunParams = node.get<GunAttachment>().get().parameters();
       // auto gun = gun_att.parameters().get();
@@ -181,21 +181,27 @@ public:
       std::tie(bombNode, bodyDef, fixtureDef) = NodeFactory::createBomb();
       bodyDef->position.Set(pos.x, pos.y);
 
-      Services::messagePublisher()->sendMessage(Message("gameScene", std::make_shared<CreateNodeEvent>(
-        "world/bullets", bombNode, bodyDef, fixtureDef
-      )));
-      Services::messagePublisher()->sendMessage(Message(
-        "audioPlayer:clip/set_bomb.ogg",
-        std::make_shared<AudioClipEvent>(CLIP_PLAY)
-      ));
+      Services::messagePublisher()->sendMessage(
+        Message("gameScene",
+          std::make_shared<CreateNodeEvent>("world/bullets",
+            bombNode, bodyDef, fixtureDef
+          )
+        )
+      );
+      Services::messagePublisher()->sendMessage(
+        Message("audioPlayer:clip/set_bomb.ogg",
+          std::make_shared<AudioClipEvent>(CLIP_PLAY)
+        )
+      );
     }
 
     if (damageToTake > 0.0f) {
-      if(hp >= 0.0f) {
-        Services::messagePublisher()->sendMessage(Message(
-          "audioPlayer:clip/pain.ogg",
-          std::make_shared<AudioClipEvent>(CLIP_PLAY)
-        ));
+      if (hp >= 0.0f) {
+        Services::messagePublisher()->sendMessage(
+          Message("audioPlayer:clip/pain.ogg",
+            std::make_shared<AudioClipEvent>(CLIP_PLAY)
+          )
+        );
       }
 
       hp -= damageToTake;
@@ -215,7 +221,7 @@ public:
 
         auto meat = NodeFactory::createMeatPieces(pos, glm::normalize(_collisionVec),  6);
 
-        for(auto m : meat){
+        for (auto m : meat) {
           Services::messagePublisher()->sendMessage(Message("gameScene", std::make_shared<CreateNodeEvent>(
             "world/bullets", std::get<0>(m), std::get<1>(m), std::get<2>(m)
           )));
@@ -223,7 +229,7 @@ public:
       }
     }
 
-    if(respawn && _lives > 0) {
+    if (respawn && _lives > 0) {
       Services::messagePublisher()->sendMessage(Message("gameScene", std::make_shared<RespawnEvent>(
         _playerId, _lives-1
       )));
@@ -235,11 +241,11 @@ public:
     auto gunAttachment = node.get<GunAttachment>();
     std::string gunName = "";
 
-    if(gunAttachment.isDefined()){
+    if (gunAttachment.isDefined()) {
       gunName = gunAttachment.get().parameters()->gunName;
     }
 
-    if(hp > 0.0f && _lives >= 0){
+    if (hp > 0.0f && _lives >= 0) {
       Services::messagePublisher()->sendMessage(Message("gameScene:" + _cameraAddress, std::make_shared<UpdateHudEvent>(
         "Player " + std::to_string(_playerId) + "\nHP: " + std::to_string((int) hp) + "\nLIVES: " + std::to_string(_lives) + "\nGUN: " + gunName + "\n"
       )));
