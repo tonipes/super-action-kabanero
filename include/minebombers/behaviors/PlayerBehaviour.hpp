@@ -44,7 +44,7 @@ public:
         } else if (action == FIRE_DOWN) {
           fireDown = isPressed;
         } else if (action == FIRE_LEFT) {
-          _isStrafing = !isPressed;
+          _isStrafing = isPressed;
           fireLeft = isPressed;
         } else if (action == FIRE_UP) {
           isFiring = isPressed;
@@ -91,19 +91,24 @@ public:
     }
 
     if (!(moveDirection.x == 0 && moveDirection.y == 0)) {
-      if (_isStrafing) {
+      if (!_isStrafing) {
         auto rotationAngle = std::atan2(moveDirection.y, moveDirection.x);
         node.setLocalRotation(glm::angleAxis(rotationAngle, glm::vec3(0, 0, -1)));
         _lookDirection = glm::vec2(moveDirection);
       }
     }
 
+    auto moveSpeed = _playerSpeed;
+    if (_isStrafing) {
+      moveSpeed *= 0.75f;
+    }
+
     const auto& physAttachment = node.get<PhysicsAttachment>();
     physAttachment.foreach([&](auto phys) {
       const auto& pos = phys.position();
       phys.setVelocity(
-        moveDirection.x * _playerSpeed,
-        moveDirection.y * _playerSpeed
+        moveDirection.x * moveSpeed,
+        moveDirection.y * moveSpeed
       );
     });
 
