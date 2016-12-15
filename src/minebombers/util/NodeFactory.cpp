@@ -398,7 +398,7 @@ namespace NodeFactory {
     auto node = std::make_shared<Node<Transform3D>>(name);
     node->setAllowSleep(false);
     // node->setLocalPosition(glm::vec3(loc.x, loc.y, 2));
-    node->addAttachment(std::make_shared<SpriteAttachment>("tiles/spriggan_druid"));
+    node->addAttachment(std::make_shared<SpriteAttachment>("player/survivor-idle_shotgun"));
 
     auto material_att = std::make_shared<CollisionMaterialAttachment>();
     material_att->isPlayer = true;

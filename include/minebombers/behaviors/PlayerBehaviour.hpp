@@ -88,6 +88,11 @@ public:
       moveDirection = glm::normalize(moveDirection);
     }
 
+    if (!(moveDirection.x == 0 && moveDirection.y == 0)) {
+      auto rotationAngle = std::atan2(moveDirection.y, moveDirection.x);
+      node.setLocalRotation(glm::angleAxis(rotationAngle, glm::vec3(0, 0, -1)));
+    }
+
     const auto& physAttachment = node.get<PhysicsAttachment>();
     physAttachment.foreach([&](auto phys) {
       const auto& pos = phys.position();
@@ -114,6 +119,9 @@ public:
     if (fireDirection.x != 0 && fireDirection.y != 0) {
       fireDirection = glm::normalize(fireDirection);
     }
+
+
+
     auto shoot = fireDirection.x != 0 || fireDirection.y != 0;
 
     if (shoot && _fireDelay <= 0) {
