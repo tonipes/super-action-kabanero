@@ -4,6 +4,9 @@
 #include <SFML/Graphics.hpp>
 #include "graphics/Effect.hpp"
 
+/**
+ * Draws a circle
+ */
 class CircleEffect : public Effect {
 public:
   CircleEffect(float radius, float time = 1.0f) : Effect(time), _radius(radius) {

@@ -3,6 +3,9 @@
 #include <exception>
 #include <string>
 
+/**
+ * Game engine level exception
+ */
 class EngineException: public std::exception {
 public:
   EngineException(std::string description): _description(description) {}

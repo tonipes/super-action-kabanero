@@ -12,7 +12,8 @@
 #include "service/Services.hpp"
 
 /**
- * Game class.
+ * Game class. The game class should be extended, and used to initialize the
+ * game. Takes care of updating the active scene.
  */
 class Game: public Updateable, public MessageSubscriber, public EventHandler {
 public:

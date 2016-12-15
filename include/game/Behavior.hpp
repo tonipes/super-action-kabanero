@@ -12,7 +12,7 @@ template <typename T>
 class Node;
 
 /**
- * Base behavior class.
+ * Base behavior class. Behaviors act as "scripts" for nodes. 
  */
 template <typename T>
 class Behavior {

@@ -5,6 +5,7 @@
 #include "scene/2D/Transform2D.hpp"
 #include <SFML/Graphics.hpp>
 
+
 class SpriteBatch {
 public:
   SpriteBatch(int tileSize) : _tileSize(tileSize) { }
