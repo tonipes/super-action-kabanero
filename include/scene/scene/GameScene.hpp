@@ -26,13 +26,15 @@ public:
 
       const auto& node = event.node();
 
-      b2Body* body = _physWorld.CreateBody(event.bodyDef().get());
-      body->CreateFixture(event.fixtureDef().get());
+      if (event.bodyDef()) {
+        b2Body* body = _physWorld.CreateBody(event.bodyDef().get());
+        body->CreateFixture(event.fixtureDef().get());
 
-      delete event.fixtureDef().get()->shape;
+        delete event.fixtureDef().get()->shape;
 
-      auto physAttachment = std::make_shared<PhysicsAttachment>(body);
-      node->addAttachment(physAttachment);
+        auto physAttachment = std::make_shared<PhysicsAttachment>(body);
+        node->addAttachment(physAttachment);
+      }
 
       _toBeAdded += std::make_tuple(path, node);
     });

@@ -17,10 +17,12 @@
 #include "scene/attachment/EffectAttachment.hpp"
 #include "graphics/effects/CircleEffect.hpp"
 #include "graphics/effects/MainMenuEffect.hpp"
+#include "graphics/effects/TextEffect.hpp"
 
 #include "minebombers/behaviors/EnemyBrainBehavior.hpp"
 #include "minebombers/behaviors/EnemyGnomeBehavior.hpp"
 #include "minebombers/behaviors/EnemyKnightBehavior.hpp"
+#include "minebombers/behaviors/DamageParticleBehavior.hpp"
 
 #include "minebombers/level/LevelCompiler.hpp"
 
@@ -357,7 +359,7 @@ namespace NodeFactory {
 
     auto material_att = std::make_shared<CollisionMaterialAttachment>();
 
-    material_att->collisionDamage = 1.0f * difficulty;
+    material_att->collisionDamage = 10.0f * difficulty;
     material_att->isEnemy = true;
 
     node->addAttachment(material_att);
@@ -466,6 +468,17 @@ namespace NodeFactory {
     fixtureDef->isSensor = true;
 
     return std::make_tuple(node, bodyDef, fixtureDef);
+  }
+
+  auto createDamageParticle(int damage) -> std::shared_ptr<Node<Transform3D>> {
+    auto node = std::make_shared<Node<Transform3D>>("particle_" + std::to_string(getId()));
+    node->setAllowSleep(false);
+    auto textEffect = std::make_shared<TextEffect>(std::to_string(damage), 1.0f);
+    node->addAttachment(std::make_shared<EffectAttachment>(textEffect));
+
+    node->addBehavior<DamageParticleBehavior>(0.5f);
+
+    return node;
   }
 
   // auto createFireball() ->
