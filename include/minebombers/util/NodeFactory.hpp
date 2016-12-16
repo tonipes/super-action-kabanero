@@ -94,6 +94,7 @@ namespace NodeFactory {
       std::shared_ptr<b2BodyDef>,
       std::shared_ptr<b2FixtureDef>>;
 
+  auto createDamageParticle(int damage) -> std::shared_ptr<Node<Transform3D>>;
   // auto createFireball() ->
   //   std::tuple<
   //     std::shared_ptr<Node<Transform3D>>,

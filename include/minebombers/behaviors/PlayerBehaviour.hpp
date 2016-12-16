@@ -71,7 +71,7 @@ public:
   const float PI = 3.1415927;
 
   auto update(float delta, Node<Transform3D>& node) -> void override {
-    auto pos = node.position().xy();
+    auto pos = node.position();
     if (_gunPickupDelay > 0.0f) {
       _gunPickupDelay -= delta;
     }
@@ -161,9 +161,11 @@ public:
       );
     });
 
+    auto playerPos = pos.xy();
+
     Services::messagePublisher()->sendMessage(Message(
       "gameScene:" + _cameraAddress,
-      std::make_shared<PlayerLocationEvent>(pos)
+      std::make_shared<PlayerLocationEvent>(playerPos)
     ));
 
     glm::vec2 fireDirection = _lookDirection;
@@ -253,6 +255,20 @@ public:
             std::make_shared<AudioClipEvent>(CLIP_PLAY)
           )
         );
+
+        auto damageParticle = NodeFactory::createDamageParticle((int)damageToTake);
+        auto randomPos = (Services::random()->nextFloat() - 0.5f) * 1.0f;
+
+        damageParticle->setLocalPosition(glm::vec3(pos.x + randomPos, pos.y, pos.z + 1));
+
+        Services::messagePublisher()->sendMessage(
+          Message("gameScene",
+            std::make_shared<CreateNodeEvent>("world",
+              damageParticle, nullptr, nullptr
+            )
+          )
+        );
+
       }
 
       hp -= damageToTake;
@@ -270,7 +286,7 @@ public:
 
         node.addAttachment(std::make_shared<SpriteAttachment>("test-effect/blood_red25"));
 
-        auto meat = NodeFactory::createMeatPieces(pos, glm::normalize(_collisionVec),  6);
+        auto meat = NodeFactory::createMeatPieces(pos.xy(), glm::normalize(_collisionVec),  6);
 
         for (auto m : meat) {
           Services::messagePublisher()->sendMessage(Message("gameScene", std::make_shared<CreateNodeEvent>(

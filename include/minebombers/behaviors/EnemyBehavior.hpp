@@ -6,6 +6,7 @@
 #include "service/Services.hpp"
 #include "message/event/CollisionEvent.hpp"
 #include "message/event/DestroyNodeEvent.hpp"
+#include "message/event/CreateNodeEvent.hpp"
 #include "minebombers/util/NodeFactory.hpp"
 
 #include <glm/vec2.hpp>
@@ -19,7 +20,7 @@ public:
     moveDirection.y = 0.0f;
 
     node->addEventReactor([&](CollisionEvent event) {
-      if(event.collisionMaterialAttachment()->collisionDamage > 0.0f){
+      if(event.collisionMaterialAttachment()->collisionDamage > 0.0f && !event.collisionMaterialAttachment()->isEnemy) {
         _dmgToTake += event.collisionMaterialAttachment()->collisionDamage;
         _collisionVec = event.vec();
       }
@@ -43,7 +44,24 @@ protected:
 
     if (_dmgToTake > 0.0f) {
       _health -= _dmgToTake;
+
+      auto myPos = node.position();
+
+      auto damageParticle = NodeFactory::createDamageParticle((int)_dmgToTake);
+      auto randomPos = (Services::random()->nextFloat() - 0.5f) * 1.0f;
+
+      damageParticle->setLocalPosition(glm::vec3(myPos.x + randomPos, myPos.y, myPos.z + 1));
+
+      Services::messagePublisher()->sendMessage(
+        Message("gameScene",
+          std::make_shared<CreateNodeEvent>("world",
+            damageParticle, nullptr, nullptr
+          )
+        )
+      );
+
       _dmgToTake = 0;
+
       if (_health <= 0.0f) {
 
         Services::messagePublisher()->sendMessage(
