@@ -20,7 +20,7 @@ public:
     moveDirection.y = 0.0f;
 
     node->addEventReactor([&](CollisionEvent event) {
-      if(event.collisionMaterialAttachment()->collisionDamage > 0.0f){
+      if(event.collisionMaterialAttachment()->collisionDamage > 0.0f && !event.collisionMaterialAttachment()->isEnemy) {
         _dmgToTake += event.collisionMaterialAttachment()->collisionDamage;
         _collisionVec = event.vec();
       }
