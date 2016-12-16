@@ -53,7 +53,7 @@ protected:
           )
         );
 
-        auto meat = NodeFactory::createMeatPieces(pos, glm::normalize(_collisionVec),  6);
+        auto meat = NodeFactory::createMeatPieces(pos, glm::normalize(_collisionVec),  10);
 
         for(auto m : meat){
           Services::messagePublisher()->sendMessage(Message("gameScene", std::make_shared<CreateNodeEvent>(

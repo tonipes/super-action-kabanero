@@ -272,7 +272,7 @@ namespace NodeFactory {
     fixtureDef->filter.maskBits = COLLISION_MASK_DECAL;
     // fixtureDef->isSensor = true;
 
-    node->addBehavior<MeatPieceBehavior>(2.0f);
+    node->addBehavior<MeatPieceBehavior>(4.0f);
 
     node->addAttachment(material_att);
     node->addAttachment(sprite_att);
@@ -311,7 +311,7 @@ namespace NodeFactory {
     fixtureDef->filter.categoryBits = COLLISION_CATEGORY_DECAL;
     fixtureDef->filter.maskBits = COLLISION_MASK_DECAL;
 
-    node->addBehavior<BloodstainBehavior>(0.5f);
+    node->addBehavior<BloodstainBehavior>(1.0f);
 
     node->addAttachment(material_att);
     node->addAttachment(sprite_att);
