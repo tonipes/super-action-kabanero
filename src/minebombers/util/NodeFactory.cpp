@@ -407,7 +407,7 @@ namespace NodeFactory {
     node->addAttachment(material_att);
 
     auto gun = std::make_shared<GunAttachment>(
-      std::make_shared<GunParameters>( 20.0f,  2.0f, 1, 0.1f, 10.0f, 1.0f, "tiles/pistol_normal",   "test-effect/crystal_spear0", "gunshot.ogg",       false, 1.0f, 0, 0, "Pistol")
+      std::make_shared<GunParameters>( 15.0f,  1.8f, 1, 0.05f, 10.0f, 1.0f, "new_tiles/crate",   "test-effect/crystal_spear0", "gunshot.ogg",       false, 1.0f, 0, 0, "Pistol")
     );
 
     node->addAttachment(gun);
