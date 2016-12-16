@@ -15,6 +15,6 @@ KBVector<std::shared_ptr<GunParameters>> LevelCompiler::artifactGuns {
   std::make_shared<GunParameters>( 16.0f, 10.0f, 1, 0.2f, 20.0f, 0.7f, "new_tiles/super-crate",   "test-effect/crystal_spear0", "gunshot.ogg",     false, 1.0f, 0, 0, "Super Rifle"),
   std::make_shared<GunParameters>( 10.0f,  2.5f, 9, 0.15f, 15.0f, 0.9f, "new_tiles/super-crate", "test-effect/crystal_spear0", "gunshot.ogg",     false, 1.0f, 0, 0, "Super Shotgun"),
   std::make_shared<GunParameters>(150.0f, 0.75f, 1, 0.00f, 45.0f, 0.6f, "new_tiles/super-crate",  "test-effect/crystal_spear0", "gunshot.ogg",     false, 1.0f, 0, 0, "Super Sniper"),
-  std::make_shared<GunParameters>(  6.0f,  6.0f, 1, 0.5f, 2.8f, 0.4f, "new_tiles/crate",    "test-effect/flame0", "gunshot.ogg",       false, 1.0f, 0, 0, "Flame Thrower"),
-  std::make_shared<GunParameters>(  7.0f,  5.0f, 1, 0.0f, 8.0f, 0.6f, "new_tiles/crate",    "test-effect/bolt01", "gunshot.ogg",       false, 1.0f, 0, 0, "Laser")
+  std::make_shared<GunParameters>(  6.0f,  8.0f, 1, 0.5f, 2.8f, 0.4f, "new_tiles/crate",    "test-effect/flame0", "flame.ogg",       false, 1.0f, 0, 0, "Flame Thrower"),
+  std::make_shared<GunParameters>(  7.0f,  5.0f, 1, 0.0f, 8.0f, 0.6f, "new_tiles/crate",    "test-effect/bolt01", "laser.ogg",       false, 1.0f, 0, 0, "Laser")
 };
